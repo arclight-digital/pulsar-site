@@ -95,6 +95,12 @@ const onDocs = path === '/docs' || path.startsWith('/docs/');
   .actions arc-button {
     display: inline-block;
   }
+  /* A single-mode theme pins the page's mode (scripts/sitetheme.ts), so
+     the toggle has nothing to offer. Hidden, not removed: it keeps its slot
+     and Docs and Install stay put. */
+  :global(:root[data-mode-pinned]) .actions arc-theme-toggle {
+    visibility: hidden;
+  }
   /* No nav and no sidebar: ARC's bar still renders its hamburger on narrow
      screens, where it would toggle nothing. Hidden through its documented
      part -- a dead control removed, not a part restyled. */

@@ -226,7 +226,7 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
     {/* Then the visitor's Pulsar theme, if they picked one: the finished
         stylesheet and any mode a single-mode theme forces, stored by
         src/scripts/sitetheme.ts, applied here so no page ever paints in
-        Pulsar first. Its selectors outrank the stylesheets that load after. */}
+        Pulsar first -- or with a light/dark toggle the theme can't honor. Its selectors outrank the stylesheets that load after. */}
     <script is:inline>
       try {
         const t = localStorage.getItem('arc-theme');
@@ -240,7 +240,10 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
           s.textContent = css;
           document.head.appendChild(s);
           const m = localStorage.getItem('pulsar-site-theme-mode');
-          if (m === 'dark' || m === 'light') document.documentElement.dataset.theme = m;
+          if (m === 'dark' || m === 'light') {
+            document.documentElement.dataset.theme = m;
+            document.documentElement.setAttribute('data-mode-pinned', '');
+          }
         }
       } catch {}
     </script>

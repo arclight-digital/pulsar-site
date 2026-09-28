@@ -9,7 +9,10 @@
 //
 // Single-mode themes (Dracula, Phosphor and Amber dark; Alucard light) set the
 // page's mode while they are worn, and the mode the visitor had comes back
-// when they switch to a two-variant theme or reset.
+// when they switch to a two-variant theme or reset. While one is worn the
+// bar's light/dark toggle has nothing to toggle: data-mode-pinned on <html>
+// hides it in place (SiteTopBar.astro), and the toggle is made inert so it
+// leaves the tab order and the accessibility tree as well as the view.
 import { cssFor, onlyMode } from '../data/sitetheme';
 import { THEMES } from '../data/themes';
 
@@ -48,6 +51,7 @@ export function applySiteTheme(slug: string): void {
     // Pulsar is the site's own palette: take everything off.
     style?.remove();
     restoreMode();
+    pin(null);
     for (const k of [K.slug, K.css, K.mode]) set(k, null);
     return;
   }
@@ -61,6 +65,7 @@ export function applySiteTheme(slug: string): void {
   style.textContent = css;
 
   const only = onlyMode(t);
+  pin(only);
   if (only) {
     if (get(K.before) === null) set(K.before, root.dataset.theme ?? 'auto');
     if (root.dataset.theme !== only) root.dataset.theme = only;
@@ -79,3 +84,20 @@ function restoreMode() {
     set(K.before, null);
   }
 }
+
+// The pre-paint script sets the attribute for a remembered single-mode theme;
+// this keeps it, and the toggles' inert, in step from then on.
+function pin(only: 'dark' | 'light' | null) {
+  root.toggleAttribute('data-mode-pinned', only !== null);
+  syncToggles();
+}
+
+function syncToggles() {
+  const pinned = root.hasAttribute('data-mode-pinned');
+  document.querySelectorAll<HTMLElement>('arc-theme-toggle').forEach((el) => {
+    el.inert = pinned;
+    if (pinned) el.setAttribute('aria-hidden', 'true');
+    else el.removeAttribute('aria-hidden');
+  });
+}
+syncToggles();
