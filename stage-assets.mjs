@@ -1,4 +1,4 @@
-// Stage the shared brand assets into site/public/assets before Astro builds.
+// Stage the shared brand assets into public/assets before Astro builds.
 //
 // The page and the OS must not be able to drift apart, so every mark, font and
 // still the page serves is copied at build time from upstream/ -- the OS
@@ -140,7 +140,7 @@ await writeFile(join(OUT, 'pulsar-mark-light.svg'), rebox);
 // showcase stays inside the "shader and its stills" rule. Regenerated from
 // the theme sources, not hand-edited; src/data/themes.json names them.
 await cp(join(SITE, 'assets-static', 'themes'), join(OUT, 'themes'), { recursive: true }).catch((cause) => {
-  throw new Error(`cannot stage site/assets-static/themes: ${cause.message}`, { cause });
+  throw new Error(`cannot stage assets-static/themes: ${cause.message}`, { cause });
 });
 
 console.log(`staged ${FILES.length + 1} assets and the theme showcase into public/assets`);

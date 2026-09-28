@@ -4,10 +4,10 @@ dist/
 node_modules/
 .wrangler/
 
-# Staged by stage-assets.mjs from the repo's assets/ on every build. Nothing
-# here is a source file -- edit assets/ (or site/assets-static/) instead.
+# Staged by stage-assets.mjs from upstream/ and assets-static/ on every build.
+# Nothing here is a source file -- edit assets-static/, or the OS repo's
+# assets/ (upstream/ is its copy, refreshed by the nightly).
 public/assets/
 
-# Editor state. Here rather than in the root .gitignore because it only
-# appears now that site/ is an npm project an IDE recognises.
+# Editor state.
 .idea/
