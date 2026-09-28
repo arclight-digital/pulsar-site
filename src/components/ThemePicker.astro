@@ -3,8 +3,14 @@
 // sheet with two independent choices.
 //
 //   Theme      recolors the whole site through ARC's tokens (never its
-//              parts), remembered across pages; dark-first, as the image
-//              lists them. Single-mode themes say so and set the page's mode.
+//              parts), remembered across pages. A radio group of cards, each
+//              a thumbnail of the theme in the page's current mode, in two
+//              sets: the themes that follow light/dark, then the one-look
+//              themes, which set the page's mode while worn. The page's
+//              light/dark toggle sits beside the heading and gives way to a
+//              "dark only" / "light only" note while a one-look theme holds
+//              the mode (scripts/sitetheme.ts). Arrow keys move the check
+//              (scripts/themes.ts).
 //   Wallpaper  the home page's sky: Pulsar's live shader in any of its four
 //              looks, or any theme's own rendered wallpaper. Picking a theme
 //              suggests its wallpaper until the visitor picks one; after
@@ -13,13 +19,40 @@
 // arc-sheet is modal: the page behind is inert (so focus stays in the
 // sheet), Escape closes it, and focus returns to the trigger. Its scrim is
 // kept light through its own custom properties so the recolor behind it is
-// visible while choosing. Every swatch carries the theme's name as text.
-import { THEMES, label, tileAttrs, variant } from '../data/themes';
+// visible while choosing. Every card carries the theme's name as text.
+import { THEMES, label, tileAttrs, variant, type Theme } from '../data/themes';
 
 const LOOKS = ['Silk', 'Leak', 'Satin', 'Holo'];
 const WALLS = THEMES.filter((t) => !['pulsar', 'pulsar-holo'].includes(t.slug) && variant(t, 'dark').wall);
-const modeNote = (t: (typeof THEMES)[number]) =>
-  t.variants.dark && t.variants.light ? '' : t.variants.dark ? 'dark only' : 'light only';
+
+// Two groups, in the image's own order: the themes that follow light/dark,
+// then the ones with a single look, which set the page's mode themselves.
+const oneLook = (t: Theme) => !(t.variants.dark && t.variants.light);
+const GROUPS = [
+  { id: 'pk-both', name: 'Light and dark', note: '', themes: THEMES.filter((t) => !oneLook(t)) },
+  { id: 'pk-one', name: 'One look', note: 'picks light or dark for you', themes: THEMES.filter(oneLook) },
+];
+
+// The card is a thumbnail of the theme itself: its ground, its text, its
+// accent and four of its terminal colors, from the same palette data the
+// site recolors with. Both variants ride along as custom properties and the
+// stylesheet shows the one the page is in, so a two-variant theme's card
+// flips with the light/dark switch and a one-look theme's never does.
+const cardVars = (t: Theme) =>
+  (['dark', 'light'] as const)
+    .map((m) => {
+      const v = variant(t, m);
+      const k = m[0];
+      const c = [v.swatch[3], v.swatch[4], v.swatch[5], v.swatch[7]];
+      return [
+        `--${k}-bg:${v.bg}`,
+        `--${k}-fg:${v.fg}`,
+        `--${k}-ac:${v.accent}`,
+        ...c.map((x, i) => `--${k}-c${i}:${x}`),
+      ].join(';');
+    })
+    .join(';');
+const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
 ---
 
 <button type="button" class="fab" data-picker-open aria-haspopup="dialog" aria-label="Choose a theme">
@@ -29,34 +62,77 @@ const modeNote = (t: (typeof THEMES)[number]) =>
 
 <arc-sheet side="right" heading="Make it yours" class="picker-sheet" data-picker>
   <section class="grp" aria-labelledby="pk-theme">
-    <h2 class="grp-h" id="pk-theme">Theme</h2>
-    <p class="grp-note">Recolors this whole site, the way <code>pulsar theme set</code> recolors your desktop.</p>
-    <ul class="themes" role="list">
+    <div class="grp-top">
+      <h2 class="grp-h" id="pk-theme">Theme</h2>
+      {/* The page's light/dark switch, here too. A one-look theme has nothing
+          for it to switch: sitetheme.ts makes every toggle inert while one is
+          worn, and this spot says which look it is instead. */}
+      <span class="mode">
+        <arc-theme-toggle size="sm" class="mode-toggle"></arc-theme-toggle>
+        <span class="mode-only mode-only--dark"><arc-icon name="moon" size="sm"></arc-icon>Dark only</span>
+        <span class="mode-only mode-only--light"><arc-icon name="sun" size="sm"></arc-icon>Light only</span>
+      </span>
+    </div>
+    <p class="grp-note">Recolors the whole site, like <code>pulsar theme set</code> does your desktop.</p>
+    <div class="themes" role="radiogroup" aria-labelledby="pk-theme" data-theme-radios>
       {
-        THEMES.map((t) => {
-          const v = variant(t, t.prefer === 'light' ? 'light' : 'dark');
-          return (
-            <li>
-              <button type="button" class="th" aria-pressed="false" {...tileAttrs(t)}>
-                <span class="th-sw" aria-hidden="true">
-                  {[v.bg, v.accent, ...v.swatch.slice(3, 6)].map((c) => (
-                    <span style={`background:${c}`} />
-                  ))}
-                </span>
-                <span class="th-name">{label(t)}</span>
-                {modeNote(t) && <span class="th-mode">{modeNote(t)}</span>}
-              </button>
-            </li>
-          );
-        })
+        GROUPS.map((g) => (
+          <div class="set" role="group" aria-labelledby={g.id}>
+            <p class="set-h" id={g.id}>
+              <span>{g.name}</span>
+              {g.note && <span class="set-note">{g.note}</span>}
+            </p>
+            <div class="cards">
+              {g.themes.map((t) => (
+                <button
+                  type="button"
+                  class="th"
+                  role="radio"
+                  aria-checked={t.slug === 'pulsar' ? 'true' : 'false'}
+                  tabindex={t.slug === 'pulsar' ? 0 : -1}
+                  {...tileAttrs(t)}
+                >
+                  <span class="th-pv" style={cardVars(t)} aria-hidden="true">
+                    <span class="th-line">
+                      <span class="th-prompt">&gt;</span>
+                      <span class="th-text" />
+                    </span>
+                    <span class="th-dots">
+                      <span />
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                    {oneLook(t) && (
+                      <span class="th-only">
+                        <arc-icon name={only(t) === 'dark' ? 'moon' : 'sun'} size="xs" />
+                      </span>
+                    )}
+                    <span class="th-check">
+                      <svg viewBox="0 0 16 16" width="10" height="10">
+                        <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                  </span>
+                  <span class="th-name">
+                    {label(t)}
+                    {oneLook(t) && <span class="sr-only">, {only(t)} only</span>}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ))
       }
-    </ul>
+    </div>
   </section>
 
   <section class="grp" aria-labelledby="pk-wall">
-    <h2 class="grp-h" id="pk-wall">Wallpaper</h2>
-    <p class="grp-note">The home page’s sky, chosen apart from the theme. Pick one and themes stop suggesting theirs.</p>
-    <p class="sub">Pulsar, live</p>
+    <div class="grp-top">
+      <h2 class="grp-h" id="pk-wall">Wallpaper</h2>
+    </div>
+    <p class="grp-note">The home page’s sky. Pick one here and themes stop swapping it.</p>
+    <p class="set-h">Pulsar, live</p>
     <div class="looks" role="group" aria-label="Pulsar, live">
       {
         LOOKS.map((name, index) => (
@@ -66,7 +142,7 @@ const modeNote = (t: (typeof THEMES)[number]) =>
         ))
       }
     </div>
-    <p class="sub">A theme’s wallpaper</p>
+    <p class="set-h">A theme’s wallpaper</p>
     <ul class="walls" role="list">
       {
         WALLS.map((t) => (
@@ -89,7 +165,11 @@ const modeNote = (t: (typeof THEMES)[number]) =>
   </section>
 
   <div slot="footer" class="foot">
-    <button type="button" class="reset" data-picker-reset>Reset Theming to Default</button>
+    <span class="foot-note">Saved in this browser</span>
+    <arc-button variant="ghost" size="sm" data-picker-reset>
+      <arc-icon slot="prefix" name="arrow-counter-clockwise" size="sm"></arc-icon>
+      Back to Pulsar
+    </arc-button>
   </div>
 </arc-sheet>
 
@@ -139,86 +219,251 @@ const modeNote = (t: (typeof THEMES)[number]) =>
   }
 
   .picker-sheet {
-    --sheet-width: min(420px, 92vw);
+    --sheet-width: 460px;
     /* light scrim: the recolor behind the sheet should stay visible */
     --sheet-backdrop: rgba(0, 0, 0, 0.18);
     --sheet-backdrop-filter: none;
   }
   .grp + .grp {
-    margin-top: var(--space-xl);
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+  }
+  .grp-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    min-height: 2.25rem;
   }
   .grp-h {
-    font-size: var(--text-md);
-    margin: 0 0 var(--space-xs);
+    margin: 0;
+    font-family: var(--font-label);
+    font-weight: var(--label-weight);
+    font-size: var(--label-size);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+  .grp-h::before {
+    content: '// ';
+    font-family: var(--font-mono);
+    letter-spacing: 0;
+    color: var(--accent-primary);
   }
   .grp-note {
-    margin: 0 0 var(--space-md);
+    margin: var(--space-xs) 0 var(--space-md);
     color: var(--text-secondary);
     font-size: var(--text-sm);
+    line-height: 1.5;
   }
-  .sub {
-    margin: var(--space-md) 0 var(--space-sm);
-    font-family: var(--font-mono);
-    font-size: var(--label-size);
-    color: var(--text-muted);
+  .grp-note code {
+    font-size: 0.92em;
+    white-space: nowrap;
   }
 
-  .themes,
-  .walls {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* light/dark: the toggle while it can do something, a note while a
+     one-look theme holds the mode */
+  .mode {
+    display: inline-flex;
+    align-items: center;
   }
-  .themes {
+  .mode-only {
+    display: none;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--border-default);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+  }
+  :global(:root[data-mode-pinned]) .mode-toggle {
+    display: none;
+  }
+  :global(:root[data-mode-pinned][data-theme='dark']) .mode-only--dark,
+  :global(:root[data-mode-pinned][data-theme='light']) .mode-only--light {
+    display: inline-flex;
+  }
+
+  .set + .set {
+    margin-top: var(--space-md);
+  }
+  .set-h {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0 var(--space-sm);
+    margin: var(--space-md) 0 var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+  .set:first-child .set-h {
+    margin-top: 0;
+  }
+  .set-note::before {
+    content: '· ';
+  }
+
+  .cards {
     display: grid;
-    gap: var(--space-xs);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-sm) var(--space-xs);
   }
   .th {
     appearance: none;
     display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: var(--space-md);
+    gap: 6px;
     width: 100%;
-    min-height: 2.75rem;
-    padding: var(--space-xs) var(--space-sm);
+    min-width: 0;
+    padding: 4px;
     border: 1px solid transparent;
     border-radius: var(--radius-md);
     background: none;
-    color: var(--text-primary);
+    color: var(--text-secondary);
     font: inherit;
     text-align: left;
     cursor: pointer;
+    transition:
+      background 0.15s var(--ease-out),
+      border-color 0.15s var(--ease-out);
   }
   .th:hover {
     background: var(--bg-card);
+    color: var(--text-primary);
   }
-  .th[aria-pressed='true'] {
+  .th[aria-checked='true'] {
     border-color: var(--accent-primary);
     background: var(--bg-card);
+    color: var(--text-primary);
   }
+
+  /* the thumbnail, in the variant the page is in */
+  .th-pv {
+    --bg: var(--d-bg);
+    --fg: var(--d-fg);
+    --ac: var(--d-ac);
+    --c0: var(--d-c0);
+    --c1: var(--d-c1);
+    --c2: var(--d-c2);
+    --c3: var(--d-c3);
+    position: relative;
+    display: grid;
+    align-content: space-between;
+    aspect-ratio: 16 / 10;
+    padding: 7px 8px;
+    border-radius: calc(var(--radius-md) - 2px);
+    background: var(--bg);
+    box-shadow:
+      inset 0 0 0 1px rgba(128, 128, 128, 0.22),
+      inset 0 -3px 0 var(--ac);
+    overflow: hidden;
+  }
+  :global(:root[data-theme='light']) .th-pv {
+    --bg: var(--l-bg);
+    --fg: var(--l-fg);
+    --ac: var(--l-ac);
+    --c0: var(--l-c0);
+    --c1: var(--l-c1);
+    --c2: var(--l-c2);
+    --c3: var(--l-c3);
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .th-pv,
+    :global(:root:not([data-theme])) .th-pv {
+      --bg: var(--l-bg);
+      --fg: var(--l-fg);
+      --ac: var(--l-ac);
+      --c0: var(--l-c0);
+      --c1: var(--l-c1);
+      --c2: var(--l-c2);
+      --c3: var(--l-c3);
+    }
+  }
+  .th-line {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    color: var(--ac);
+  }
+  .th-text {
+    flex: 0 1 60%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--fg);
+    opacity: 0.85;
+  }
+  .th-dots {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 3px;
+  }
+  .th-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--c0);
+  }
+  .th-dots span:nth-child(2) {
+    background: var(--c1);
+  }
+  .th-dots span:nth-child(3) {
+    background: var(--c2);
+  }
+  .th-dots span:nth-child(4) {
+    background: var(--c3);
+  }
+  .th-only {
+    position: absolute;
+    right: 6px;
+    bottom: 7px;
+    display: inline-flex;
+    color: var(--fg);
+    opacity: 0.8;
+  }
+  .th-check {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: grid;
+    place-items: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    color: var(--bg-deep);
+    opacity: 0;
+    transform: scale(0.4);
+    transition:
+      opacity 0.15s var(--ease-out),
+      transform 0.25s var(--ease-out);
+  }
+  .th[aria-checked='true'] .th-check {
+    opacity: 1;
+    transform: none;
+  }
+  .th-name {
+    overflow: hidden;
+    padding: 0 2px;
+    font-size: var(--text-xs);
+    line-height: 1.3;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .th[aria-checked='true'] .th-name {
+    font-weight: 700;
+  }
+
   .th:focus-visible,
   .lk:focus-visible,
-  .wl:focus-visible,
-  .reset:focus-visible {
+  .wl:focus-visible {
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
-  }
-  .th-sw {
-    display: inline-flex;
-    width: 4.5rem;
-    height: 1.25rem;
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--border-default);
-  }
-  .th-sw span {
-    flex: 1;
-  }
-  .th-mode {
-    font-family: var(--font-mono);
-    font-size: var(--label-size);
-    color: var(--text-muted);
   }
 
   .looks {
@@ -247,15 +492,19 @@ const modeNote = (t: (typeof THEMES)[number]) =>
     background: var(--bg-card);
   }
   .walls {
+    list-style: none;
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-sm);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-sm) var(--space-xs);
   }
   .wl {
     appearance: none;
     display: grid;
     gap: 4px;
     width: 100%;
+    min-width: 0;
     padding: 0;
     border: 0;
     background: none;
@@ -264,6 +513,11 @@ const modeNote = (t: (typeof THEMES)[number]) =>
     font-size: var(--text-xs);
     text-align: left;
     cursor: pointer;
+  }
+  .wl span {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
   .wl img {
     width: 100%;
@@ -282,18 +536,29 @@ const modeNote = (t: (typeof THEMES)[number]) =>
   }
   .foot {
     display: flex;
-    justify-content: flex-end;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    width: 100%;
   }
-  .reset {
-    appearance: none;
-    min-height: 2.5rem;
-    padding: var(--space-xs) var(--space-md);
-    border-radius: var(--radius-full);
-    border: 1px solid var(--border-default);
-    background: none;
-    color: var(--text-primary);
-    font: inherit;
-    cursor: pointer;
+  .foot arc-button {
+    margin-left: auto;
+  }
+  .foot-note {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  /* a phone: three across, the sheet a touch narrower than the screen */
+  @media (max-width: 30rem) {
+    .cards,
+    .walls {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .foot-note {
+      display: none;
+    }
   }
 
   @media (max-width: 40rem) {
@@ -303,7 +568,9 @@ const modeNote = (t: (typeof THEMES)[number]) =>
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .fab {
+    .fab,
+    .th,
+    .th-check {
       transition: none;
     }
   }
