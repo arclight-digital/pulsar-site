@@ -53,9 +53,54 @@ function preview(detail: ThemeDetail) {
     if (el.tagName === 'ARC-CODE-BLOCK') el.setAttribute('code', cmd);
     else el.textContent = cmd;
   });
-  document.querySelectorAll<HTMLElement>('[data-theme-tile]').forEach((b) =>
-    b.setAttribute('aria-pressed', b.dataset.themeTile === detail.slug ? 'true' : 'false'),
-  );
+  document.querySelectorAll<HTMLElement>('[data-theme-tile]').forEach((b) => {
+    const on = b.dataset.themeTile === detail.slug;
+    // the picker's cards are a radio group, with one tab stop on the checked
+    // card; the showcase tiles and hero controls are toggle buttons
+    if (b.getAttribute('role') === 'radio') {
+      b.setAttribute('aria-checked', String(on));
+      b.tabIndex = on ? 0 : -1;
+    } else {
+      b.setAttribute('aria-pressed', String(on));
+    }
+  });
+}
+
+// Arrow keys in the picker's radio group, as a radio group should: they move
+// the checked card, and checking one wears it. Left/right walk the order;
+// up/down go to the nearest card in the row above or below, measured, so the
+// two sets and a phone's narrower grid need no column arithmetic.
+function radioKeys(group: HTMLElement) {
+  group.addEventListener('keydown', (e) => {
+    const radios = [...group.querySelectorAll<HTMLElement>('[role="radio"]')];
+    const at = radios.indexOf(e.target as HTMLElement);
+    if (at < 0) return;
+    let next = -1;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+      next = (at + (e.key === 'ArrowRight' ? 1 : -1) + radios.length) % radios.length;
+    } else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = radios.length - 1;
+    else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+      const down = e.key === 'ArrowDown';
+      const from = radios[at].getBoundingClientRect();
+      const cx = from.left + from.width / 2;
+      let best = Infinity;
+      radios.forEach((r, i) => {
+        const b = r.getBoundingClientRect();
+        const dy = down ? b.top - from.bottom : from.top - b.bottom;
+        if (dy < -1) return;
+        const score = dy * 1000 + Math.abs(b.left + b.width / 2 - cx);
+        if (i !== at && score < best) {
+          best = score;
+          next = i;
+        }
+      });
+    } else return;
+    e.preventDefault();
+    if (next < 0 || next === at) return;
+    radios[next].focus();
+    pick(detailOf(radios[next]));
+  });
 }
 
 export const detailOf = (el: HTMLElement): ThemeDetail => ({
@@ -124,7 +169,9 @@ export function initThemes(): void {
   const tile = stored && document.querySelector<HTMLElement>(`[data-theme-tile="${CSS.escape(stored)}"]`);
   if (tile) show(detailOf(tile));
 
-  // the floating picker: open it, and "Reset Theming to Default"
+  document.querySelectorAll<HTMLElement>('[data-theme-radios]').forEach(radioKeys);
+
+  // the floating picker: open it, and "Back to Pulsar"
   document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     if (target.closest('[data-picker-open]')) {
