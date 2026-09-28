@@ -83,6 +83,15 @@ export const CARDS: Card[] = [
     visual: { kind: 'terminal', line: { cmd: `sudo bootc switch ${IMAGES.vanilla}:latest` } },
   },
   {
+    slug: 'coming-from',
+    path: '/docs/coming-from',
+    headline: 'Moving in from Windows or a Mac.',
+    lift: 'or a Mac.',
+    sub: 'The stick, your files, your apps and your shortcuts.',
+    alt: 'The Pulsar logo, the line "Moving in from Windows or a Mac.", and the command that installs GIMP from Flathub.',
+    visual: { kind: 'terminal', line: { cmd: 'flatpak install flathub org.gimp.GIMP', note: 'no .exe, no .dmg' } },
+  },
+  {
     slug: 'cli',
     path: '/docs/cli',
     headline: 'One command for the whole system.',
