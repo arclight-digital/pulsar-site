@@ -10,6 +10,7 @@ export const DOCS_NAV: DocGroup[] = [
     links: [
       { label: 'Overview', href: '/docs', icon: 'book-open' },
       { label: 'Install', href: '/docs/install', icon: 'download-simple' },
+      { label: 'From Windows or macOS', href: '/docs/coming-from', icon: 'airplane-landing' },
       { label: 'Where things go', href: '/docs/where-things-go', icon: 'stack' },
     ],
   },

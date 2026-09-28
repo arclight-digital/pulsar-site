@@ -34,7 +34,7 @@ const STOPS = [
   {
     i: 'usb',
     t: 'Put it on a USB stick',
-    d: 'Any stick of 8 GB or more. In GNOME Disks, pick the stick and choose Restore Disk Image; on another system, Fedora Media Writer does the same.',
+    d: 'Any stick of 8 GB or more. In GNOME Disks, pick the stick and choose Restore Disk Image; on Windows or a Mac, Fedora Media Writer does the same.',
   },
   {
     i: 'hard-drives',
@@ -66,6 +66,10 @@ const VERIFY = [
   <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
   <p class="lede">
     One download and a USB stick. It’s free, and the whole of it is open source.
+  </p>
+  <p class="from">
+    Coming from Windows or a Mac? <a href="/docs/coming-from">Start here</a>: whether your computer
+    can run it, making the stick, and keeping Windows alongside.
   </p>
 
   <div class="downloads">
@@ -155,6 +159,11 @@ const VERIFY = [
 <style>
   .lede {
     max-width: 62ch;
+  }
+  .from {
+    max-width: 62ch;
+    margin-top: calc(-1 * var(--space-sm));
+    color: var(--text-secondary);
   }
 
   /* ---- the two downloads ------------------------------------------------ */
