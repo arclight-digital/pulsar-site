@@ -1,4 +1,4 @@
-// The hero background: assets/shaders/pulsar.frag -- the SAME shader that
+// The hero background: upstream/assets/shaders/pulsar.frag -- the SAME shader that
 // renders the OS wallpapers -- running live in WebGL1.
 //
 // The source is compiled into this bundle from the repo's assets/ rather than
@@ -9,7 +9,7 @@
 // Falls back to the page's CSS ground -- the CI-rendered silk still -- when
 // WebGL is missing. prefers-reduced-motion gets still frames that redraw only
 // when a control is used.
-import fragmentSource from '../../../assets/shaders/pulsar.frag?raw';
+import fragmentSource from '../../upstream/assets/shaders/pulsar.frag?raw';
 import { currentLook, effectiveTheme, handleLookSwitch, onStateChange } from './theme';
 import { storedTheme } from './sitetheme';
 import { THEMES, type Variant } from '../data/themes';

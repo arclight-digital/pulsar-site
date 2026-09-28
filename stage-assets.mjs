@@ -1,17 +1,19 @@
 // Stage the shared brand assets into site/public/assets before Astro builds.
 //
 // The page and the OS must not be able to drift apart, so every mark, font and
-// still the page serves is copied from the repo's assets/ at build time rather
-// than kept as a second copy under site/. public/assets is gitignored for the
-// same reason: if it is in git, someone will edit it there.
+// still the page serves is copied at build time from upstream/ -- the OS
+// repo's own files, which its publish.sh copies in with each published
+// nightly (see upstream.list) -- rather than kept as a second copy here.
+// public/assets is gitignored for the same reason: if it is in git, someone
+// will edit it there.
 //
 // These land in public/ rather than being imported through Vite on purpose --
 // their URLs have to be stable. og:image is an absolute URL in a share card
 // that outlives the deploy, and a content hash would change it on every build.
 //
 // The wallpaper shader is NOT staged: src/scripts/sky.ts imports
-// assets/shaders/pulsar.frag directly with ?raw, so it is compiled into the
-// bundle from the same file the OS wallpapers are rendered from.
+// upstream/assets/shaders/pulsar.frag directly with ?raw, so it is compiled
+// into the bundle from the same file the OS wallpapers are rendered from.
 //
 // Runs from `npm run stage`, which `npm run dev` and `npm run build` both
 // depend on. Node only -- Cloudflare's builder has node and nothing else.
@@ -20,10 +22,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SITE = dirname(fileURLToPath(import.meta.url));
-const REPO = join(SITE, '..');
+// the OS repo's files, as its last published nightly shipped them
+const REPO = join(SITE, 'upstream');
 const OUT = join(SITE, 'public', 'assets');
 
-// [source relative to the repo root, name it is served as]
+// [source relative to the OS repo's root (under upstream/), name it is served as]
 const FILES = [
   // brand: the v2 package's own files, by its "which file where" table. The
   // mark is a responsive family -- the large drawing above 56px, the heavier
@@ -61,12 +64,12 @@ const FILES = [
   // files. src/og/render.ts also reads silk-still-dark as the share cards ground.
   //
   // The share card is NOT here any more: it is rendered at build time.
-  ['site/assets-static/silk-still-dark.jpg', 'silk-still-dark.jpg'],
-  ['site/assets-static/silk-still-light.jpg', 'silk-still-light.jpg'],
-  ['site/assets-static/gamescale.svg', 'gamescale.svg'],
+  ['./assets-static/silk-still-dark.jpg', 'silk-still-dark.jpg'],
+  ['./assets-static/silk-still-light.jpg', 'silk-still-light.jpg'],
+  ['./assets-static/gamescale.svg', 'gamescale.svg'],
   // 64px tile of +-2-step triangular noise at a tiny alpha: dithers the
   // hero's CSS readability wash, which browsers (Firefox) draw undithered.
-  ['site/assets-static/dither.png', 'dither.png'],
+  ['./assets-static/dither.png', 'dither.png'],
 ];
 
 // Clear first: a file dropped from the list above must leave the deploy too,
@@ -76,7 +79,8 @@ await mkdir(OUT, { recursive: true });
 
 await Promise.all(
   FILES.map(([from, name]) =>
-    cp(join(REPO, from), join(OUT, name)).catch((cause) => {
+    // "./" is this repo's own (assets-static); anything else is the OS repo's
+    cp(from.startsWith('./') ? join(SITE, from) : join(REPO, from), join(OUT, name)).catch((cause) => {
       // A missing source is fatal. The page would otherwise deploy with a
       // broken mark or an unstyled face and nothing would say so.
       throw new Error(`cannot stage ${from}: ${cause.message}`, { cause });

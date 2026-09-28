@@ -1,0 +1,27 @@
+# What this site reads from the OS repo (arclight-digital/pulsar), one path
+# per line, relative to that repo's root. The OS repo's scripts/publish.sh
+# copies each into upstream/ in the same commit as each published nightly's
+# changelog and manifest -- so the page's marks, fonts, shader and docs are
+# always the ones the shipped image was built from, and never a night early.
+# Edit this list here; never edit upstream/ by hand (the next nightly
+# replaces it).
+assets/brand/svg/pulsar-animated.svg
+assets/brand/svg/pulsar-animated-large.svg
+assets/brand/svg/pulsar-mark-small.svg
+assets/brand/svg/pulsar-mark-small-light.svg
+assets/brand/svg/pulsar-mark-light.svg
+assets/brand/svg/favicon.svg
+assets/brand/png/favicon-16.png
+assets/brand/png/favicon-32.png
+assets/brand/png/favicon-48.png
+# the share cards (src/og/render.ts)
+assets/brand/png/pulsar-lockup-horizontal.png
+assets/brand/png/pulsar-mark-1024.png
+assets/fonts/JetBrains_Mono/static/JetBrainsMono-Bold.ttf
+assets/fonts/Host_Grotesk/static/HostGrotesk-Regular.ttf
+assets/fonts/Host_Grotesk/static/HostGrotesk-Bold.ttf
+assets/fonts/Host_Grotesk/OFL.txt
+assets/fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
+assets/fonts/JetBrains_Mono/OFL.txt
+assets/shaders/pulsar.frag
+docs/*.md

@@ -41,7 +41,8 @@ const CYAN = '#3ECBFF';
 // runs with the Astro project as its working directory, which is also what
 // Cloudflare gives us (root directory `site`).
 const SITE = process.cwd();
-const REPO = join(SITE, '..');
+// the OS repo's files, as its last published nightly shipped them (upstream.list)
+const REPO = join(SITE, 'upstream');
 
 function asset(...parts: string[]): Buffer {
   const path = join(...parts);

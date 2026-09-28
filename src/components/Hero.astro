@@ -24,7 +24,7 @@ import Sky from './Sky.astro';
 // last drop makes the core orbit instead of spin. The light mark is staged
 // onto this file's box (stage-assets.mjs), so the one origin serves both
 // themes. The build runs from site/, so the repo root is one level up.
-const MARK_SVG = join(process.cwd(), '..', 'assets', 'brand', 'svg', 'pulsar-animated-large.svg');
+const MARK_SVG = join(process.cwd(), 'upstream', 'assets', 'brand', 'svg', 'pulsar-animated-large.svg');
 function coreOrigin(svg: string): string {
   const box = svg.match(/<svg\b[^>]*\bviewBox="([^"]+)"/)?.[1]?.split(/[\s,]+/).map(Number);
   const core = svg.match(/<circle\b[^>]*\bclass="pl-core"[^>]*>/)?.[0];

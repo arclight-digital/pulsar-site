@@ -103,14 +103,5 @@ export default defineConfig({
       // means a second custom-element registry.
       noExternal: ['@arclux/arc-ui'],
     },
-    server: {
-      fs: {
-        // src/scripts/sky.ts imports ../../../assets/shaders/pulsar.frag with
-        // ?raw -- the actual OS wallpaper shader, compiled into the bundle
-        // rather than copied. The dev server refuses reads above the project
-        // root unless the repo is allowed explicitly; the build does not care.
-        allow: ['..'],
-      },
-    },
   },
 });
