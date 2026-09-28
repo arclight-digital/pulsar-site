@@ -5,6 +5,7 @@
 // picker are the ones every page wears.
 import Base from './Base.astro';
 import { DOCS_NAV, hrefOf } from '../data/docs';
+import { REPO } from '../data/site';
 
 interface Props {
   title: string;
@@ -76,6 +77,12 @@ const current = DOCS_NAV.flatMap((g) => g.links).find((l) => here(hrefOf(l)));
 
     <article class="prose">
       <slot />
+      {/* Said plainly, once, at the foot of every page. */}
+      <p class="provenance">
+        Drafted with an AI's help, then checked against the code by a person
+        before it went up. If it disagrees with your machine, the page is the
+        bug: <a href={`${REPO}/issues`}>tell us</a>.
+      </p>
     </article>
 
     <aside class="toc" aria-label="On this page">
@@ -277,6 +284,17 @@ const current = DOCS_NAV.flatMap((g) => g.links).find((l) => here(hrefOf(l)));
     font-size: var(--label-inline-size);
     letter-spacing: var(--label-spacing);
     text-transform: uppercase;
+  }
+
+  .prose .provenance {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+  .prose .provenance a {
+    color: inherit;
   }
 
   @media (max-width: 72rem) {
