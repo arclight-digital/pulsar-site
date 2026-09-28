@@ -1,0 +1,213 @@
+---
+// Where software goes on an image-based system, as a decision: apps are
+// Flatpaks, dev tools go in a toolbox, services are quadlets, and layering is
+// the last resort. The filesystem table and the rules are the image's own
+// briefing (system_files/usr/share/pulsar/AGENTS.md); the recipes are
+// cli/pulsar's `setup`, distrobox.ini and templates/example.container.
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'On Pulsar, apps are Flatpaks, dev tools live in a toolbox, services are quadlets, and layering a host package is the last resort. Here is where each thing goes.';
+
+const FLATPAK = [
+  'flatpak install --user flathub org.gimp.GIMP   # yours, no password',
+  'flatpak list --app                             # what you have',
+  'sudo pulsar setup apps                         # put back any default app you removed',
+].join('\n');
+
+const TOOLBOX = [
+  'toolbox create                  # a Fedora box matching this release',
+  'toolbox enter                   # a shell inside it',
+  'sudo dnf install rust cargo     # inside the box: changes the box, not the OS',
+  'toolbox run cargo build         # or run one command from the host',
+].join('\n');
+
+const DEVBOX = [
+  'pulsar setup devbox             # the default dev box, pulsar-dev, via distrobox',
+  'distrobox enter pulsar-dev',
+].join('\n');
+
+const MISE = [
+  'cd ~/code/app',
+  'mise use node@22 python@3.13    # pinned for this project, installed under $HOME',
+].join('\n');
+
+const QUADLET = [
+  'pulsar setup quadlet                                     # copy the template, enable auto-update',
+  '$EDITOR ~/.config/containers/systemd/example.container',
+  'systemctl --user daemon-reload',
+  'systemctl --user start example',
+].join('\n');
+
+const LAYER = [
+  'sudo rpm-ostree install <package>    # staged: takes effect at the next boot',
+  'sudo rpm-ostree uninstall <package>',
+].join('\n');
+
+const PATHS: [string, string][] = [
+  ['/usr', 'The OS image. Read-only, even for root. Every update replaces it whole.'],
+  ['/etc', 'Writable and local to this machine. Each deployment keeps its own copy, and updates merge your edits forward.'],
+  ['/var', 'Writable, persistent, shared by every deployment. /home is /var/home.'],
+  ['/usr/local, /opt', 'Links into /var. Not part of the image, and no update or rollback ever cleans them.'],
+  ['$HOME', 'Yours. Nothing on the system rolls it back.'],
+];
+
+const WHERE: [string, string, string][] = [
+  ['An app with a window', 'Flatpak', 'GNOME Software, or flatpak install --user'],
+  ['A compiler, SDK, language runtime', 'A toolbox', 'toolbox create, then dnf inside it'],
+  ['A per-project toolchain', 'mise and direnv', 'on the host already, installing into $HOME'],
+  ['A server or background service', 'A quadlet', 'pulsar setup quadlet'],
+  ['A local model, anything CUDA', 'A GPU container', 'podman run --device nvidia.com/gpu=all'],
+  ['A kernel module, udev rule, host daemon', 'Layered on the host', 'sudo rpm-ostree install, as a last resort'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'Where things go on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/where-things-go', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'filesystem', label: 'The filesystem', level: 2 },
+  { id: 'choose', label: 'Where does it go?', level: 2 },
+  { id: 'apps', label: 'Apps: Flatpak', level: 2 },
+  { id: 'dev', label: 'Dev tools: a toolbox', level: 2 },
+  { id: 'services', label: 'Services: quadlets', level: 2 },
+  { id: 'layering', label: 'Layering, the last resort', level: 2 },
+  { id: 'dont', label: 'Tempting, and wrong', level: 2 },
+];
+---
+
+<Docs
+  title="Where things go"
+  fullTitle="Where things go on Pulsar — Flatpak, toolbox or layering"
+  description={DESCRIPTION}
+  path="/docs/where-things-go"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>Where things go</h1>
+  <p class="intro">
+    On most Linux systems, “install it” means one thing. On an image-based one it means four,
+    and picking the right one is most of what keeps the machine fast, updatable and yours.
+  </p>
+
+  <h2 id="filesystem">The filesystem</h2>
+  <table>
+    <thead><tr><th>Path</th><th>What it is</th></tr></thead>
+    <tbody>
+      {PATHS.map(([p, what]) => (
+        <tr><td><code>{p}</code></td><td>{what}</td></tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 id="choose">Where does it go?</h2>
+  <table>
+    <thead><tr><th>You want</th><th>It goes in</th><th>How</th></tr></thead>
+    <tbody>
+      {WHERE.map(([want, where, how]) => (
+        <tr><td>{want}</td><td><strong>{where}</strong></td><td>{how}</td></tr>
+      ))}
+    </tbody>
+  </table>
+
+  <h2 id="apps">Apps: Flatpak</h2>
+  <p>
+    Anything with a window is a Flatpak. Flathub is configured unfiltered, so the whole catalog
+    shows up in GNOME Software, and Fedora’s remote carries the stock GNOME apps. On the first boot
+    with a network, Pulsar installs its defaults: Steam, Heroic, Faugus, Bottles, ProtonPlus,
+    protontricks, OBS Studio, Discord, EasyEffects, virt-manager, Flatseal and the stock GNOME set.
+    Remove one and it stays removed.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK}></arc-code-block>
+  <p>
+    <code>--user</code> installs into your home folder, needs no password, and touches no one
+    else’s account. A system install (what GNOME Software does by default) is shared by every
+    account.
+  </p>
+
+  <h2 id="dev">Dev tools: a toolbox</h2>
+  <p>
+    Compilers, SDKs and language runtimes never go into the image. They go in a toolbox: a Fedora
+    container that shares your home folder, so your projects and dotfiles are the same files inside
+    and out. Inside, <code>sudo dnf install</code> works as usual, because it changes only the box.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="toolbox" code={TOOLBOX}></arc-code-block>
+  <p>
+    Want a box with the usual kit already in it (git, gcc, cmake, gdb, make, ripgrep, jq, Python
+    headers)? Pulsar ships a recipe:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="devbox" code={DEVBOX}></arc-code-block>
+  <p>
+    That one is a distrobox, so <code>toolbox list</code> will not show it. The recipe lives at{' '}
+    <code>/usr/share/pulsar/distrobox.ini</code>: copy it, edit it, keep your own.
+  </p>
+  <p>
+    For toolchains pinned per project, <code>mise</code> and <code>direnv</code> are on the host and
+    install into <code>$HOME</code>:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="mise" code={MISE}></arc-code-block>
+  <p>
+    The exceptions sit on the host because they have to: <code>bpftrace</code>,{' '}
+    <code>bcc-tools</code>, <code>perf</code> and <code>sysstat</code>. A probe attaches to the
+    host’s kernel, and a container cannot do that for you.
+  </p>
+
+  <h2 id="services">Services: quadlets</h2>
+  <p>
+    A long-running container is best written as a quadlet: a unit file that systemd turns into a
+    service, rootless, in your session, logged like everything else, and a file you can keep in
+    git. Pulsar ships a commented template:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="quadlet" code={QUADLET}></arc-code-block>
+  <p>
+    The service is named after the file: <code>myapp.container</code> becomes{' '}
+    <code>myapp.service</code>. <code>podman-auto-update.timer</code> is on for every session, and
+    it updates only containers labeled <code>AutoUpdate=</code>, as the template is. On Fedora,
+    host paths mounted into a container need <code>:Z</code>, or SELinux denies them in a way that
+    looks like the app’s fault.
+  </p>
+  <p class="hint">Containers that need the GPU: <a href="/docs/gpu-containers">GPU containers</a>.</p>
+
+  <h2 id="layering">Layering, the last resort</h2>
+  <p>
+    Some things cannot run in a container at all: a kernel module, a udev rule, a daemon that has to
+    own the host. For those, layer a package onto the image:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="layer" code={LAYER}></arc-code-block>
+  <p>
+    It builds a new deployment, takes effect at the next boot, and rides along on every update
+    after. The price is that every update then goes through <code>rpm-ostree</code> and takes
+    minutes instead of seconds. <code>pulsar update</code> handles that for you, and{' '}
+    <code>pulsar doctor</code> counts your layers on its <code>updates</code> line. Never layer a
+    dev tool; that is what the toolbox is for.
+  </p>
+
+  <h2 id="dont">Tempting, and wrong</h2>
+  <ul>
+    <li>
+      <strong><code>sudo make install</code>, a vendor’s <code>install.sh</code>, anything into{' '}
+      <code>/usr/local</code> or <code>/opt</code>.</strong> It works, which is the problem: it
+      shadows the image on your <code>PATH</code>, never shows up in <code>rpm-ostree status</code>,
+      and survives every update and rollback forever. Use a toolbox, <code>mise</code> or{' '}
+      <code>~/.local/bin</code>.
+    </li>
+    <li>
+      <strong><code>sudo pip install</code> or <code>sudo npm install -g</code> on the host.</strong>{' '}
+      It either fails on the read-only <code>/usr</code> or lands in <code>/usr/local</code>. Use a
+      venv in the project, or a toolbox.
+    </li>
+    <li>
+      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> A local edit
+      outlives every update and quietly shadows the real fix when it arrives. If you must, take a{' '}
+      <a href="/docs/updates#checkpoint">checkpoint</a> first.
+    </li>
+  </ul>
+</Docs>

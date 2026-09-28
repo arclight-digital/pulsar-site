@@ -1,0 +1,139 @@
+---
+// GPU containers on the NVIDIA image: CDI, what the boot units do, and how
+// doctor checks it. Facts from Containerfile.nvidia phases 0 and 8,
+// system_files.nvidia/.../pulsar-gpu-containers.service, check_gpu_containers
+// and model_quadlet in cli/pulsar, and the README's examples.
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'On Pulsar’s NVIDIA image, any podman container can ask for the GPU by name. Run local models and CUDA work in containers, with nothing layered onto the host.';
+
+const SMOKE = 'podman run --rm --device nvidia.com/gpu=all registry.fedoraproject.org/fedora nvidia-smi';
+
+const OLLAMA = [
+  'podman run -d --device nvidia.com/gpu=all -p 11434:11434 \\',
+  '  -v ollama:/root/.ollama docker.io/ollama/ollama',
+].join('\n');
+
+const QUADLET = [
+  '[Container]',
+  'Image=docker.io/ollama/ollama',
+  'AddDevice=nvidia.com/gpu=all',
+  'PublishPort=127.0.0.1:11434:11434',
+  'Volume=ollama:/root/.ollama',
+].join('\n');
+
+const DOCTOR = [
+  '$ pulsar doctor gpu-containers',
+  'ok    gpu-containers CDI spec matches driver 615.71.09',
+  '                     podman run --rm --device nvidia.com/gpu=all IMAGE',
+].join('\n');
+
+const FINDINGS: [string, string][] = [
+  ['no CDI spec, so containers cannot be given the GPU', 'sudo systemctl restart nvidia-cdi-refresh.service, then read journalctl -b -u nvidia-cdi-refresh.service'],
+  ['stale CDI spec for driver …', 'Delete the spec it names. It is one somebody wrote by hand into /etc/cdi, and it went stale at the last driver update.'],
+  ['CDI spec matches …, but SELinux blocks containers from the GPU', 'systemctl status pulsar-gpu-containers.service: the unit that turns the boolean on did not run.'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'GPU containers on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/gpu-containers', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'run', label: 'Give a container the GPU', level: 2 },
+  { id: 'how', label: 'What makes it work', level: 2 },
+  { id: 'check', label: 'When it does not', level: 2 },
+  { id: 'models', label: 'A model for your agents', level: 2 },
+];
+---
+
+<Docs
+  title="GPU containers"
+  fullTitle="GPU containers on Pulsar — CUDA in podman, via CDI"
+  description={DESCRIPTION}
+  path="/docs/gpu-containers"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>GPU containers</h1>
+  <p class="intro">
+    Local models, CUDA, anything that wants the graphics card: it runs in a container, not on the
+    host. The NVIDIA image makes the GPU something a container can simply ask for.
+  </p>
+
+  <h2 id="run">Give a container the GPU</h2>
+  <p>Ask for it by name. If this prints your card, everything below is already working:</p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="smoke test" code={SMOKE}></arc-code-block>
+  <p>Then run the real thing. ollama, for example:</p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="ollama" code={OLLAMA}></arc-code-block>
+  <p>
+    The image brings the driver and <code>libcuda</code>; the container brings the CUDA runtime.
+    Nothing CUDA is ever installed on the host. For something you want
+    running every day, write it as a <a href="/docs/where-things-go#services">quadlet</a>; the
+    device is one line:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="~/.config/containers/systemd/ollama.container" code={QUADLET}></arc-code-block>
+  <p class="hint">
+    NVIDIA image only. The standard image has no NVIDIA driver to hand out; a container there can
+    still get a GPU through <code>/dev/dri</code> for Vulkan.
+  </p>
+
+  <h2 id="how">What makes it work</h2>
+  <p>
+    Podman speaks CDI, the Container Device Interface: a spec file that lists the device nodes and
+    driver libraries behind a name like <code>nvidia.com/gpu=all</code>. Two units keep it right:
+  </p>
+  <ul>
+    <li>
+      <strong><code>nvidia-cdi-refresh.service</code></strong>, from NVIDIA’s container toolkit,
+      writes the spec for the running driver to <code>/var/run/cdi/nvidia.yaml</code> on every boot.{' '}
+      <code>/var/run</code> is wiped at shutdown, so that spec can never outlive the driver it
+      describes.
+    </li>
+    <li>
+      <strong><code>pulsar-gpu-containers.service</code></strong> turns on the SELinux boolean{' '}
+      <code>container_use_xserver_devices</code> each boot. Without it a container gets the device
+      nodes and the libraries, then dies in <code>nvidia-smi</code> with “Failed to initialize NVML:
+      Insufficient Permissions”, which reads like a driver bug and is not one. The boolean only lets a
+      container use a GPU it was given with <code>--device</code>; a container not given one has
+      nothing to open.
+    </li>
+  </ul>
+  <arc-alert variant="warning" heading="Don’t write your own spec to /etc/cdi">
+    Plenty of guides say to run <code>nvidia-ctk cdi generate</code> into <code>/etc/cdi</code>. On
+    Pulsar that file survives every driver update, names library versions that no longer exist, and
+    fails inside the container. The boot unit already does the job, in the place that cannot go
+    stale.
+  </arc-alert>
+
+  <h2 id="check">When it does not</h2>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar doctor gpu-containers" code={DOCTOR}></arc-code-block>
+  <table>
+    <thead><tr><th>doctor says</th><th>Do this</th></tr></thead>
+    <tbody>
+      {FINDINGS.map(([says, fix]) => (
+        <tr><td>{says}</td><td>{fix}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="hint">
+    No NVIDIA module loaded at all is the <code>nvidia</code> check’s finding, not this one’s:{' '}
+    <a href="/docs/troubleshooting#fixes">Troubleshooting</a>.
+  </p>
+
+  <h2 id="models">A model for your agents</h2>
+  <p>
+    <code>pulsar agent model on</code> runs llama.cpp’s own server image as a rootless quadlet, on
+    this GPU (CUDA on the NVIDIA image, Vulkan where there is <code>/dev/dri</code>, CPU otherwise),
+    listening on <code>127.0.0.1</code> only and behind a key. It is the easy path to a local model
+    for opencode and aider: <a href="/docs/agents#model">Coding agents</a>.
+  </p>
+</Docs>

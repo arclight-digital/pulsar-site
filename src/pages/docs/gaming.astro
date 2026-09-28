@@ -1,0 +1,191 @@
+---
+// Gaming on Pulsar: what ships, what is tuned and why, and what doctor watches.
+// Facts from system_files/usr/share/pulsar/flatpaks.list, etc/gamemode.ini,
+// usr/lib/sysctl.d/60-pulsar-gaming.conf, usr/lib/tmpfiles.d/60-pulsar-gaming.conf,
+// udev/rules.d/70-ntsync.rules, zz0-pulsar.gschema.override (check-alive-timeout),
+// the gamemode/mangohud/ntsync/flatpak-gl checks in cli/pulsar, and the
+// nvidia image's pulsar-gl-nvidia units. The doctor lines are real output.
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'What Pulsar does for games: the launchers, gamemode set up for two GPUs, ntsync for Proton, kernel tuning, and the NVIDIA driver for Flatpak games.';
+
+const DOCTOR = [
+  '$ pulsar doctor ntsync gamemode mangohud flatpak-gl',
+  'ok    ntsync         /dev/ntsync present',
+  '                     crw-rw-r-- root:root',
+  'ok    gamemode       proto is in gamemode; renice=10 available',
+  '                     igpu governor demotion disabled (igpu_power_threshold=-1)',
+  'warn  mangohud       flatpaks.list pins //25.08, Steam runs on 26.08',
+  '                     installed (25.08,26.08) still covers it; repin before the old branch goes',
+  'ok    flatpak-gl     running Flatpak apps have the NVIDIA 615.71.09 driver',
+].join('\n');
+
+const GAMEMODE = [
+  'gamemoderun %command%          # Steam: a game’s launch options',
+  'sudo pulsar setup gamemode     # enroll accounts made since first boot, then log out and in',
+].join('\n');
+
+const LAUNCHERS: [string, string][] = [
+  ['Steam', 'com.valvesoftware.Steam'],
+  ['Heroic', 'com.heroicgameslauncher.hgl'],
+  ['Faugus Launcher', 'io.github.Faugus.faugus-launcher'],
+  ['Bottles', 'com.usebottles.bottles'],
+  ['ProtonPlus', 'com.vysp3r.ProtonPlus'],
+  ['protontricks', 'com.github.Matoking.protontricks'],
+  ['MangoHud (the Vulkan layer)', 'org.freedesktop.Platform.VulkanLayer.MangoHud'],
+];
+
+const TUNING: [string, string][] = [
+  ['kernel.split_lock_mitigate = 0', 'The kernel stalls a process about 10 ms for every split lock, as a deterrent. Several Windows games split-lock constantly and turn into a slideshow under it.'],
+  ['vm.max_map_count = 2147483642', 'Proton games with huge address-space appetites exhaust Fedora’s default and crash.'],
+  ['transparent_hugepage/defrag = defer+madvise', 'Hugepage defragmentation is deferred to the background instead of stalling the thread that faulted, which may be the one drawing your frame. Only memory a program explicitly asked to be hugepage-backed still waits for it.'],
+  ['vm.compaction_proactiveness = 0', 'No compaction on a timer. Compaction when memory is actually wanted is untouched.'],
+  ['vm.min_free_kbytes = 524288', '512 MB of headroom, so a game that allocates hard gets background reclaim instead of reclaiming mid-frame itself.'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'Gaming on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/gaming', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'launchers', label: 'The launchers', level: 2 },
+  { id: 'gamemode', label: 'gamemode', level: 2 },
+  { id: 'proton', label: 'Proton and the kernel', level: 2 },
+  { id: 'nvidia', label: 'NVIDIA and Flatpak games', level: 2 },
+  { id: 'loading', label: 'Loading screens', level: 2 },
+  { id: 'check', label: 'Checking it', level: 2 },
+];
+---
+
+<Docs
+  title="Gaming"
+  fullTitle="Gaming on Pulsar — launchers, gamemode, Proton, NVIDIA"
+  description={DESCRIPTION}
+  path="/docs/gaming"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>Gaming</h1>
+  <p class="intro">
+    Log in, open Steam, play. The rest of this page is what had to be true for that sentence to
+    hold, and how to check it still does.
+  </p>
+
+  <h2 id="launchers">The launchers</h2>
+  <p>
+    On the first boot with a network, Pulsar installs the launchers and tools from Flathub. They are
+    ordinary Flatpaks: update them in GNOME Software, remove any you don’t want, and it stays gone.
+  </p>
+  <table>
+    <thead><tr><th>App</th><th>Flatpak ID</th></tr></thead>
+    <tbody>
+      {LAUNCHERS.map(([name, id]) => (
+        <tr><td>{name}</td><td><code>{id}</code></td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    What an app cannot do from inside its sandbox lives in the image instead: gamescope, gamemode,
+    MangoHud and the udev rules for controllers and headsets (<code>steam-devices</code>).
+  </p>
+
+  <h2 id="gamemode">gamemode</h2>
+  <p>
+    Pulsar’s <code>/etc/gamemode.ini</code> changes two things from the defaults, both because this
+    was built for a laptop with two GPUs:
+  </p>
+  <ul>
+    <li>
+      <strong>No governor demotion.</strong> Left alone, gamemode compares the integrated GPU’s power
+      draw with the CPU’s and, above a ratio, drops the CPU to <code>powersave</code> mid-game. That
+      rule was written for machines where the integrated GPU <em>is</em> the game’s GPU. With a
+      discrete card doing the rendering, it measures the wrong thing and acts on it anyway. Pulsar
+      turns it off (<code>igpu_power_threshold=-1</code>).
+    </li>
+    <li>
+      <strong>A priority boost.</strong> <code>renice=10</code> uses the nice grant the gamemode
+      package already ships. For that, your account has to be in the <code>gamemode</code> group:
+      the first boot enrolls every account that exists by then.
+    </li>
+  </ul>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="gamemode" code={GAMEMODE}></arc-code-block>
+  <p>
+    Groups are fixed when you log in, so the session in which you were enrolled does not have it
+    yet. <code>pulsar doctor gamemode</code> tells those two states apart, which saves you wondering
+    why nothing changed.
+  </p>
+
+  <h2 id="proton">Proton and the kernel</h2>
+  <p>
+    <code>ntsync</code> is loaded at boot and <code>/dev/ntsync</code> is handed to whoever is at
+    the seat, so Proton can use the kernel’s own Windows-style sync instead of emulating it. Without
+    it Proton falls back to esync or fsync.
+  </p>
+  <p>A few kernel settings, each for a reason you could name:</p>
+  <table>
+    <thead><tr><th>Setting</th><th>Why</th></tr></thead>
+    <tbody>
+      {TUNING.map(([s, why]) => (
+        <tr><td><code>{s}</code></td><td>{why}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    The scheduler is <code>scx_bpfland</code> where the kernel can load it: on a CPU with eight
+    performance and sixteen efficiency cores and no SMT, stock EEVDF places threads badly. Some
+    Fedora kernels cannot load any BPF scheduler; on those the machine runs stock EEVDF and{' '}
+    <code>pulsar doctor</code> says so rather than warning forever.
+  </p>
+
+  <h2 id="nvidia">NVIDIA and Flatpak games</h2>
+  <p>
+    A Flatpak app does not see the host’s NVIDIA driver. It needs a matching GL extension from
+    Flathub, and it picks that up once, when it starts. Two things on the NVIDIA image keep that
+    from biting:
+  </p>
+  <ul>
+    <li>
+      <code>pulsar-gl-nvidia.service</code> installs the extension for the running driver at boot,
+      and for the next driver as soon as an update is staged, so it is already there when you
+      restart into it.
+    </li>
+    <li>
+      If Steam (or any Flatpak app) was started before its extension arrived, it runs its games on
+      the integrated GPU, which on many laptops means a black window. Pulsar notices and says so:{' '}
+      <strong>Restart Steam to use the NVIDIA GPU</strong>. Quit it fully, not just its window, and
+      open it again.
+    </li>
+  </ul>
+  <p>
+    MangoHud has the same kind of catch: the Flatpak layer only shows up in apps on the matching
+    runtime branch. When Steam moves to a new runtime and the layer does not, the overlay just
+    disappears, silently. <code>pulsar doctor mangohud</code> watches for exactly that.
+  </p>
+
+  <h2 id="loading">Loading screens</h2>
+  <p>
+    GNOME asks every window whether it is still alive, and after five seconds without an answer
+    offers to kill it. A game in the middle of a level load or a shader pass is working perfectly
+    and still trips that. Pulsar raises the wait to 20 seconds as a desktop default, and while a game
+    runs under gamemode it suspends the check entirely, then puts back whatever was there before.
+    It is deliberately not off for good: a desktop that cannot tell you an app has hung leaves you
+    only a terminal to kill it with.
+  </p>
+
+  <h2 id="check">Checking it</h2>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
+  <p class="hint">
+    Playing at your screen’s real resolution under fractional scaling is its own page:{' '}
+    <a href="/docs/gamescale">gamescale</a>. Everything doctor can report:{' '}
+    <a href="/docs/troubleshooting">Troubleshooting</a>.
+  </p>
+</Docs>

@@ -10,15 +10,32 @@ export const DOCS_NAV: DocGroup[] = [
     links: [
       { label: 'Overview', href: '/docs', icon: 'book-open' },
       { label: 'Install', href: '/docs/install', icon: 'download-simple' },
+      { label: 'Where things go', href: '/docs/where-things-go', icon: 'stack' },
     ],
   },
   {
     heading: 'Use',
     links: [
-      { label: 'Themes', slug: 'theming', icon: 'palette' },
-      { label: 'Agents and safety', slug: 'agents-safety', icon: 'robot' },
+      { label: 'Themes', href: '/docs/themes', icon: 'palette' },
+      { label: 'How theming works', slug: 'theming', icon: 'swatches' },
+      { label: 'Gaming', href: '/docs/gaming', icon: 'game-controller' },
+      { label: 'gamescale', href: '/docs/gamescale', icon: 'arrows-out' },
+      { label: 'GPU containers', href: '/docs/gpu-containers', icon: 'graphics-card' },
+    ],
+  },
+  {
+    heading: 'Agents',
+    links: [
+      { label: 'Coding agents', href: '/docs/agents', icon: 'robot' },
+      { label: 'Agents and safety', slug: 'agents-safety', icon: 'shield-check' },
+    ],
+  },
+  {
+    heading: 'Maintain',
+    links: [
+      { label: 'Updates and rollback', href: '/docs/updates', icon: 'arrows-clockwise' },
+      { label: 'Troubleshooting', href: '/docs/troubleshooting', icon: 'first-aid' },
       { label: 'The pulsar command', href: '/docs/cli', icon: 'terminal-window' },
-      { label: 'gamescale', href: '/docs/gamescale', icon: 'game-controller' },
     ],
   },
   {

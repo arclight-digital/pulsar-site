@@ -1,0 +1,241 @@
+---
+// Updates and undo, in the order you meet them: the notification, the update,
+// the restart, and the three ways back (rollback, pin, checkpoint). Commands,
+// flags and messages are cli/pulsar's; the timer and the GNOME Software
+// policy are system_files/usr/lib/systemd/user/pulsar-update-check.* and
+// zz0-pulsar.gschema.override. The status transcripts are real runs.
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'How Pulsar updates: a notification per build, sudo pulsar update, and a restart. Then the ways back: rollback, pinning, and checkpoints for /etc and your settings.';
+
+const CHECK = [
+  '$ pulsar update --check',
+  'up to date: 44.20260928.0 (ghcr.io/arclight-digital/pulsar-nvidia:latest)',
+].join('\n');
+
+const CHECK_ANSWERS = [
+  'up to date: <version> (<image>)          exit 0',
+  'staged: <version> -- reboot to apply      exit 0',
+  'update available: <booted> -> <latest>   exit 10',
+  '(could not reach the registry)           exit 1',
+].join('\n');
+
+const UPDATE = [
+  'sudo pulsar update            # fetch and stage; applies at the next restart',
+  'sudo pulsar update --apply    # the same, then restart into it',
+].join('\n');
+
+const STATUS = [
+  '$ pulsar status',
+  'STATE    VERSION       IMAGE                                         PINNED',
+  'booted   44.20260928.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+  '-        44.20260927.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+].join('\n');
+
+const ROLLBACK = [
+  'sudo pulsar rollback          # the previous deployment boots next time',
+  'systemctl reboot',
+].join('\n');
+
+const DISCARD = 'sudo rpm-ostree cleanup --pending    # drop a staged update before it boots';
+
+const PIN = [
+  '$ pulsar pin',
+  'the booted deployment is not pinned (sudo pulsar pin on to keep it)',
+  '$ sudo pulsar pin on',
+  'pinned the booted deployment; it will survive GC',
+].join('\n');
+
+const CHECKPOINT = [
+  'sudo pulsar checkpoint "before the agent"   # take one, with a note',
+  'sudo pulsar checkpoint list                 # every checkpoint',
+  'sudo pulsar checkpoint diff                 # what changed since the newest one',
+  'sudo pulsar checkpoint restore <id>         # put changed and deleted files back',
+  'sudo pulsar checkpoint drop <id>            # delete it, and unpin what it pinned',
+].join('\n');
+
+const CHECKPOINT_OUT = [
+  'checkpoint <id>',
+  '  /etc      <n> paths saved',
+  '  home      <n> paths saved from /var/home/you (dotfiles, ~/.config, ~/.local/bin, ~/.ssh)',
+  '  deployment 44.20260928.0 pinned',
+  'see what changed: sudo pulsar checkpoint diff <id>',
+  'undo it:          sudo pulsar checkpoint restore <id>',
+].join('\n');
+
+const COVERS: [string, string, string][] = [
+  ['The OS image (/usr)', 'yes', 'yes, pinned'],
+  ['Layered packages', 'yes: they belong to the deployment', 'yes, pinned'],
+  ['/etc', 'no: you boot the old deployment’s copy, which can lose later edits', 'yes'],
+  ['Your settings: dotfiles, ~/.config, ~/.local/bin, ~/.ssh', 'no', 'yes'],
+  ['Documents, projects, ~/.local/share', 'no', 'no'],
+  ['Flatpak apps and their data, toolboxes, containers', 'no', 'no'],
+  ['/usr/local, /opt, the rest of /var', 'no', 'no'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'Updates and rollback on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/updates', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'notice', label: 'How you hear about one', level: 2 },
+  { id: 'update', label: 'Taking an update', level: 2 },
+  { id: 'rollback', label: 'Going back', level: 2 },
+  { id: 'greenboot', label: 'When a boot fails', level: 3 },
+  { id: 'pin', label: 'Pinning', level: 2 },
+  { id: 'checkpoint', label: 'Checkpoints', level: 2 },
+  { id: 'covers', label: 'What each one covers', level: 2 },
+];
+---
+
+<Docs
+  title="Updates and rollback"
+  fullTitle="Pulsar updates, rollback, pins and checkpoints"
+  description={DESCRIPTION}
+  path="/docs/updates"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>Updates and rollback</h1>
+  <p class="intro">
+    A new image is built every night. You are told when one is out, you take it when you like, and
+    the one you were on stays in the boot menu. Nothing installs or restarts on its own.
+  </p>
+
+  <h2 id="notice">How you hear about one</h2>
+  <p>
+    Ten to forty minutes after you log in, and about every six hours after that, your session asks
+    the registry whether a newer build is published. (The delay is randomized, so every Pulsar
+    machine on Earth does not ask in the same second.) If one is, you get one notification for it:{' '}
+    <strong>Pulsar &lt;version&gt; is available</strong>, with the command to run. One per build,
+    not one per check, so skipping a night costs you exactly one notification.
+  </p>
+  <p>You can ask the same question yourself. No root needed:</p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar update --check" code={CHECK}></arc-code-block>
+  <arc-code-block class="theme-fixed-dark" filename="the four answers" code={CHECK_ANSWERS}></arc-code-block>
+  <p>
+    The exit status is the answer, so a script can use it; <code>--json</code> gives{' '}
+    <code>{'{status, booted, latest, image}'}</code>. GNOME Software does not download updates here,
+    and bootc’s automatic update timer is off. The first cannot read an image with layered packages
+    and once froze a desktop for a minute and a half trying; the second restarts the machine on its
+    own. Neither is a thing you want surprising you mid-game.
+  </p>
+
+  <h2 id="update">Taking an update</h2>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE}></arc-code-block>
+  <p>
+    <code>pulsar update</code> fetches the new image and <strong>stages</strong> it: it becomes the
+    default at the next boot, and the running system is untouched until then. Restart when it suits
+    you. On the NVIDIA image, staging an update also fetches the next driver’s Flatpak GL extension
+    in the background, so Steam has it the moment you boot.
+  </p>
+  <p>
+    If you have layered packages with <code>rpm-ostree install</code>, it says so and updates
+    through <code>rpm-ostree upgrade</code>, which carries your layers forward.{' '}
+    <code>bootc upgrade</code> on its own would drop them. That is why the command to remember is{' '}
+    <code>pulsar update</code>, not either of the tools under it.
+  </p>
+  <p><code>pulsar status</code> shows what you have: the booted deployment, one staged if there is one, and the one before.</p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar status" code={STATUS}></arc-code-block>
+  <arc-alert variant="warning" heading="Installed from an ISO before September 25, 2026?">
+    Those installs follow one fixed image digest, so no update can ever reach them.{' '}
+    <code>pulsar doctor</code> fails its <code>origin</code> check and prints the one command that
+    points the machine back at <code>:latest</code>. <code>pulsar update</code> refuses to pretend
+    otherwise and prints the same command.
+  </arc-alert>
+
+  <h2 id="rollback">Going back</h2>
+  <p>
+    The deployment you updated from stays on disk. To boot it again, make it the default and
+    restart:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="rollback" code={ROLLBACK}></arc-code-block>
+  <p>
+    <code>pulsar rollback</code> never restarts for you. For a one-off look at the older version,
+    pick it from the boot menu instead: each entry is named after its Pulsar version. Changed your
+    mind about an update you have not booted yet? Throw it away:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="discard" code={DISCARD}></arc-code-block>
+
+  <h3 id="greenboot">When a boot fails</h3>
+  <p>
+    Every boot is checked by greenboot. The required check is simple: a graphical session, the login
+    screen or a desktop, has to appear within two minutes. After three boots that fail it, the
+    machine rolls itself back to the previous deployment. That is the one failure you could not fix
+    by typing a command, because there would be nowhere to type it.
+  </p>
+  <p>
+    The scheduler and network checks only warn: a machine without either is still a machine.{' '}
+    <code>pulsar doctor greenboot</code> tells you how this boot went.
+  </p>
+
+  <h2 id="pin">Pinning</h2>
+  <p>
+    Updates clean up old deployments as they go. A pin keeps the booted one on disk through that
+    cleanup, however many updates follow, so a version you trust stays one boot-menu pick away.
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pin" code={PIN}></arc-code-block>
+  <p><code>sudo pulsar pin off</code> lets it go again.</p>
+
+  <h2 id="checkpoint">Checkpoints</h2>
+  <p>
+    Rollback covers the OS image. It does not cover <code>/etc</code>, where each deployment has its
+    own copy that updates merge forward, and it never touched your home folder. A checkpoint covers
+    both halves that rollback misses. Take one before a risky session, an agent’s or your own:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="checkpoint" code={CHECKPOINT}></arc-code-block>
+  <arc-code-block class="theme-fixed-dark" filename="what a new checkpoint prints" code={CHECKPOINT_OUT}></arc-code-block>
+  <p>A checkpoint keeps three things:</p>
+  <ul>
+    <li>
+      <strong>All of <code>/etc</code></strong>, with owners, modes, ACLs and SELinux labels, so a
+      restored file comes back exactly as it was.
+    </li>
+    <li>
+      <strong>Your settings</strong>, for whoever ran <code>sudo</code>: the dotfiles in your home
+      folder, <code>~/.config</code> without its caches, <code>~/.local/bin</code> and{' '}
+      <code>~/.ssh</code>. Not documents, projects or <code>~/.local/share</code>: that is what git
+      and backups are for. Over 512 MB of settings, the home half is skipped with a note.{' '}
+      <code>--no-home</code> skips it on purpose.
+    </li>
+    <li><strong>A pin</strong> on the booted deployment, so the OS it describes cannot be cleaned up.</li>
+  </ul>
+  <p>
+    <code>diff</code> lists every path that was <code>changed</code>, <code>added</code> or{' '}
+    <code>removed</code> since, in <code>/etc</code> and in your settings, and says if a new
+    deployment has been staged or booted. <code>restore</code> puts back what was changed or
+    deleted, and discards a deployment staged since the checkpoint. It does not delete files added
+    since (it lists them, since one may be the change you wanted), and it does not restart anything.
+    Services read <code>/etc</code> when they start, and GNOME reads its settings at login, so
+    restart the one or log out for the other.
+  </p>
+  <arc-alert variant="warning" heading="Read the diff before you restore">
+    Restore puts back <strong>everything</strong> that changed since the checkpoint, not only what
+    the agent touched. Every subcommand needs root, even <code>list</code>: a checkpoint holds{' '}
+    <code>/etc/shadow</code> and your SSH keys, and an agent that could take and restore its own
+    checkpoints could erase the evidence of what it did.
+  </arc-alert>
+
+  <h2 id="covers">What each one covers</h2>
+  <table>
+    <thead><tr><th>What changed</th><th>Rollback</th><th>Checkpoint</th></tr></thead>
+    <tbody>
+      {COVERS.map(([what, rb, cp]) => (
+        <tr><td>{what}</td><td>{rb}</td><td>{cp}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p class="hint">
+    What an agent can and cannot change without asking, row by row:{' '}
+    <a href="/docs/agents-safety">Agents and safety</a>.
+  </p>
+</Docs>

@@ -1,0 +1,227 @@
+---
+// Themes, as a how-to: pick one, switch it, keep open apps in step, undo it,
+// make your own. The map of what the engine writes and why is
+// docs/theming.md (rendered at /docs/theming); this page is for using it.
+// Commands and flags are scripts/pulsar-theme's argparse and cli/pulsar's
+// theme_usage; the transcripts are real runs (the swatches print as hex when
+// the output is not a terminal).
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'Switch the whole Pulsar desktop to one of sixteen themes with pulsar theme set or the Themes picker, import any base16 scheme, and put stock GNOME back exactly.';
+
+const LIST = [
+  '$ pulsar theme list',
+  '* pulsar                   #0b0e1a #3ecbff #ff6b8b #5ee6a8 #ffd479 #8fa8ff #b69cff #3ecbff  Pulsar [dark+light]',
+  '  pulsar-holo              #120f24 #8fa8ff #ff7aa2 #7af0c0 #ffe08a #8fa8ff #c3a6ff #3ecbff  Pulsar Holo [dark+light]',
+  '  ayu                      #0b0e14 #e6b450 #f07178 #aad94c #ffb454 #59c2ff #d2a6ff #95e6cb  Ayu [dark+light]',
+  '  catppuccin               #1e1e2e #cba6f7 #f38ba8 #a6e3a1 #f9e2af #89b4fa #cba6f7 #94e2d5  Catppuccin [dark+light]',
+  '  everforest               #2d353b #a7c080 #e98183 #a7c080 #dbbc7f #7fbbb3 #d699b6 #83c092  Everforest [dark+light]',
+  '  flexoki                  #100f0f #4385be #d55044 #879a39 #d0a215 #4385be #8b7ec8 #3aa99f  Flexoki [dark+light]',
+  '  gruvbox                  #282828 #fe8019 #ff543e #b8bb26 #fabd2f #83a598 #d3869b #8ec07c  Gruvbox [dark+light]',
+  '  kanagawa                 #1f1f28 #7e9cd8 #e46876 #98bb6c #e6c384 #7e9cd8 #957fb8 #7aa89f  Kanagawa [dark+light]',
+  '  nord                     #2e3440 #88c0d0 #e4828a #a3be8c #ebcb8b #81a1c1 #b791b0 #88c0d0  Nord [dark+light]',
+  '  rose-pine                #191724 #c4a7e7 #eb6f92 #4a8ca8 #f6c177 #9ccfd8 #c4a7e7 #ebbcba  Rosé Pine [dark+light]',
+  '  solarized                #002b36 #268bd2 #fd544b #859900 #b58900 #3294dc #8086db #2aa198  Solarized [dark+light]',
+  '  tokyo-night              #1a1b26 #7aa2f7 #f7768e #9ece6a #e0af68 #7aa2f7 #bb9af7 #7dcfff  Tokyo Night [dark+light]',
+  '  amber                    #0a0703 #ffb000 #ff6a3d #b8c94a #ffd24a #a3b8cc #e38aa0 #a8d4b0  Amber [dark]',
+  '  dracula                  #282a36 #bd93f9 #ff5958 #50fa7b #f1fa8c #bd93f9 #ff79c6 #8be9fd  Dracula [dark]',
+  '  phosphor                 #050a06 #33ff66 #e38a6d #33ff66 #c8ff5c #57c8e0 #cf94b8 #66ffd0  Phosphor [dark]',
+  '  alucard                  #fffbeb #644ac9 #cb3a2a #14710a #846e15 #644ac9 #a3144d #036a96  Alucard [light]',
+].join('\n');
+
+const SET = [
+  '$ pulsar theme set nord',
+  'pulsar-theme: Nord (both) -> scheme, gtk4, gtk3, ptyxis, gtksourceview, wallpaper, shell, btop, flatpak, agents',
+].join('\n');
+
+const MORE = [
+  'pulsar theme next               # the next theme in the list (prev goes back)',
+  'pulsar theme bg-next            # the next wallpaper for this theme',
+  'pulsar theme current            # what is applied, and every file it wrote',
+  'pulsar theme set gruvbox --variant light   # pin one variant',
+  'pulsar theme set nord --dry-run            # what it would write; writes nothing',
+].join('\n');
+
+const OPTOUT = [
+  'pulsar theme set nord --without agents     # leave coding agents’ colors alone',
+  'pulsar theme set nord --without flatpak    # do not widen the Flatpak sandbox',
+  'pulsar theme set nord --with flatpak       # turn it back on',
+  'pulsar theme targets                       # every target, and whether it applies here',
+].join('\n');
+
+const RESTART = [
+  'pulsar theme restart-apps                  # which open apps still wear the old colors',
+  'pulsar theme restart-apps --yes            # ask each to quit and reopen it',
+  'pulsar theme set nord --restart            # switch and restart, no question',
+  'pulsar theme set nord --no-restart         # switch, never ask',
+  'pulsar theme config restart-prompt on      # undo "Don’t ask again"',
+].join('\n');
+
+const REVERT = [
+  'pulsar theme revert                 # stock GNOME, exactly',
+  'pulsar theme revert --to image      # Pulsar’s own defaults instead',
+].join('\n');
+
+const IMPORT = [
+  'pulsar theme import base16 ./my-scheme.yaml --name mine',
+  'pulsar theme import base16 <url> --accent blue --set red=#e06c75',
+  'pulsar theme audit mine             # WCAG contrast checks; exit 1 on a failure',
+  'pulsar theme set mine',
+].join('\n');
+
+const TARGETS: [string, string, string][] = [
+  ['scheme', 'the system accent, and Dark or Light Style for one-variant themes', 'at once, everywhere'],
+  ['gtk4', 'GTK 4 and libadwaita apps', 'new windows'],
+  ['gtk3', 'GTK 3 apps', 'new windows'],
+  ['ptyxis', 'the terminal’s palette, on every profile', 'at once'],
+  ['gtksourceview', 'Text Editor, and anything else built on GtkSourceView', 'at once'],
+  ['wallpaper', 'the desktop and lock-screen backgrounds', 'at once'],
+  ['shell', 'the top bar, quick settings, menus and notifications', 'at once'],
+  ['btop', 'btop’s colors', 'at once'],
+  ['flatpak', 'lets Flatpak apps read the same GTK colors', 'next launch'],
+  ['agents', 'Claude Code, Gemini CLI and opencode draw with the terminal’s colors', 'next start'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'Themes on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/themes', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'pick', label: 'Pick one', level: 2 },
+  { id: 'switch', label: 'What a switch changes', level: 2 },
+  { id: 'dark-light', label: 'Dark and light', level: 2 },
+  { id: 'open-apps', label: 'Apps that were already open', level: 2 },
+  { id: 'revert', label: 'Put it back', level: 2 },
+  { id: 'your-own', label: 'Make your own', level: 2 },
+  { id: 'first-login', label: 'The first login', level: 2 },
+];
+---
+
+<Docs
+  title="Themes"
+  fullTitle="Pulsar themes — the whole desktop, one command"
+  description={DESCRIPTION}
+  path="/docs/themes"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>Themes</h1>
+  <p class="intro">
+    One theme recolors the whole desktop at once: the accent, your apps, the terminal, the text
+    editor, the top bar and the wallpaper. Sixteen ship with the image, and one command takes you
+    back to stock GNOME exactly.
+  </p>
+
+  <h2 id="pick">Pick one</h2>
+  <p>
+    Open <strong>Themes</strong> from the app grid (on a fresh account it is on{' '}
+    <arc-kbd>Super</arc-kbd>&nbsp;+&nbsp;<arc-kbd>T</arc-kbd> too, if that shortcut was free). Each
+    card is dressed in its own theme. Type to filter, <arc-kbd>Enter</arc-kbd> applies,{' '}
+    <arc-kbd>Esc</arc-kbd> closes. Or from a terminal:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar theme list" code={LIST}></arc-code-block>
+  <p>
+    The <code>*</code> is the one you are on. In a terminal the hex codes are drawn as color swatches:
+    background, accent, then red, green, yellow, blue, magenta and cyan.
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar theme set" code={SET}></arc-code-block>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={MORE}></arc-code-block>
+
+  <h2 id="switch">What a switch changes</h2>
+  <p>
+    Each piece of the desktop is a <em>target</em>, and a switch writes them all in one go, or
+    none of them if anything fails. It never touches your fonts or icons.
+  </p>
+  <table>
+    <thead><tr><th>Target</th><th>What it recolors</th><th>You see it</th></tr></thead>
+    <tbody>
+      {TARGETS.map(([t, what, when]) => (
+        <tr><td><code>{t}</code></td><td>{what}</td><td>{when}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    Two targets reach outside the desktop itself, so you can leave them out. Your choice sticks
+    through every later switch, the picker’s included, until you change it:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="opt out" code={OPTOUT}></arc-code-block>
+
+  <h2 id="dark-light">Dark and light</h2>
+  <p>
+    Twelve themes have a dark and a light variant, and follow the Dark Style switch in Quick
+    Settings: flip it and the whole desktop flips with you. <code>--variant dark</code> or{' '}
+    <code>--variant light</code> pins one instead.
+  </p>
+  <p>
+    Four come in one variant only. Dracula, Phosphor and Amber are dark; Alucard is light. Picking one
+    of those sets Dark or Light Style for you, and it stays put when the switch flips. Phosphor and
+    Amber are CRT terminals: every ANSI color is pulled toward the phosphor but keeps its meaning,
+    so a red error never passes for a green success.
+  </p>
+
+  <h2 id="open-apps">Apps that were already open</h2>
+  <p>
+    A GTK app reads its colors once, when it starts. So after a switch, Pulsar lists the apps still
+    wearing the old palette and offers <strong>Restart</strong>, <strong>Later</strong> or{' '}
+    <strong>Don’t ask again</strong>: a dialog in the picker, a question in the terminal.
+  </p>
+  <p>
+    Restart asks each app to quit the way <arc-kbd>Ctrl</arc-kbd>&nbsp;+&nbsp;<arc-kbd>Q</arc-kbd>{' '}
+    does, so an app with unsaved work shows its own save dialog and stays open. Nothing is killed,
+    and only apps that actually quit are reopened.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="restarts" code={RESTART}></arc-code-block>
+
+  <h2 id="revert">Put it back</h2>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="revert" code={REVERT}></arc-code-block>
+  <p>
+    The first time a theme touches a file or a setting, the original is saved. Revert puts each one
+    back, down to the byte. Files you share with it (your own <code>gtk.css</code>,{' '}
+    <code>btop.conf</code>) lose only the theme’s lines and keep yours, including edits you made
+    after theming. A setting you changed yourself since the theme wrote it is yours, and stays.
+  </p>
+  <p>
+    Plain <code>revert</code> goes all the way to GNOME’s own defaults, not Fedora’s and not
+    Pulsar’s, and turns the theme’s Shell extension off. <code>--to image</code> stops at Pulsar’s
+    defaults instead.
+  </p>
+
+  <h2 id="your-own">Make your own</h2>
+  <p>
+    Any base16 or base24 scheme imports as a theme of your own, with a wallpaper generated from its
+    palette. The import warns when a slot is not the color its name promises (some popular
+    schemes have a “red” that is pale blue), and <code>--set</code> fixes it:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="import" code={IMPORT}></arc-code-block>
+  <p>
+    Your themes live in <code>~/.local/share/pulsar/themes/</code>, next to the image’s in{' '}
+    <code>/usr/share/pulsar/themes/</code>. Each is one folder with a <code>theme.toml</code>; copy
+    one of the shipped ones under a new name to start from something complete.
+  </p>
+  <p>
+    Or describe what you want to a coding agent. The image ships a skill that teaches it to build a
+    theme from a scheme, a photo or a mood, check its contrast, and apply it when you say so.{' '}
+    <code>pulsar agent add</code> links it in: <a href="/docs/agents">Coding agents</a>.
+  </p>
+
+  <h2 id="first-login">The first login</h2>
+  <p>
+    A brand-new account starts in the Pulsar theme. An account that already had a look of its own
+    (its own accent, wallpaper, GTK or Shell theme, terminal palette) is left exactly as it was, and
+    told once that themes are there. Either way this happens once per account, and never again after
+    a revert.
+  </p>
+  <p class="hint">
+    Every file a switch writes, how revert decides what is yours, and how the themes are checked
+    against each new GNOME: <a href="/docs/theming">How theming works</a>.
+  </p>
+</Docs>

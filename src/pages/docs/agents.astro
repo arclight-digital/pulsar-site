@@ -1,0 +1,271 @@
+---
+// Coding agents, as a how-to: install one, point it at the machine, hand it a
+// problem, give it a local model, and sandbox it. Every command and message is
+// cli/pulsar's (agent_*, sandbox_*, model_*), scripts/pulsar-mcp's, or
+// system_files/etc/profile.d/pulsar-agents.sh's. The transcripts are real
+// runs. What an agent can and cannot reach is docs/AGENTS-SAFETY.md, which
+// this page links to rather than restates.
+import Docs from '../../layouts/Docs.astro';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'Install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, hand it a crash, give it a local model, and sandbox it to one project.';
+
+const LIST = [
+  '$ pulsar agent list',
+  'NAME      COMMAND   INSTALL                            STATE      DESCRIPTION',
+  'claude    claude    npm @anthropic-ai/claude-code      -          Claude Code (Anthropic)',
+  'codex     codex     npm @openai/codex                  -          Codex CLI (OpenAI)',
+  'gemini    gemini    npm @google/gemini-cli             -          Gemini CLI (Google)',
+  'opencode  opencode  npm opencode-ai                    -          opencode (open source, any provider)',
+  'aider     aider     uv aider-chat                      -          aider (open source, any provider)',
+  '',
+  'none is installed by default. box: agents  prefix: /var/home/you/.local/share/pulsar/agents',
+].join('\n');
+
+const ADD = [
+  'pulsar agent add claude       # then type `claude` in any terminal',
+  'pulsar agent remove claude    # its command and package; your logins stay',
+].join('\n');
+
+const STATUS = [
+  '$ pulsar agent',
+  'guide    /usr/share/pulsar/AGENTS.md  (pulsar agent guide)',
+  'agent    claude    native',
+  'sandbox  off here (default)  (pulsar agent sandbox)',
+  'guard    off: layering and system Flatpak installs do not prompt  (sudo pulsar agent guard on)',
+].join('\n');
+
+const ASK = [
+  'pulsar agent default claude                      # the agent ask starts',
+  'pulsar agent ask                                 # "what, if anything, looks wrong?"',
+  'pulsar agent ask why does the fan never stop     # your own question',
+  'pulsar agent ask --crash latest                  # the newest crash, explained',
+  'pulsar agent ask --with codex                    # someone other than the default',
+].join('\n');
+
+const MODEL = [
+  'pulsar agent model on                            # the default: Qwen2.5 Coder 7B',
+  'pulsar agent model on --model <owner/repo[:quant]> --at-login',
+  'pulsar agent model                               # state, endpoint, key, the aider line',
+  'pulsar agent model off --purge                   # stop, remove, delete the downloads',
+].join('\n');
+
+const SANDBOX = [
+  'pulsar agent sandbox on               # every project, from now on',
+  'pulsar agent sandbox on --here        # just this one',
+  'pulsar agent sandbox                  # what applies here, and why',
+  'pulsar agent sandbox push branches    # never the default branch',
+  'pulsar agent sandbox push off         # no pushes, no pull requests',
+].join('\n');
+
+const SANDBOX_START = [
+  '$ claude',
+  'sandboxed: only /var/home/you/code/app is visible; push on through the gate',
+].join('\n');
+
+const SANDBOX_MORE = [
+  'pulsar agent sandbox allow ~/.local/bin/my-hook     # one more path in, read-only',
+  'pulsar agent sandbox allow ~/notes --rw --here      # read-write, this project only',
+  'pulsar agent sandbox repin                          # after you really changed a remote',
+  'pulsar agent run claude --no-sandbox                # one session outside it',
+].join('\n');
+
+const REPO_TOML = ['# .pulsar/agent.toml, committed to the repo', 'sandbox = "on"', 'push = "branches"'].join('\n');
+
+const GUARD = [
+  '$ pulsar agent guard',
+  'guard: off',
+  '',
+  '  org.projectatomic.rpmostree1.install-uninstall-packages    no prompt',
+  '  org.projectatomic.rpmostree1.rollback                      no prompt',
+  '  org.projectatomic.rpmostree1.cleanup                       no prompt',
+  '  org.freedesktop.Flatpak.app-install                        no prompt',
+  '  org.freedesktop.Flatpak.app-uninstall                      no prompt',
+].join('\n');
+
+const TOOLS: [string, string][] = [
+  ['doctor', 'the health checks, all or one'],
+  ['status', 'deployments, pins and layered packages'],
+  ['manifest', 'the image, the variant, the kernel and the hardware'],
+  ['report', 'the redacted diagnosis report, with a crash if asked'],
+  ['crashes', 'your crashes this boot'],
+  ['update_check', 'whether a newer image is out'],
+  ['agent_status', 'the guide, the agents, guard, the pin and the sandbox setting'],
+  ['theme_list, theme_current', 'the desktop themes'],
+  ['theme_set', 'the one tool that changes anything: your desktop theme, undone by pulsar theme revert'],
+];
+
+const JSONLD = [
+  {
+    '@type': 'TechArticle',
+    headline: 'Coding agents on Pulsar',
+    description: DESCRIPTION,
+    about: { '@id': APP_ID },
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    url: new URL('/docs/agents', Astro.site).href,
+  },
+];
+const TOC = [
+  { id: 'install', label: 'Install one', level: 2 },
+  { id: 'briefing', label: 'What it knows about the machine', level: 2 },
+  { id: 'ask', label: 'Hand it a problem', level: 2 },
+  { id: 'model', label: 'A model on your own GPU', level: 2 },
+  { id: 'sandbox', label: 'The sandbox', level: 2 },
+  { id: 'guard', label: 'Guard, and checkpoints', level: 2 },
+];
+---
+
+<Docs
+  title="Coding agents"
+  fullTitle="Coding agents on Pulsar — install, ask, sandbox"
+  description={DESCRIPTION}
+  path="/docs/agents"
+  headings={TOC}
+  jsonLd={JSONLD}
+>
+  <h1>Coding agents</h1>
+  <p class="intro">
+    Pulsar ships no agent and favors none. Pick one and it arrives already knowing how this machine
+    works, with a report of the machine’s health a command away and, if you like, a sandbox that
+    shows it one project.
+  </p>
+
+  <h2 id="install">Install one</h2>
+  <p>
+    The welcome window offers them on your first login. Skipped it? The same list is one command away:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar agent list" code={LIST}></arc-code-block>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="add" code={ADD}></arc-code-block>
+  <p>
+    <code>add</code> creates a toolbox called <code>agents</code> the first time, installs the agent
+    with its vendor’s own npm or uv method into <code>~/.local/share/pulsar/agents</code>, and puts
+    a command in <code>~/.local/bin</code> that runs it from any terminal. Nothing is layered onto
+    the host and nothing needs root.
+  </p>
+  <p>
+    Already installed an agent with its vendor’s installer? <code>add</code> leaves it exactly
+    where it is, installs nothing, and still does the rest below. <code>pulsar agent list</code>{' '}
+    marks it <code>native</code>.
+  </p>
+  <arc-alert variant="info" heading="The toolbox is for tidiness, not safety">
+    The <code>agents</code> box keeps Node, Python and the agent off the host, and{' '}
+    <code>toolbox rm -f agents</code> deletes all of it. It shares your home folder and your
+    session, though, so an agent in it can do anything you can. Isolation is{' '}
+    <a href="#sandbox">the sandbox</a>.
+  </arc-alert>
+
+  <h2 id="briefing">What it knows about the machine</h2>
+  <p>
+    The image carries one briefing for agents, <code>/usr/share/pulsar/AGENTS.md</code>: the
+    read-only <code>/usr</code>, toolboxes for dev tools, Flatpaks for apps, what rollback does and
+    does not undo, and a short list of things never to do (reboot the machine among them).{' '}
+    <code>pulsar agent guide</code> prints it, so “run <code>pulsar agent guide</code> first” works
+    as the opening line for any agent at all.
+  </p>
+  <p>
+    <code>add</code> also links it where your agent reads instructions by itself, if nothing is there
+    yet (for Claude Code, <code>~/.claude/rules/pulsar.md</code>), links the image’s skills into the
+    agent’s skills folder (one of them makes you a desktop theme), and, for the four that speak
+    MCP, registers <code>pulsar mcp</code>, which hands the agent this machine’s facts as tools:
+  </p>
+  <table>
+    <thead><tr><th>Tool</th><th>What it answers</th></tr></thead>
+    <tbody>
+      {TOOLS.map(([t, what]) => (
+        <tr><td><code>{t}</code></td><td>{what}</td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    None of it needs root, and none of the root commands are there. Update, rollback, checkpoint,
+    guard and pin stay commands you run, because an agent that could run them could undo the checks
+    meant to hold it. <code>pulsar agent</code> shows the whole arrangement at a glance:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar agent" code={STATUS}></arc-code-block>
+
+  <h2 id="ask">Hand it a problem</h2>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="ask" code={ASK}></arc-code-block>
+  <p>
+    <code>ask</code> writes a redacted <code>pulsar report</code> (with the crash, if you named one)
+    to a file only you can read, in <code>$XDG_RUNTIME_DIR</code>, gone when you log out. Then it
+    starts your agent with a prompt that points at the file, asks your question, and ends with “Do
+    not change the system without asking me first.” opencode gets the prompt typed in for you;
+    press Enter to send it. aider gets the report as a read-only file and the prompt printed for you
+    to paste.
+  </p>
+  <p>
+    When a program crashes, the notification’s <strong>Ask</strong> button runs{' '}
+    <code>pulsar agent ask --crash</code> for you, in a new terminal. The report never includes the
+    core file, only the stack trace and the logs; see{' '}
+    <a href="/docs/troubleshooting#crashes">Troubleshooting</a>. From then on, what the agent reads
+    goes to its provider, the same as if you had pasted it. The click is the consent.
+  </p>
+
+  <h2 id="model">A model on your own GPU</h2>
+  <p>
+    opencode and aider will talk to any OpenAI-compatible server, so they can run with no account at
+    all:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="model" code={MODEL}></arc-code-block>
+  <p>
+    That runs llama.cpp’s own server image as a rootless user service: CUDA on the NVIDIA image,
+    Vulkan where there is a GPU at <code>/dev/dri</code>, CPU otherwise. llama.cpp downloads the model
+    from Hugging Face into <code>~/.local/share/pulsar/models</code> on the first start, which takes
+    a while. It answers at <code>http://127.0.0.1:8080/v1</code>, on this machine only, and every
+    request needs the key in <code>~/.config/pulsar/model-key</code>, so a web page in your browser
+    cannot borrow it. opencode gets a “Local (Pulsar)” provider next to its others; pick it with{' '}
+    <code>/models</code>. For aider, <code>pulsar agent model</code> prints the command line.
+  </p>
+  <p>
+    It stops when you log out unless you pass <code>--at-login</code>. A loaded model holds
+    gigabytes of video memory, and this is also the machine your games run on.
+  </p>
+
+  <h2 id="sandbox">The sandbox</h2>
+  <p>
+    Switched on, an agent starts in a rootless container that sees the project you started it in,
+    and not the rest of your home folder: no SSH keys, no browser profiles, no other projects. It
+    still pushes your code, through a gate on the host that uses your credentials without ever
+    handing them over, and refuses force-pushes, deletions and tags.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="sandbox" code={SANDBOX}></arc-code-block>
+  <p>You keep typing the agent’s name as usual. It says so as it starts:</p>
+  <arc-code-block class="theme-fixed-dark" filename="claude" code={SANDBOX_START}></arc-code-block>
+  <p>
+    Start it inside a project: the sandbox refuses to open on your whole home folder. Typing{' '}
+    <code>claude</code> (or <code>codex</code>, <code>gemini</code>, <code>opencode</code>,{' '}
+    <code>aider</code>) goes through the sandbox in interactive bash. A script, another shell, or{' '}
+    <code>command claude</code> starts the agent as installed; <code>pulsar agent run claude</code>{' '}
+    always goes through your settings.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={SANDBOX_MORE}></arc-code-block>
+  <p>
+    A repository can require the sandbox for everyone who works in it. The file can only tighten
+    things, never loosen them:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename=".pulsar/agent.toml" code={REPO_TOML}></arc-code-block>
+  <p class="hint">
+    Exactly what goes into the sandbox, what comes back out, and what it does not protect (the
+    network, for one): <a href="/docs/agents-safety#the-sandbox-and-a-push-that-never-holds-your-key">Agents and safety</a>.
+  </p>
+
+  <h2 id="guard">Guard, and checkpoints</h2>
+  <p>
+    On stock Fedora, an administrator’s desktop session can layer packages, roll back, and install
+    or remove system Flatpaks without a password prompt, and so can anything that session starts.
+    See for yourself:
+  </p>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar agent guard" code={GUARD}></arc-code-block>
+  <p>
+    <code>sudo pulsar agent guard on</code> makes all five ask for the admin password, for your
+    agent and for you. Updates stay ungated. <code>sudo pulsar agent guard off</code> puts Fedora’s
+    default back.
+  </p>
+  <p>
+    And before a long session, take a checkpoint: <code>sudo pulsar checkpoint "before the agent"</code>.
+    Afterwards, <code>diff</code> shows every change to <code>/etc</code> and your settings, and{' '}
+    <code>restore</code> puts them back. <a href="/docs/updates#checkpoint">How checkpoints work</a>.
+  </p>
+</Docs>

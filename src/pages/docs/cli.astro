@@ -29,8 +29,9 @@ const USAGE = [
   "  pulsar update --check    is a newer image published? exit 10 if so",
   "  pulsar rollback          boot the previous deployment next      (root)",
   "  pulsar pin [on|off]      keep the booted deployment through GC  (root)",
-  "  pulsar checkpoint        snapshot /etc and pin, to diff or      (root)",
-  "                           restore later: list | diff | restore | drop",
+  "  pulsar checkpoint        snapshot /etc, your settings and pin,  (root)",
+  "                           to diff or restore later:",
+  "                           list | diff | restore | drop",
   "",
   "Desktop",
   "  pulsar theme <command>   recolor the whole desktop: list | set <theme> |",
@@ -69,14 +70,37 @@ const JSONLD = [
     url: new URL('/docs/cli', Astro.site).href,
   },
 ];
-const DEVBOX = 'pulsar setup devbox    # distrobox assemble from /usr/share/pulsar/distrobox.ini';
+const SETUP = [
+  'sudo pulsar setup apps         # install any default Flatpak that is missing',
+  'pulsar setup devbox            # a dev distrobox, pulsar-dev, from /usr/share/pulsar/distrobox.ini',
+  'sudo pulsar setup gamemode     # enroll accounts in the gamemode group',
+  'pulsar setup quadlet           # the quadlet template, and container auto-update',
+  'pulsar setup gamescale --platform steam   # let a Flatpak launcher use gamescale',
+].join('\n');
+
+const JSON_EXAMPLES = [
+  "pulsar doctor --json | jq -r '.checks[] | select(.status != \"ok\") | .summary'",
+  "pulsar update --check --json    # {status, booted, latest, image}",
+  "pulsar manifest --json | jq 'del(.host)'    # the manifest baked into the image",
+].join('\n');
+
+// where each command is explained properly
+const WHERE: [string, string, string][] = [
+  ['doctor, report', 'Troubleshooting', '/docs/troubleshooting'],
+  ['status, update, rollback, pin, checkpoint', 'Updates and rollback', '/docs/updates'],
+  ['theme', 'Themes', '/docs/themes'],
+  ['agent, mcp', 'Coding agents', '/docs/agents'],
+  ['setup', 'Where things go', '/docs/where-things-go'],
+  ['manifest, changelog, sbom, verify', 'Provenance', '/docs/provenance'],
+];
+
 const TOC = [
   { id: 'usage', label: 'Everything it does', level: 2 },
-  { id: 'theme', label: 'theme', level: 2 },
-  { id: 'agents', label: 'For coding agents', level: 2 },
+  { id: 'json', label: 'For scripts', level: 2 },
+  { id: 'setup', label: 'setup', level: 2 },
   { id: 'doctor', label: 'Why doctor exists', level: 2 },
   { id: 'update', label: 'update, not upgrade', level: 2 },
-  { id: 'setup', label: 'For development', level: 2 },
+  { id: 'name', label: 'Another pulsar?', level: 2 },
 ];
 ---
 
@@ -96,33 +120,40 @@ const TOC = [
 
   <h2 id="usage">Everything it does</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar --help" code={usage}></arc-code-block>
+  <p>
+    Plain <code>pulsar</code> runs <code>doctor</code>. <code>pulsar help &lt;command&gt;</code>, or{' '}
+    <code>--help</code> after any command, gives that command’s own usage. Only the commands marked
+    root ask for it; everything that just reads works as you.
+  </p>
+  <table>
+    <thead><tr><th>Commands</th><th>Explained in</th></tr></thead>
+    <tbody>
+      {WHERE.map(([cmds, label, href]) => (
+        <tr><td><code>{cmds}</code></td><td><a href={href}>{label}</a></td></tr>
+      ))}
+    </tbody>
+  </table>
 
-  <h2 id="theme">theme: the whole desktop, one step</h2>
+  <h2 id="json">For scripts</h2>
   <p>
-    <code>pulsar theme set nord</code> re-colors the accent, the apps, the terminal, the text
-    editor, btop, the top bar, quick settings and the wallpaper together, as one change.{' '}
-    <code>pulsar theme list</code> shows what ships; any base16 scheme imports beside them.
+    <code>--json</code> works anywhere on the line. A command that has no JSON output says so and
+    exits with an error, instead of handing your script prose it will choke on. Exit codes carry
+    answers too: <code>doctor</code> exits 1 only on a failed check, and{' '}
+    <code>update --check</code> exits 10 when an update is out.
   </p>
-  <p>
-    <code>pulsar theme revert</code> puts stock GNOME back exactly. Apps that were already open are
-    offered a restart, and each is asked to quit the way Ctrl+Q asks, so unsaved work keeps its
-    dialog. Nothing is ever killed. <a href="/docs/theming">More in Themes</a>.
-  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="json" code={JSON_EXAMPLES}></arc-code-block>
 
-  <h2 id="agents">For coding agents</h2>
+  <h2 id="setup">setup: what an image cannot bake</h2>
   <p>
-    <code>pulsar agent guide</code> prints the briefing the image ships for coding agents: how this
-    system differs from a mutable one, and what not to touch. <code>pulsar agent add claude</code>{' '}
-    (or <code>codex</code>, <code>gemini</code>, <code>opencode</code>, <code>aider</code>) installs
-    that agent into its own toolbox and runs it from any terminal. None ships by default, and one you
-    installed yourself is left alone. <code>sudo pulsar agent guard on</code> makes layering and
-    system app installs ask for your password, for the agent and for you.
+    Some state belongs to your machine or your account, not to the image: which apps you have, which
+    groups you are in, your containers. Each <code>setup</code> recipe does one of those, and says
+    so if you run it with or without <code>sudo</code> when it should not be.
   </p>
-  <p>
-    <code>pulsar report</code> is the one thing to paste when something is broken: health checks,
-    failed services, recent warnings, the GPU and Flatpak state, as JSON or <code>--text</code>, with
-    hostname, username and addresses redacted. What an agent can and cannot reach is in{' '}
-    <a href="/docs/agents-safety">Agents and safety</a>.
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
+  <p class="hint">
+    When to use a toolbox, a distrobox, a quadlet or neither:{' '}
+    <a href="/docs/where-things-go">Where things go</a>. Why gamescale needs its step:{' '}
+    <a href="/docs/gamescale#flatpak">gamescale</a>.
   </p>
 
   <h2 id="doctor">Why doctor exists</h2>
@@ -150,28 +181,18 @@ const TOC = [
   </p>
   <p>
     <code>pulsar update</code> checks the booted deployment first and hands off to{' '}
-    <code>rpm-ostree upgrade</code> when there is something to preserve; <code>pulsar doctor</code>{' '}
-    tells you which side of that line you are on. <code>pulsar update --check</code> answers “is
-    there a newer image” without root, and <code>--notify</code> turns that into a desktop
-    notification, once per published build.
+    <code>rpm-ostree upgrade</code> when there is something to preserve; the <code>updates</code>{' '}
+    line of <code>pulsar doctor</code> tells you which side of that line you are on.{' '}
+    <code>pulsar update --check</code> answers “is there a newer image” without root.{' '}
+    <a href="/docs/updates">The whole update story</a>.
   </p>
 
-  <h2 id="setup">For development</h2>
+  <h2 id="name">Another pulsar?</h2>
   <p>
-    <code>bpftrace</code>, <code>bcc-tools</code>, <code>sysstat</code> and <code>perf</code> are on
-    the host because a container cannot attach probes to the host kernel. <code>mise</code> and{' '}
-    <code>direnv</code> handle toolchains, so compilers and SDKs are pinned per project instead of
-    layered into the image. A default dev box is one command away:
-  </p>
-  <arc-code-block class="theme-fixed-dark" language="bash" filename="devbox" code={DEVBOX}></arc-code-block>
-  <p>
-    <code>podman-auto-update.timer</code> is enabled for user sessions, and a commented quadlet
-    template lives at <code>/usr/share/pulsar/templates/example.container</code>: containers as
-    systemd units, rootless, in a file you can version (<code>pulsar setup quadlet</code>).
-  </p>
-  <p>
-    <code>pulsar setup gamescale</code> runs the installer copy staged in the image for Flatpak
-    launchers. <a href="/docs/gamescale#flatpak">Why that step exists</a>.
+    The Pulsar code editor also ships a command called <code>pulsar</code>. As a Flatpak it
+    collides with nothing, but its RPM or AppImage can land earlier on your <code>PATH</code>, and
+    then <code>pulsar doctor</code> quietly opens an editor. <code>/usr/bin/pulsar</code> always
+    reaches this one, and doctor’s <code>cli</code> check tells you when something is shadowing it.
   </p>
   <p class="hint">The source is <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>, one shell script.</p>
 </Docs>
