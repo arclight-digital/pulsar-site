@@ -113,7 +113,9 @@ const current = DOCS_NAV.flatMap((g) => g.links).find((l) => here(hrefOf(l)));
   .side,
   .toc {
     position: sticky;
-    top: calc(var(--space-3xl) + var(--space-md));
+    /* the page's own top padding (base.css .page): they stick where they
+       already sit, so scrolling never slides them up first */
+    top: var(--space-4xl);
     max-height: calc(100svh - var(--space-4xl));
     overflow-y: auto;
   }
