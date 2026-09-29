@@ -34,6 +34,7 @@ const DEEP = '#070912';
 const STAR = '#E9EDF7';
 const MUTED = '#A9B1CC';
 const CYAN = '#3ECBFF';
+const HAIRLINE = '1px solid rgba(233, 237, 247, 0.14)';
 
 // Read from the project root rather than from import.meta.url: this module is
 // bundled into dist/.prerender/chunks before it runs, so a path relative to
@@ -68,14 +69,6 @@ const FONTS = [
 // the logo, not a second drawing of it. 1600x452, cropped to the art plus 3%.
 const LOCKUP = dataUri('image/png', asset(REPO, 'assets', 'brand', 'png', 'pulsar-lockup-horizontal.png'));
 const LOCKUP_RATIO = 1600 / 452;
-// The mark alone, drawn huge and faint off the corner: the card's own
-// lighthouse. Shrunk first, so a 1024px PNG does not blow the byte budget.
-const MARK_SIZE = 900;
-const MARK = dataUri(
-  'image/png',
-  await sharp(asset(REPO, 'assets', 'brand', 'png', 'pulsar-mark-1024.png')).resize(MARK_SIZE).png().toBuffer(),
-);
-const SILK = dataUri('image/jpeg', asset(SITE, 'assets-static', 'silk-still-dark.jpg'));
 const GAMESCALE = dataUri('image/svg+xml', asset(SITE, 'assets-static', 'gamescale.svg'));
 
 /** The smallest type any card may set: 11px on a 500px-wide feed preview,
@@ -115,52 +108,23 @@ async function desktopShot(slug: string, v: 'dark' | 'light', width: number): Pr
 
 const PAD = 64;
 
-/** The ground every card shares: the silk still, darkened toward the type,
-    and the footer's spectrum line along the bottom edge. */
-function ground(scrim: string, ...children: Child[]): Node {
+/** The ground every card shares: the site's ink, flat. No wallpaper, no
+    bloom, no spectrum bar -- the product and the words carry the card. */
+function ground(...children: Child[]): Node {
   return h(
     'div',
     { width: W, height: H, display: 'flex', position: 'relative', backgroundColor: INK, fontFamily: 'Host Grotesk' },
-    img(SILK, W, H, { position: 'absolute', top: 0, left: 0, objectFit: 'cover' }),
-    h('div', { position: 'absolute', top: 0, left: 0, width: W, height: H, display: 'flex', backgroundImage: scrim }),
     ...children,
-    h('div', {
-      position: 'absolute',
-      left: 0,
-      bottom: 0,
-      width: W,
-      height: 5,
-      display: 'flex',
-      backgroundImage: 'linear-gradient(90deg, #3ECBFF 0%, #8FA8FF 45%, #5B53E6 75%, #3ECBFF 100%)',
-    }),
   );
 }
-
-/** The mark, huge and faint, bleeding off the top-right corner over a cyan
-    bloom: behind everything, so the type never competes with it. */
-const beacon = (): Node[] => [
-  h('div', {
-    position: 'absolute',
-    top: -260,
-    right: -260,
-    width: 760,
-    height: 760,
-    display: 'flex',
-    backgroundImage: 'radial-gradient(circle, rgba(62, 203, 255, 0.22) 0%, rgba(62, 203, 255, 0) 65%)',
-  }),
-  // far enough off the corner that the solid core is gone and only the lit
-  // arc sweeps in above the URL
-  img(MARK, MARK_SIZE, MARK_SIZE, { position: 'absolute', top: -520, right: -520, opacity: 0.32 }),
-];
 
 const lockup = (height: number) => img(LOCKUP, Math.round(height * LOCKUP_RATIO), height);
 
 
-// ---- the poster ------------------------------------------------------------
-// Each inner card is a poster: the page's promise is the picture, set as
-// large as it fits, tight, with its closing phrase lit on a line of its own
-// the way the site's .lift is. The one real command the page is about runs
-// along the bottom as a quiet strip, the way a poster carries its small print.
+// ---- the inner card --------------------------------------------------------
+// Each inner card names its page plainly, says in one line what is there, and
+// shows the one real command the page is about under a hairline. One weight of
+// headline, one color: nothing lit, nothing glowing.
 
 // Host Grotesk Bold averages under 0.55em a character; JetBrains Mono's
 // advance is exactly 0.6em. Satori clips nothing and reports nothing, so the
@@ -213,38 +177,20 @@ function balance(words: string[], size: number, width: number): string[] {
   return (best ?? [words]).map((ws) => ws.join(' '));
 }
 
-/** The headline's lines at a size: the plain part, then the lit part on its own. */
-function headLines(card: Card, size: number, width: number): number {
-  const lift = card.lift ?? '';
-  const plain = card.headline.slice(0, card.headline.length - lift.length).trim();
-  return wrap(plain, size, width) + wrap(lift, size, width);
-}
-
-/** The largest size, from a poster's to a sign's, whose headline fits the room. */
+/** The largest of a few set sizes whose headline fits the room: a heading,
+    not a poster, so it tops out well short of shouting. */
 function fitHead(card: Card, width: number, room: number): number {
-  for (const size of [112, 104, 96, 88, 80, 72, 66]) {
-    const lines = headLines(card, size, width);
-    if (lines <= 3 && lines * size * LEAD <= room) return size;
+  for (const size of [84, 76, 68]) {
+    const lines = wrap(card.headline, size, width);
+    if (lines <= 2 && lines * size * LEAD <= room) return size;
   }
   throw new Error(`og: card "${card.slug}" headline will not fit at any poster size; shorten it`);
 }
 
-// The site's .lift: the promise's key phrase in the accent, glowing, on a
-// line of its own. Every line is broken here, balanced, and drawn as its own
-// row, rather than left to Satori's greedy wrap.
-function headline(text: string, size: number, maxWidth: number, lift = ''): Node {
-  if (lift && !text.endsWith(lift)) throw new Error(`og: "${lift}" is not the end of "${text}"`);
-  const words = (t: string) => t.split(' ').filter(Boolean);
-  const plain = balance(words(text.slice(0, text.length - lift.length)), size, maxWidth);
-  const lit = balance(words(lift), size, maxWidth);
-  const row = (t: string, on: boolean) =>
-    h(
-      'div',
-      on
-        ? { display: 'flex', whiteSpace: 'pre', color: CYAN, textShadow: '0 0 36px rgba(62, 203, 255, 0.6)' }
-        : { display: 'flex', whiteSpace: 'pre', color: STAR },
-      t,
-    );
+// Every line is broken here, balanced, and drawn as its own row, rather than
+// left to Satori's greedy wrap.
+function headline(text: string, size: number, maxWidth: number): Node {
+  const lines = balance(text.split(' ').filter(Boolean), size, maxWidth);
   return h(
     'div',
     {
@@ -253,21 +199,21 @@ function headline(text: string, size: number, maxWidth: number, lift = ''): Node
       fontSize: size,
       fontWeight: 700,
       lineHeight: LEAD,
-      letterSpacing: -0.025 * size,
+      letterSpacing: -0.02 * size,
+      color: STAR,
       maxWidth,
     },
-    ...plain.map((t) => row(t, false)),
-    ...lit.map((t) => row(t, true)),
+    ...lines.map((t) => h('div', { display: 'flex', whiteSpace: 'pre' }, t)),
   );
 }
 
 const SUB = 30;
-function sub(text: string, size = SUB): Node {
-  return h('div', { display: 'flex', fontSize: size, fontWeight: 400, lineHeight: 1.3, color: MUTED, marginTop: 22 }, text);
+function sub(text: string, size = SUB, maxWidth = 1040): Node {
+  return h('div', { display: 'flex', fontSize: size, fontWeight: 400, lineHeight: 1.3, color: MUTED, marginTop: 24, maxWidth }, text);
 }
 
 // The small print: one real command on a hairline-topped strip, the prompt in
-// cyan and its comment beside it. Sized to the longest thing it must hold,
+// the accent and an optional comment beside it. Sized to the longest thing it must hold,
 // never under the floor.
 const STRIP = 30;
 function strip(line: Line, width: number, icon?: string): Node {
@@ -282,7 +228,7 @@ function strip(line: Line, width: number, icon?: string): Node {
       alignItems: 'center',
       width,
       paddingTop: 22,
-      borderTop: '1px solid rgba(143, 168, 255, 0.3)',
+      borderTop: HAIRLINE,
       fontFamily: 'JetBrains Mono',
       whiteSpace: 'pre',
     },
@@ -311,10 +257,10 @@ function buildStrip(width: number): Node {
       justifyContent: 'space-between',
       width,
       paddingTop: 22,
-      borderTop: '1px solid rgba(143, 168, 255, 0.3)',
+      borderTop: HAIRLINE,
       fontFamily: 'JetBrains Mono',
     },
-    h('span', { color: CYAN, fontSize: 30, fontWeight: 700 }, version),
+    h('span', { color: STAR, fontSize: 30 }, version),
     h('span', { color: MUTED, fontSize: 28 }, `${tally} · ${buildDate}`),
   );
 }
@@ -323,7 +269,7 @@ function topRow(card: Card): Node {
   return h(
     'div',
     { display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: W - 2 * PAD },
-    lockup(64),
+    lockup(48),
     h(
       'div',
       { display: 'flex', fontFamily: 'JetBrains Mono', fontSize: 26, color: MUTED },
@@ -332,8 +278,6 @@ function topRow(card: Card): Node {
   );
 }
 
-const INNER_SCRIM = 'linear-gradient(180deg, rgba(11,14,26,0.55) 0%, rgba(11,14,26,0.35) 45%, rgba(11,14,26,0.85) 100%)';
-
 async function inner(card: Card): Promise<Node> {
   const v = card.visual;
   const width = W - 2 * PAD;
@@ -341,7 +285,7 @@ async function inner(card: Card): Promise<Node> {
   const STRIP_H = 22 + (v.kind === 'terminal' && v.icon ? 56 : STRIP * 1.3);
   // what the headline has once the lockup row, the sub, the strip and the
   // air between them are paid for
-  const room = H - top - 64 - 40 - (card.sub ? 22 + SUB * 1.3 : 0) - 40 - STRIP_H - PAD;
+  const room = H - top - 48 - 40 - (card.sub ? 24 + 2 * SUB * 1.3 : 0) - 40 - STRIP_H - PAD;
   const size = fitHead(card, width - 60, room);
 
   let visual: Node;
@@ -350,8 +294,6 @@ async function inner(card: Card): Promise<Node> {
   else throw new Error(`og: card "${card.slug}" has a visual only the home card draws`);
 
   return ground(
-    INNER_SCRIM,
-    ...beacon(),
     h(
       'div',
       {
@@ -369,7 +311,7 @@ async function inner(card: Card): Promise<Node> {
       h(
         'div',
         { display: 'flex', flexDirection: 'column' },
-        headline(card.headline, size, width - 60, card.lift),
+        headline(card.headline, size, width - 60),
         card.sub ? sub(card.sub) : null,
       ),
       visual,
@@ -377,64 +319,45 @@ async function inner(card: Card): Promise<Node> {
   );
 }
 
-// The home card: the logo and the line on the left, the desktop in three
-// themes fanned off the right edge. The screenshots are the theme harness's
-// own, so the card shows the product rather than describing it.
+// The home card: one real desktop, shown big and running off the bottom
+// edge, with the lockup, the line and the address above it. The screenshot is
+// the theme harness's own, so the card shows the product rather than
+// describing it.
 async function home(card: Card): Promise<Node> {
   const v = card.visual;
-  if (v.kind !== 'desktops' || v.themes.length !== 3) {
-    throw new Error('og: the home card needs exactly three desktop screenshots');
+  if (v.kind !== 'desktops' || v.themes.length !== 1) {
+    throw new Error('og: the home card shows exactly one desktop screenshot');
   }
-  const TW = 560;
+  const TW = W - 2 * PAD;
   const TH = Math.round((TW * 1000) / 1600); // the screenshots are 16:10
-  const shots = await Promise.all(v.themes.map((t) => desktopShot(t.slug, t.variant, TW)));
-  // back to front, each one down and left of the last
-  const at = [
-    { top: 62, left: 720 },
-    { top: 158, left: 668 },
-    { top: 254, left: 616 },
-  ];
-  const tiles = shots.map((src, i) =>
-    h(
-      'div',
-      {
-        position: 'absolute',
-        top: at[i].top,
-        left: at[i].left,
-        display: 'flex',
-        borderRadius: 14,
-        overflow: 'hidden',
-        border: '1px solid rgba(233, 237, 247, 0.16)',
-        boxShadow: '0 24px 60px rgba(0, 0, 0, 0.55)',
-      },
-      img(src, TW, TH),
-    ),
-  );
+  const shot = await desktopShot(v.themes[0].slug, v.themes[0].variant, TW);
+  const TOP = 168;
 
   return ground(
-    'linear-gradient(90deg, rgba(11,14,26,0.82) 0%, rgba(11,14,26,0.55) 50%, rgba(11,14,26,0.2) 100%)',
-    ...tiles,
+    h(
+      'div',
+      { position: 'absolute', top: TOP, left: PAD, display: 'flex', borderRadius: 12, overflow: 'hidden', border: HAIRLINE },
+      img(shot, TW, TH),
+    ),
     h(
       'div',
       {
         position: 'absolute',
         top: 0,
         left: 0,
-        width: 600,
-        height: H,
-        padding: `0 0 0 ${PAD}px`,
+        width: W,
+        height: TOP,
+        padding: `0 ${PAD}px`,
         display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'space-between',
       },
-      lockup(84),
-      h('div', { display: 'flex', height: 40 }),
-      headline(card.headline, 64, 560, card.lift),
-      card.sub ? sub(card.sub, 30) : null,
+      lockup(60),
       h(
         'div',
-        { display: 'flex', fontFamily: 'JetBrains Mono', fontSize: 26, color: MUTED, marginTop: 40 },
-        SITE_HOST,
+        { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' },
+        h('div', { display: 'flex', fontSize: 30, color: STAR }, card.headline),
+        h('div', { display: 'flex', fontFamily: 'JetBrains Mono', fontSize: 26, color: MUTED, marginTop: 8 }, SITE_HOST),
       ),
     ),
   );

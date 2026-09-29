@@ -9,10 +9,11 @@
 // entry here, which fails the build rather than shipping a page that shares
 // with the wrong picture.
 //
-// Copy rules for a card: the headline is the page's own promise in a few
-// words, set large enough to read at 300px wide; the visual is something the
-// page actually shows (a real command, a real screenshot, the real build), never
-// an illustration of a claim.
+// Copy rules for a card: the headline names the page plainly, the way the
+// site's navigation would, and the sub says in one factual line what is there.
+// No slogans, no set-up and pay-off. The visual is something the page actually
+// shows (a real command, a real screenshot, the real build), never an
+// illustration of a claim.
 import { changelog, version } from '../data/build';
 import { IMAGES } from '../data/site';
 
@@ -20,7 +21,7 @@ import { IMAGES } from '../data/site';
 export type Line = { cmd: string; note?: string };
 
 export type Visual =
-  /** Three real desktop screenshots, from site/assets-static/themes. */
+  /** One real desktop screenshot, from site/assets-static/themes. */
   | { kind: 'desktops'; themes: { slug: string; variant: 'dark' | 'light' }[] }
   /** One real command, as the poster's small print along the bottom. */
   | { kind: 'terminal'; line: Line; icon?: string }
@@ -32,9 +33,6 @@ export interface Card {
   slug: string;
   path: string;
   headline: string;
-  /** the headline's closing words, lit in the accent the way the site's
-      .lift is; must be how the headline ends */
-  lift?: string;
   /** a short second line under the headline; optional */
   sub?: string;
   /** og:image:alt, describing the picture rather than repeating the page */
@@ -57,163 +55,140 @@ function longDate(iso: string): string {
 export const buildDate = longDate(changelog.generated);
 export { version };
 
-const HOME_THEMES: { slug: string; variant: 'dark' | 'light' }[] = [
-  { slug: 'gruvbox', variant: 'dark' },
-  { slug: 'catppuccin', variant: 'light' },
-  { slug: 'pulsar', variant: 'dark' },
-];
-
 export const CARDS: Card[] = [
   {
     slug: 'home',
     path: '/',
-    headline: 'Your lighthouse in the sky.',
-    lift: 'in the sky.',
-    sub: 'A stylish, atomic, agentic Linux.',
-    alt: 'The Pulsar logo beside three screenshots of the same desktop in the Gruvbox, Catppuccin and Pulsar themes, with the line: your lighthouse in the sky.',
-    visual: { kind: 'desktops', themes: HOME_THEMES },
+    headline: 'Stylish, atomic, modern Linux, rebuilt every night.',
+    alt: 'The Pulsar logo above a screenshot of the Pulsar desktop in its own dark theme: GNOME with a code editor, btop and a GTK demo app open.',
+    visual: { kind: 'desktops', themes: [{ slug: 'pulsar', variant: 'dark' }] },
   },
   {
     slug: 'install',
     path: '/docs/install',
-    headline: 'Install it fresh, or switch in place.',
-    lift: 'switch in place.',
-    sub: 'A free ISO, or one command from any atomic Fedora.',
-    alt: `The Pulsar logo, the line "Install it fresh, or switch in place.", and the switch command: sudo bootc switch ${IMAGES.vanilla}:latest.`,
+    headline: 'Install Pulsar',
+    sub: 'A free ISO, or one command from Silverblue or Kinoite.',
+    alt: `The Pulsar logo, the heading "Install Pulsar", and the switch command: sudo bootc switch ${IMAGES.vanilla}:latest.`,
     visual: { kind: 'terminal', line: { cmd: `sudo bootc switch ${IMAGES.vanilla}:latest` } },
   },
   {
     slug: 'coming-from',
     path: '/docs/coming-from',
-    headline: 'Moving in from Windows or a Mac.',
-    lift: 'or a Mac.',
-    sub: 'The stick, your files, your apps and your shortcuts.',
-    alt: 'The Pulsar logo, the line "Moving in from Windows or a Mac.", and the command that installs GIMP from Flathub.',
-    visual: { kind: 'terminal', line: { cmd: 'flatpak install flathub org.gimp.GIMP', note: 'no .exe, no .dmg' } },
+    headline: 'Coming from Windows or macOS',
+    sub: 'Making the USB stick, moving your files, and finding your apps.',
+    alt: 'The Pulsar logo, the heading "Coming from Windows or macOS", and the command that installs GIMP from Flathub.',
+    visual: { kind: 'terminal', line: { cmd: 'flatpak install flathub org.gimp.GIMP' } },
   },
   {
     slug: 'cli',
     path: '/docs/cli',
-    headline: 'One command for the whole system.',
-    lift: 'the whole system.',
-    alt: 'The Pulsar logo, the line "One command for the whole system.", and the command pulsar theme set tokyo-night.',
-    // the comment says what the CLI's own help text says, in few enough
-    // words to read at thumbnail size
-    visual: { kind: 'terminal', line: { cmd: 'pulsar theme set tokyo-night', note: 'recolor everything' } },
+    headline: 'The pulsar command',
+    sub: 'Themes, updates, health checks and agents from one CLI.',
+    alt: 'The Pulsar logo, the heading "The pulsar command", and the command pulsar theme set tokyo-night.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar theme set tokyo-night' } },
   },
   {
     slug: 'gamescale',
     path: '/docs/gamescale',
-    headline: 'Your screen’s real resolution, for one game.',
-    lift: 'for one game.',
-    alt: 'The Pulsar logo, the gamescale icon, and the command that sets gamescale up for Steam.',
+    headline: 'gamescale',
+    sub: 'Native resolution for games when fractional scaling is on.',
+    alt: 'The Pulsar logo, the heading "gamescale", the gamescale icon, and the command that sets gamescale up for Steam.',
     visual: { kind: 'terminal', icon: 'gamescale', line: { cmd: 'pulsar setup gamescale --platform steam' } },
   },
   {
     slug: 'provenance',
     path: '/docs/provenance',
-    headline: 'Every image has a paper trail.',
-    lift: 'a paper trail.',
-    sub: 'Full package list attached, diffed every night.',
-    alt: `The Pulsar logo and the command that lists the package list attached to the image: oras discover ${IMAGES.vanilla}:latest.`,
+    headline: 'Provenance',
+    sub: 'How each image is built, and the package list attached to it.',
+    alt: `The Pulsar logo, the heading "Provenance", and the command that lists the package list attached to the image: oras discover ${IMAGES.vanilla}:latest.`,
     visual: { kind: 'terminal', line: { cmd: `oras discover ${IMAGES.vanilla}:latest` } },
   },
   {
     slug: 'changelog',
     path: '/docs/changelog',
-    headline: 'What changed last night.',
-    lift: 'last night.',
-    alt: `The Pulsar logo and the latest build, ${version}, built ${buildDate}, with its package counts.`,
+    headline: 'Nightly builds',
+    alt: `The Pulsar logo, the heading "Nightly builds", and the latest build, ${version}, built ${buildDate}, with its package counts.`,
     visual: { kind: 'build' },
   },
   {
     slug: 'agents',
     path: '/docs/agents-safety',
-    headline: 'The safest machine to hand an agent.',
-    lift: 'hand an agent.',
-    sub: 'It can help with anything. Sandboxed, it sees only your project.',
-    alt: 'The Pulsar logo, the line "The safest machine to hand an agent.", and the command pulsar agent sandbox on.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar agent sandbox on', note: 'one project, no keys' } },
+    headline: 'Agent safety',
+    sub: 'What a coding agent can and can’t reach on Pulsar.',
+    alt: 'The Pulsar logo, the heading "Agent safety", and the command pulsar agent sandbox on.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar agent sandbox on' } },
   },
   {
     slug: 'themes',
     path: '/docs/themes',
-    headline: 'Sixteen themes, one command.',
-    lift: 'one command.',
-    sub: 'The whole desktop changes together, and back.',
-    alt: 'The Pulsar logo, the line "Sixteen themes, one command.", and the command pulsar theme set catppuccin.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar theme set catppuccin', note: 'the whole desktop' } },
+    headline: '16 themes',
+    sub: 'Each covers GNOME, GTK apps, the terminal, the editor and the wallpaper.',
+    alt: 'The Pulsar logo, the heading "16 themes", and the command pulsar theme set catppuccin.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar theme set catppuccin' } },
   },
   {
     slug: 'theming',
     path: '/docs/theming',
-    headline: 'Every file a theme writes, and how it comes back.',
-    lift: 'how it comes back.',
-    alt: 'The Pulsar logo, the line "Every file a theme writes, and how it comes back.", and the command pulsar theme revert.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar theme revert', note: 'stock GNOME, exactly' } },
+    headline: 'How themes work',
+    sub: 'Every file a theme writes, and how revert restores it.',
+    alt: 'The Pulsar logo, the heading "How themes work", and the command pulsar theme revert.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar theme revert' } },
   },
   {
     slug: 'coding-agents',
     path: '/docs/agents',
-    headline: 'Bring the agent you already use.',
-    lift: 'already use.',
-    sub: 'It arrives knowing how the machine works.',
-    alt: 'The Pulsar logo, the line "Bring the agent you already use.", and the command pulsar agent add claude.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar agent add claude', note: 'in its own toolbox' } },
+    headline: 'Coding agents',
+    sub: 'Claude Code, Codex, Gemini CLI, opencode or aider, each in a toolbox.',
+    alt: 'The Pulsar logo, the heading "Coding agents", and the command pulsar agent add claude.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar agent add claude' } },
   },
   {
     slug: 'updates',
     path: '/docs/updates',
-    headline: 'The last good version is one restart away.',
-    lift: 'one restart away.',
-    sub: 'Updates when you choose. Rollback, pins and checkpoints.',
-    alt: 'The Pulsar logo, the line "The last good version is one restart away.", and the command sudo pulsar rollback.',
-    visual: { kind: 'terminal', line: { cmd: 'sudo pulsar rollback', note: 'the previous version, next boot' } },
+    headline: 'Updates and rollback',
+    sub: 'Nightly images, applied on reboot, with automatic rollback.',
+    alt: 'The Pulsar logo, the heading "Updates and rollback", and the command sudo pulsar rollback.',
+    visual: { kind: 'terminal', line: { cmd: 'sudo pulsar rollback' } },
   },
   {
     slug: 'troubleshooting',
     path: '/docs/troubleshooting',
-    headline: 'Ask the machine before you guess.',
-    lift: 'before you guess.',
-    sub: 'Health checks, a redacted report, and crash reports.',
-    alt: 'The Pulsar logo, the line "Ask the machine before you guess.", and the command pulsar doctor.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar doctor', note: 'health checks, no root' } },
+    headline: 'Troubleshooting',
+    sub: 'Health checks, a redacted system report, and crash reports.',
+    alt: 'The Pulsar logo, the heading "Troubleshooting", and the command pulsar doctor.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar doctor' } },
   },
   {
     slug: 'where-things-go',
     path: '/docs/where-things-go',
-    headline: 'Apps, tools and services, each in its place.',
-    lift: 'in its place.',
-    sub: 'Flatpaks, toolboxes, quadlets, and layering last.',
-    alt: 'The Pulsar logo, the line "Apps, tools and services, each in its place.", and the command toolbox create.',
-    visual: { kind: 'terminal', line: { cmd: 'toolbox create', note: 'dev tools live here' } },
+    headline: 'Where things go',
+    sub: 'Flatpaks, toolboxes, quadlets, and layering as a last resort.',
+    alt: 'The Pulsar logo, the heading "Where things go", and the command toolbox create.',
+    visual: { kind: 'terminal', line: { cmd: 'toolbox create' } },
   },
   {
     slug: 'gaming',
     path: '/docs/gaming',
-    headline: 'Log in, open Steam, play.',
-    lift: 'play.',
-    sub: 'Launchers, gamemode, ntsync and the NVIDIA driver, set up.',
-    alt: 'The Pulsar logo, the line "Log in, open Steam, play.", and the command pulsar doctor gamemode.',
+    headline: 'Gaming',
+    sub: 'Steam, Heroic, Bottles, GameMode, ntsync and the NVIDIA driver.',
+    alt: 'The Pulsar logo, the heading "Gaming", and the command pulsar doctor gamemode flatpak-gl.',
     visual: { kind: 'terminal', line: { cmd: 'pulsar doctor gamemode flatpak-gl' } },
   },
   {
     slug: 'gpu-containers',
     path: '/docs/gpu-containers',
-    headline: 'The GPU, for any container that asks.',
-    lift: 'any container that asks.',
-    sub: 'CUDA in podman, nothing layered on the host.',
-    alt: 'The Pulsar logo, the line "The GPU, for any container that asks.", and a podman run command that passes the NVIDIA GPU to a container.',
+    headline: 'GPU containers',
+    sub: 'CUDA and local models in podman, with nothing layered on the host.',
+    alt: 'The Pulsar logo, the heading "GPU containers", and a podman run command that passes the NVIDIA GPU to a container.',
     visual: { kind: 'terminal', line: { cmd: 'podman run --device nvidia.com/gpu=all …' } },
   },
   {
     slug: 'docs',
     path: '/docs',
-    headline: 'How Pulsar works, top to bottom.',
-    lift: 'top to bottom.',
-    sub: 'Install, themes, agents, and how every image is built and signed.',
-    alt: 'The Pulsar logo, the line "How Pulsar works, top to bottom.", and the command pulsar agent guide.',
-    visual: { kind: 'terminal', line: { cmd: 'pulsar agent guide', note: 'how this machine works' } },
+    headline: 'Pulsar docs',
+    sub: 'Install, themes, agents, updates, and how each image is built.',
+    alt: 'The Pulsar logo, the heading "Pulsar docs", and the command pulsar agent guide.',
+    visual: { kind: 'terminal', line: { cmd: 'pulsar agent guide' } },
   },
 ];
 
