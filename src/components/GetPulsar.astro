@@ -146,11 +146,12 @@ const VERIFY = [
 
 <style>
   /* ---- the stage: the theme's wallpaper behind the two downloads ------ */
-  /* The site theme's own wallpaper (--stage-wall, set by src/scripts/themes.ts
-     with the preview; Silk's still until then), under a wash in the theme's
-     colors: its accent from the top corner, then its ground deepening toward
-     the downloads so every line of text keeps its contrast on any wallpaper
-     (checked for all sixteen, both modes). */
+  /* The hero's live sky, as a still (--stage-wall: src/scripts/sky.ts
+     snapshots the canvas whenever the picture changes -- the site theme's
+     recolor of the look on show), under a wash in the theme's colors: its
+     accent from the top corner, then its ground deepening toward the
+     downloads so every line of text keeps its contrast. Silk's still until
+     then, and with no WebGL. */
   .stage {
     position: relative;
     isolation: isolate;
@@ -180,11 +181,34 @@ const VERIFY = [
       background: var(--stage-wall, url('/assets/silk-still-light.jpg')) center / cover;
     }
   }
+  /* On a dark page the sky runs brighter than the theme's ground (a pale
+     satin cloth, a lit silk), so the picture itself is dimmed there before
+     the wash: the wash can stay light enough to show it, and the text keeps
+     WCAG contrast over every theme's preferred look (measured, both modes). */
+  :global(:root[data-theme='dark']) .stage::before {
+    filter: brightness(0.62);
+  }
+  @media (prefers-color-scheme: dark) {
+    :global(:root[data-theme='auto']) .stage::before,
+    :global(:root:not([data-theme])) .stage::before {
+      filter: brightness(0.62);
+    }
+  }
+  /* and the mirror on a light page: its darker folds lifted under dark text */
+  :global(:root[data-theme='light']) .stage::before {
+    filter: brightness(1.15);
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .stage::before,
+    :global(:root:not([data-theme])) .stage::before {
+      filter: brightness(1.15);
+    }
+  }
   .stage::after {
     z-index: -1;
     background:
-      radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--accent-primary) 12%, transparent), transparent 65%),
-      linear-gradient(180deg, color-mix(in oklab, var(--bg-base) 76%, transparent), color-mix(in oklab, var(--bg-base) 88%, transparent));
+      radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--accent-primary) 6%, transparent), transparent 65%),
+      linear-gradient(180deg, color-mix(in oklab, var(--bg-base) 86%, transparent), color-mix(in oklab, var(--bg-base) 94%, transparent));
   }
   .stage-head {
     margin-bottom: var(--space-2xl);

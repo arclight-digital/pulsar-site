@@ -24,4 +24,7 @@ assets/fonts/Host_Grotesk/OFL.txt
 assets/fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf
 assets/fonts/JetBrains_Mono/OFL.txt
 assets/shaders/pulsar.frag
+# the live sky recolors this per theme, with the uniforms publish.sh writes
+# to upstream/theme-uniforms.json (scripts/render-theme-wallpapers.py --uniforms)
+assets/shaders/theme.frag
 docs/*.md

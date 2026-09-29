@@ -84,6 +84,16 @@ function reflect(): void {
   for (const fn of listeners) fn();
 }
 
+/** Switch the look as a deck click does: crossfaded, remembered, reflected.
+ *  sky.ts calls it when a picked theme's wallpaper prefers another look. */
+export function setLook(next: Look): void {
+  if (next === look) return;
+  onLookSwitch?.(next);
+  look = next;
+  store.set(LOOK_KEY, String(look));
+  reflect();
+}
+
 export function initTheme(): void {
   reflect();
 
@@ -91,13 +101,12 @@ export function initTheme(): void {
     button.addEventListener('click', () => {
       const next = Number(button.dataset.look);
       if (next !== 0 && next !== 1 && next !== 2 && next !== 3) return;
-      if (next === look) return;
-      onLookSwitch?.(next);
-      look = next;
-      store.set(LOOK_KEY, String(look));
-      reflect();
+      setLook(next);
     });
   }
+
+  // "Back to Pulsar" puts the sky back to its own look too: Silk.
+  document.addEventListener('pulsar:reset', () => setLook(0));
 
   // arc-theme-toggle writes data-theme; this is how the shader hears about it.
   new MutationObserver(reflect).observe(root, { attributes: true, attributeFilter: ['data-theme'] });

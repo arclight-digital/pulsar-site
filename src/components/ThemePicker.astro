@@ -11,10 +11,9 @@
 //              "dark only" / "light only" note while a one-look theme holds
 //              the mode (scripts/sitetheme.ts). Arrow keys move the check
 //              (scripts/themes.ts).
-//   Wallpaper  the home page's sky: Pulsar's live shader in any of its four
-//              looks, or any theme's own rendered wallpaper. Picking a theme
-//              suggests its wallpaper until the visitor picks one; after
-//              that, themes leave it alone (scripts/wallpaper.ts).
+//   Wallpaper  the home page's live sky in any of its four looks, each in
+//              the theme's colors as the OS recolors it (scripts/sky.ts).
+//              Picking a theme switches to the look its own wallpaper uses.
 //
 // arc-sheet is modal: the page behind is inert (so focus stays in the
 // sheet), Escape closes it, and focus returns to the trigger. Its scrim is
@@ -23,7 +22,6 @@
 import { THEMES, label, tileAttrs, variant, type Theme } from '../data/themes';
 
 const LOOKS = ['Silk', 'Leak', 'Satin', 'Holo'];
-const WALLS = THEMES.filter((t) => !['pulsar', 'pulsar-holo'].includes(t.slug) && variant(t, 'dark').wall);
 
 // Two groups, in the image's own order: the themes that follow light/dark,
 // then the ones with a single look, which set the page's mode themselves.
@@ -131,37 +129,25 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     <div class="grp-top">
       <h2 class="grp-h" id="pk-wall">Wallpaper</h2>
     </div>
-    <p class="grp-note">The home page’s sky. Pick one here and themes stop swapping it.</p>
-    <p class="set-h">Pulsar, live</p>
-    <div class="looks" role="group" aria-label="Pulsar, live">
+    <p class="grp-note">The home page’s live sky, in the theme’s colors. Picking a theme switches to the look its own wallpaper uses.</p>
+    <div class="looks" role="group" aria-label="Looks">
       {
         LOOKS.map((name, index) => (
-          <button type="button" class="lk" data-look={index} data-wall="pulsar" aria-pressed={index === 0 ? 'true' : 'false'}>
-            {name}
+          <button type="button" class="lk" data-look={index} aria-pressed={index === 0 ? 'true' : 'false'}>
+            {/* filled by scripts/sky.ts: this look, rendered in the theme's colors */}
+            <span class="lk-pv">
+              <img data-look-thumb={index} alt="" width="256" height="160" hidden />
+              <span class="th-check lk-check">
+                <svg viewBox="0 0 16 16" width="10" height="10">
+                  <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </span>
+            <span class="lk-name">{name}</span>
           </button>
         ))
       }
     </div>
-    <p class="set-h">A theme’s wallpaper</p>
-    <ul class="walls" role="list">
-      {
-        WALLS.map((t) => (
-          <li>
-            <button
-              type="button"
-              class="wl"
-              data-wall={t.slug}
-              data-dark={t.variants.dark?.wall}
-              data-light={t.variants.light?.wall}
-              aria-pressed="false"
-            >
-              <img src={variant(t, 'dark').wall} alt="" width="160" height="100" loading="lazy" decoding="async" />
-              <span>{label(t)}</span>
-            </button>
-          </li>
-        ))
-      }
-    </ul>
   </section>
 
   <div slot="footer" class="foot">
@@ -460,79 +446,74 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
   }
 
   .th:focus-visible,
-  .lk:focus-visible,
-  .wl:focus-visible {
+  .lk:focus-visible {
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
   }
 
+  /* the four looks: cards like the themes', each a small frame of the live
+     sky in the theme's colors (scripts/sky.ts renders them) */
   .looks {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-xs);
-  }
-  .lk {
-    appearance: none;
-    min-height: 2.5rem;
-    padding: var(--space-xs) var(--space-md);
-    border-radius: var(--radius-full);
-    border: 1px solid var(--border-default);
-    background: none;
-    color: var(--text-primary);
-    font: inherit;
-    font-family: var(--font-label);
-    font-weight: var(--label-weight);
-    font-size: var(--label-size);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-  }
-  .lk[aria-pressed='true'][data-live-on] {
-    border-color: var(--accent-primary);
-    background: var(--bg-card);
-  }
-  .walls {
-    list-style: none;
-    margin: 0;
-    padding: 0;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: var(--space-sm) var(--space-xs);
   }
-  .wl {
+  .lk {
     appearance: none;
     display: grid;
-    gap: 4px;
+    gap: 6px;
     width: 100%;
     min-width: 0;
-    padding: 0;
-    border: 0;
+    padding: 4px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
     background: none;
     color: var(--text-secondary);
     font: inherit;
-    font-size: var(--text-xs);
     text-align: left;
     cursor: pointer;
+    transition:
+      background 0.15s var(--ease-out),
+      border-color 0.15s var(--ease-out);
   }
-  .wl span {
+  .lk:hover {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+  .lk[aria-pressed='true'] {
+    border-color: var(--accent-primary);
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+  .lk-pv {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    border-radius: calc(var(--radius-md) - 2px);
+    background: var(--bg-deep);
+    box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.22);
     overflow: hidden;
+  }
+  .lk-pv img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .lk[aria-pressed='true'] .lk-check {
+    opacity: 1;
+    transform: none;
+  }
+  .lk-name {
+    overflow: hidden;
+    padding: 0 2px;
+    font-size: var(--text-xs);
+    line-height: 1.3;
     white-space: nowrap;
     text-overflow: ellipsis;
   }
-  .wl img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-default);
-  }
-  .wl[aria-pressed='true'] img {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
-  }
-  .wl[aria-pressed='true'] span {
-    color: var(--text-primary);
+  .lk[aria-pressed='true'] .lk-name {
+    font-weight: 700;
   }
   .foot {
     display: flex;
@@ -552,8 +533,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
 
   /* a phone: three across, the sheet a touch narrower than the screen */
   @media (max-width: 30rem) {
-    .cards,
-    .walls {
+    .cards {
       grid-template-columns: repeat(3, minmax(0, 1fr));
     }
     .foot-note {

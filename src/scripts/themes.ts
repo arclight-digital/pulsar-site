@@ -46,12 +46,6 @@ function preview(detail: ThemeDetail) {
     img.src = src;
     img.alt = alt;
   });
-  // the install stage wears the theme's own wallpaper (its CSS falls back
-  // to Silk's still before this runs)
-  document.querySelectorAll<HTMLElement>('[data-stage-wall]').forEach((el) => {
-    if (v.wall) el.style.setProperty('--stage-wall', `url("${v.wall}")`);
-    else el.style.removeProperty('--stage-wall');
-  });
   document.querySelectorAll('[data-preview-name]').forEach((el) => (el.textContent = detail.name));
   const cmd = `pulsar theme set ${detail.slug}`;
   document.querySelectorAll('[data-preview-cmd]').forEach((el) => {
