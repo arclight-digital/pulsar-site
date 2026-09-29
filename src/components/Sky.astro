@@ -15,7 +15,8 @@
 // Hidden until a GL context actually exists -- a visitor without WebGL must
 // never see buttons that silently do nothing. Light/dark is the top bar's
 // toggle, not the deck's.
-const LOOKS = ['Silk', 'Leak', 'Satin', 'Holo'];
+import { LOOK_LABELS as LOOKS } from '../data/looks';
+
 
 // Hero option (a) trades this deck for its theme deck in the same spot.
 interface Props {
@@ -79,8 +80,10 @@ const { deck = true } = Astro.props;
     color: var(--text-secondary);
   }
 
+  /* eight looks: one pill row where it fits, two rows of four on a phone */
   .picker {
-    display: inline-flex;
+    display: inline-grid;
+    grid-template-columns: repeat(8, auto);
     padding: var(--space-xs);
     gap: var(--space-xs);
     border-radius: var(--radius-full);
@@ -132,6 +135,23 @@ const { deck = true } = Astro.props;
     }
     .deck-note {
       display: none;
+    }
+  }
+  @media (max-width: 44rem) {
+    .deck {
+      white-space: normal;
+      width: calc(100% - 2 * var(--space-md));
+    }
+    .deck-note {
+      text-align: center;
+    }
+    .picker {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      width: 100%;
+      border-radius: var(--radius-lg);
+    }
+    .picker button {
+      padding: var(--space-sm) var(--space-xs);
     }
   }
 </style>

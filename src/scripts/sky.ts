@@ -17,8 +17,9 @@
 // Falls back to the page's CSS ground -- the CI-rendered silk still -- when
 // WebGL is missing. prefers-reduced-motion gets still frames that redraw only
 // when a control is used.
-import pulsarSource from '../../upstream/assets/shaders/pulsar.frag?raw';
-import themeSource from '../../upstream/assets/shaders/theme.frag?raw';
+import pulsarEntry from '../../upstream/assets/shaders/pulsar.frag?raw';
+import themeEntry from '../../upstream/assets/shaders/theme.frag?raw';
+import { LOOK_FILES, LOOK_NAMES } from '../data/looks';
 import THEME_UNIFORMS from '../../upstream/theme-uniforms.json';
 import { currentLook, effectiveTheme, handleLookSwitch, onStateChange, setLook, type Look } from './theme';
 import { storedTheme } from './sitetheme';
@@ -30,7 +31,20 @@ type Entry = {
   variants: Partial<Record<'dark' | 'light', { primary: string; looks?: Record<string, Uniforms> }>>;
 };
 const TABLE = THEME_UNIFORMS as unknown as Record<string, Entry>;
-const LOOK_NAMES = ['silk', 'leak', 'satin', 'holo'] as const;
+// Each shader is its entry file then every look file, in looks.json's order --
+// exactly as the OS renderers assemble it (scripts/render-*wallpapers.py).
+const LOOK_SOURCES = import.meta.glob('../../upstream/assets/shaders/looks/*.glsl', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>;
+const looksSource = LOOK_FILES.map((n) => {
+  const src = LOOK_SOURCES[`../../upstream/assets/shaders/looks/${n}.glsl`];
+  if (src === undefined) throw new Error(`no look file ${n}.glsl in upstream/`);
+  return src;
+}).join('\n');
+const pulsarSource = `${pulsarEntry}\n${looksSource}`;
+const themeSource = `${themeEntry}\n${looksSource}`;
 
 // What the sky draws: Pulsar's shader at a look, or theme.frag with one of
 // the pipeline's uniform sets. `key` changes exactly when the picture does
@@ -53,8 +67,8 @@ function resolve(slug: string, mode: 'dark' | 'light', look: number): Spec {
 function preferredLook(slug: string, mode: 'dark' | 'light'): Look | null {
   const entry = TABLE[slug];
   const v = entry?.variants[mode] ?? entry?.variants.dark ?? entry?.variants.light;
-  const at = v ? LOOK_NAMES.indexOf(v.primary as (typeof LOOK_NAMES)[number]) : -1;
-  return at >= 0 ? (at as Look) : null;
+  const at = v ? LOOK_NAMES.indexOf(v.primary) : -1;
+  return at >= 0 ? at : null;
 }
 
 function compile(gl: WebGLRenderingContext, type: GLenum, source: string): WebGLShader {
@@ -207,6 +221,8 @@ export function initSky(): void {
         else if (Array.isArray(value)) (value.length === 2 ? gl.uniform2fv : gl.uniform3fv).call(gl, l, value);
         else gl.uniform1f(l, value);
       }
+      // the looks since the first four move live (drift, sweep, twinkle)
+      gl.uniform1f(T.loc('u_live'), 1);
     }
     gl.drawArrays(gl.TRIANGLES, 0, 3);
   };
@@ -234,7 +250,7 @@ export function initSky(): void {
     if (!ctx) return;
     gl.bindFramebuffer(gl.FRAMEBUFFER, sky.thumb);
     gl.viewport(0, 0, THUMB_W, THUMB_H);
-    for (let look = 0; look < 4; look++) {
+    for (let look = 0; look < LOOK_NAMES.length; look++) {
       paint(resolve(siteTheme, mode, look), THUMB_W, THUMB_H, lastSeconds, mode === 'light' ? 1 : 0, look);
       gl.readPixels(0, 0, THUMB_W, THUMB_H, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       // GL's rows run bottom-up

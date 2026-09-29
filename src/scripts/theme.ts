@@ -8,10 +8,12 @@
 //
 // The look -- which of the four shipped wallpapers the hero renders -- is
 // still ours. A stored choice beats the default; the default is silk.
+import { LOOK_NAMES } from '../data/looks';
 import { store } from './store';
 
 export type Theme = 'dark' | 'light';
-export type Look = 0 | 1 | 2 | 3;
+/** an index into LOOK_NAMES (src/data/looks.ts): 0 silk .. 7 beacon */
+export type Look = number;
 
 const LOOK_KEY = 'pulsar-look';
 
@@ -22,7 +24,7 @@ let look: Look = readLook();
 
 function readLook(): Look {
   const stored = Number(store.get(LOOK_KEY));
-  return stored === 1 || stored === 2 || stored === 3 ? stored : 0;
+  return Number.isInteger(stored) && stored > 0 && stored < LOOK_NAMES.length ? stored : 0;
 }
 
 /** What the page is actually wearing: the explicit choice, or the system's. */
@@ -36,10 +38,9 @@ export function currentLook(): Look {
   return look;
 }
 
-// sky.ts registers here. A look switch cannot ease u_look -- the shader
-// chain-mixes the looks, so a scalar sweep from holo to silk marches through
-// satin and leak on the way -- so the shader is handed the change to crossfade
-// itself rather than being left to interpolate.
+// sky.ts registers here. A look switch cannot ease u_look -- each look is its
+// own branch of the shader, so there is nothing between two of them to sweep
+// through -- so the shader is handed the change to crossfade itself.
 type LookSwitch = (next: Look) => void;
 let onLookSwitch: LookSwitch | null = null;
 export function handleLookSwitch(fn: LookSwitch): void {
@@ -100,7 +101,7 @@ export function initTheme(): void {
   for (const button of document.querySelectorAll<HTMLElement>('[data-look]')) {
     button.addEventListener('click', () => {
       const next = Number(button.dataset.look);
-      if (next !== 0 && next !== 1 && next !== 2 && next !== 3) return;
+      if (!Number.isInteger(next) || next < 0 || next >= LOOK_NAMES.length) return;
       setLook(next);
     });
   }

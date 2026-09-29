@@ -27,4 +27,7 @@ assets/shaders/pulsar.frag
 # the live sky recolors this per theme, with the uniforms publish.sh writes
 # to upstream/theme-uniforms.json (scripts/render-theme-wallpapers.py --uniforms)
 assets/shaders/theme.frag
+# the looks both shaders are assembled from, one file each, in looks.json's order
+assets/shaders/looks/*.glsl
+assets/shaders/looks/looks.json
 docs/*.md

@@ -21,7 +21,7 @@
 // visible while choosing. Every card carries the theme's name as text.
 import { THEMES, label, tileAttrs, variant, type Theme } from '../data/themes';
 
-const LOOKS = ['Silk', 'Leak', 'Satin', 'Holo'];
+import { LOOK_LABELS as LOOKS } from '../data/looks';
 
 // Two groups, in the image's own order: the themes that follow light/dark,
 // then the ones with a single look, which set the page's mode themselves.
@@ -451,7 +451,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     outline-offset: 2px;
   }
 
-  /* the four looks: cards like the themes', each a small frame of the live
+  /* the looks: cards like the themes', each a small frame of the live
      sky in the theme's colors (scripts/sky.ts renders them) */
   .looks {
     display: grid;
