@@ -85,7 +85,7 @@ function reflect(): void {
   for (const fn of listeners) fn();
 }
 
-/** Switch the look as a deck click does: crossfaded, remembered, reflected.
+/** Switch the look as a picker click does: crossfaded, remembered, reflected.
  *  sky.ts calls it when a picked theme's wallpaper prefers another look. */
 export function setLook(next: Look): void {
   if (next === look) return;

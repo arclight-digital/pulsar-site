@@ -92,9 +92,8 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
     isolation: isolate;
     width: min(100% - 2 * var(--space-lg), 44rem);
     min-width: 0;
-    /* a little above optical center, and clear of the look picker pinned to
-       the hero's bottom edge */
-    padding: var(--space-2xl) 0 calc(var(--space-2xl) + 4rem);
+    /* a little above optical center */
+    padding: var(--space-2xl) 0 calc(var(--space-2xl) + 2rem);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -225,9 +224,9 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
     .hero :global(.mark) {
       --mk-fit: 144px;
     }
-    /* the look picker sits higher here (Sky.astro), clear of the theme button */
+    /* clear of the floating theme button */
     .inner {
-      padding-bottom: calc(var(--space-xl) + 8.5rem);
+      padding-bottom: calc(var(--space-xl) + 3.5rem);
     }
   }
 </style>

@@ -94,7 +94,7 @@ function tokens(v: Variant, light: boolean): string {
     // the brand family the site's own components use: accent glows, the
     // spectrum line, the build chip
     // The brand cyan also lives on the dark chips over the sky (the build
-    // chip, the look deck), which stay dark in light mode too. A light
+    // chip), which stay dark in light mode too. A light
     // theme's accent is fitted dark for its pale page, so light themes keep
     // the brand cyan there; dark themes take their own.
     // ARC has its own --on-accent (white); this one is the site's.

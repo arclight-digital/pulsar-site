@@ -63,7 +63,7 @@ function resolve(slug: string, mode: 'dark' | 'light', look: number): Spec {
 }
 
 // The look a theme's own wallpaper uses (its first wallpaper for the mode, as
-// the pipeline renders it): picking the theme switches the deck to it.
+// the pipeline renders it): picking the theme switches the sky to it.
 function preferredLook(slug: string, mode: 'dark' | 'light'): Look | null {
   const entry = TABLE[slug];
   const v = entry?.variants[mode] ?? entry?.variants.dark ?? entry?.variants.light;
@@ -145,7 +145,7 @@ export function initSky(): void {
 
   // preserveDrawingBuffer so a look switch can snapshot the outgoing frame
   const gl = canvas.getContext('webgl', { antialias: false, preserveDrawingBuffer: true });
-  if (!gl) return; // the CSS ground is the fallback; the deck still themes the page
+  if (!gl) return; // the CSS ground is the fallback; the picker still themes the page
   const fadeContext = fade.getContext('2d');
 
   let sky: Sky;
@@ -157,9 +157,9 @@ export function initSky(): void {
     return;
   }
 
-  // What the sky wears: the site theme's recolor of the deck's look. A theme
+  // What the sky wears: the site theme's recolor of the chosen look. A theme
   // picked just now (not one remembered from an earlier page, which keeps the
-  // visitor's look) switches the deck to the look its own wallpaper uses --
+  // visitor's look) switches to the look its own wallpaper uses --
   // after the theme has applied, since a single-mode theme also sets the mode.
   let siteTheme: string = storedTheme() ?? 'pulsar';
   document.addEventListener('pulsar:theme', (e) => {
@@ -181,11 +181,6 @@ export function initSky(): void {
   };
   resize();
   addEventListener('resize', resize);
-
-  // The shader is provably running, so NOW the backdrop controls may exist.
-  // A visitor without a GL context must never see buttons that do nothing.
-  const lookSeg = document.getElementById('lookSeg');
-  if (lookSeg) lookSeg.hidden = false;
 
   // shown values: Pulsar's light/dark crossfades inside its shader (u_theme
   // eases); everything else changes picture and dissolves instead
@@ -392,13 +387,12 @@ export function initSky(): void {
   // The browser can take the context away (a driver reset, too many contexts,
   // a backgrounded tab on a phone). preventDefault is what allows it to come
   // back; until it does, the canvas steps aside for the CSS ground under it
-  // (the rendered still), and the deck, which could not draw anything, hides.
+  // (the rendered still).
   canvas.addEventListener('webglcontextlost', (e) => {
     e.preventDefault();
     lost = true;
     sync();
     canvas.style.visibility = 'hidden';
-    if (lookSeg) lookSeg.hidden = true;
   });
   canvas.addEventListener('webglcontextrestored', () => {
     try {
@@ -410,7 +404,6 @@ export function initSky(): void {
     thumbsFor = '';
     resize();
     canvas.style.visibility = '';
-    if (lookSeg) lookSeg.hidden = false;
     if (reduced) snap();
     else sync();
   });

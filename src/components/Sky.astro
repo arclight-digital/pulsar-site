@@ -8,40 +8,13 @@
 // #skyfade holds a snapshot of the outgoing look so backdrop switches
 // crossfade directly instead of sweeping u_look through the intermediate ones.
 //
-// The deck is the quick way to the live looks (the site-wide picker has
-// them too). Each is drawn in the site theme's colors, the way the OS recolors
+// The looks are chosen in the site-wide theme picker, never on the sky
+// itself: each is drawn in the site theme's colors, the way the OS recolors
 // that look for the theme (scripts/sky.ts); there is no still over the sky.
-//
-// Hidden until a GL context actually exists -- a visitor without WebGL must
-// never see buttons that silently do nothing. Light/dark is the top bar's
-// toggle, not the deck's.
-import { LOOK_LABELS as LOOKS } from '../data/looks';
-
-
-// Hero option (a) trades this deck for its theme deck in the same spot.
-interface Props {
-  deck?: boolean;
-}
-const { deck = true } = Astro.props;
 ---
 
 <canvas id="sky" aria-hidden="true"></canvas>
 <canvas id="skyfade" aria-hidden="true"></canvas>
-
-{deck && (
-<div class="deck" role="group" aria-label="Backdrop" id="lookSeg" hidden>
-  <span class="deck-note">The wallpapers Pulsar ships, live. Pick a theme to recolor them.</span>
-  <div class="picker">
-    {
-      LOOKS.map((name, index) => (
-        <button type="button" data-look={index} aria-pressed={index === 0 ? 'true' : 'false'}>
-          {name}
-        </button>
-      ))
-    }
-  </div>
-</div>
-)}
 
 <style>
   #sky,
@@ -55,103 +28,5 @@ const { deck = true } = Astro.props;
   #skyfade {
     pointer-events: none;
     opacity: 0;
-  }
-  .deck {
-    position: absolute;
-    /* above the hero's content block, whose bottom padding reserves this
-       room and would otherwise sit on top of the buttons and eat the clicks */
-    z-index: 2;
-    left: 50%;
-    bottom: var(--space-lg);
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-sm);
-    white-space: nowrap;
-  }
-  .deck[hidden] {
-    display: none;
-  }
-  /* on the sky itself, not on the chip below it: it takes the page's text
-     color, so a light page's pale sky keeps it readable */
-  .deck-note {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-  }
-
-  /* eight looks: one pill row where it fits, two rows of four on a phone */
-  .picker {
-    display: inline-grid;
-    grid-template-columns: repeat(8, auto);
-    padding: var(--space-xs);
-    gap: var(--space-xs);
-    border-radius: var(--radius-full);
-    background: var(--chip);
-    border: 1px solid var(--chip-line);
-    backdrop-filter: blur(12px);
-  }
-  .picker[hidden] {
-    display: none;
-  }
-  .picker button {
-    appearance: none;
-    border: 0;
-    background: transparent;
-    color: var(--on-chip);
-    font: inherit;
-    font-family: var(--font-label);
-    font-weight: var(--label-weight);
-    font-size: var(--label-size);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: var(--space-sm) var(--space-md);
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition:
-      color 0.3s var(--ease-out),
-      background-color 0.3s var(--ease-out),
-      box-shadow 0.3s var(--ease-out);
-  }
-  .picker button:hover {
-    color: var(--star);
-  }
-  .picker button[aria-pressed='true'] {
-    /* --pulsar-on-accent is set with a theme; Pulsar's own cyan takes ink */
-    color: var(--pulsar-on-accent, var(--ink));
-    background: var(--cyan);
-    box-shadow: var(--glow-sm);
-  }
-  .picker button:focus-visible {
-    outline: 2px solid var(--cyan);
-    outline-offset: 2px;
-  }
-
-  /* Too narrow for the picker and the floating theme button to share the
-     bottom edge: the picker steps up above the button. */
-  @media (max-width: 40rem) {
-    .deck {
-      bottom: calc(var(--space-lg) + 2.75rem + var(--space-md));
-    }
-    .deck-note {
-      display: none;
-    }
-  }
-  @media (max-width: 44rem) {
-    .deck {
-      white-space: normal;
-      width: calc(100% - 2 * var(--space-md));
-    }
-    .deck-note {
-      text-align: center;
-    }
-    .picker {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      width: 100%;
-      border-radius: var(--radius-lg);
-    }
-    .picker button {
-      padding: var(--space-sm) var(--space-xs);
-    }
   }
 </style>

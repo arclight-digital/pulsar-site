@@ -1,6 +1,6 @@
 // The wallpaper looks, in u_look order, as the OS repo lists them
-// (upstream/assets/shaders/looks/looks.json): the hero's deck, the picker's
-// look cards and the sky all read this one list, so a look added there is a
+// (upstream/assets/shaders/looks/looks.json): the picker's look cards and
+// the sky all read this one list, so a look added there is a
 // look here.
 import LOOKS_JSON from '../../upstream/assets/shaders/looks/looks.json';
 
