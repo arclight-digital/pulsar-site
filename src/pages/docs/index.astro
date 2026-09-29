@@ -1,7 +1,12 @@
 ---
 // The docs front page: what is here, grouped the way the sidebar is.
+import { getCollection } from 'astro:content';
 import Docs from '../../layouts/Docs.astro';
-import { DOCS_NAV, hrefOf } from '../../data/docs';
+import { DOCS_NAV as ALL_NAV, hrefOf } from '../../data/docs';
+// Only the repo docs a published nightly has shipped (as the sidebar does):
+// releases.md arrives with the release it describes.
+const shipped = new Set((await getCollection('docs')).map((d) => d.id));
+const DOCS_NAV = ALL_NAV.map((g) => ({ ...g, links: g.links.filter((l) => !l.slug || shipped.has(l.slug)) })).filter((g) => g.links.length);
 ---
 
 <Docs

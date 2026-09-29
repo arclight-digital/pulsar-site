@@ -57,6 +57,8 @@ const groups = await searchIndex();
   </div>
 
   <div slot="actions" class="actions">
+    {/* shown only once the center links fold away, so Docs is never lost */}
+    <a class="docs-compact" href="/docs" aria-current={onDocs ? 'page' : undefined}>Docs</a>
     <arc-theme-toggle icon-only size="md"></arc-theme-toggle>
     <arc-icon-button href={REPO} name="github-logo" label="Source on GitHub" variant="ghost" size="md"></arc-icon-button>
     <arc-button href="/#install" variant="primary" size="sm">Install</arc-button>
@@ -225,11 +227,24 @@ const groups = await searchIndex();
     display: none;
   }
 
-  /* narrower: the links go (the docs sidebar and the footer carry them), the
-     field shrinks */
+  .docs-compact {
+    display: none;
+    margin-right: var(--space-sm);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: var(--text-sm);
+  }
+  .docs-compact[aria-current='page'] {
+    color: var(--text-primary);
+  }
+  /* narrower: the links fold into a single Docs link on the right (the
+     docs sidebar and the footer carry the rest), the field shrinks */
   @media (max-width: 64rem) {
     .links {
       display: none;
+    }
+    .docs-compact {
+      display: inline;
     }
     .find {
       width: 15rem;
