@@ -3,7 +3,7 @@
 // CSS's text-wrap: pretty does something like this in Chromium, but Firefox
 // and Safari ignore it, and there the lede that wraps to "date." on a line of
 // its own is the common case. Runs once over the rendered page; text inside
-// code is left alone. When three words would make too long an unbreakable
+// code is left alone, and so is anything under [data-no-widont]. When three words would make too long an unbreakable
 // run, it joins two, and when even two would, it leaves the line free.
 const TARGETS = 'main p, main li, main dd, main figcaption, footer p';
 const MAX_TAIL = 32; // characters a joined tail may run to
@@ -11,6 +11,10 @@ const NBSP = ' ';
 
 export function initWidont(): void {
   for (const el of document.querySelectorAll<HTMLElement>(TARGETS)) {
+    // short labels in a narrow column opt out: a joined tail there is wider
+    // than the column on a phone (the gamescale diagram's "XWayland native
+    // scaling" pushed the page 25px past a 360px screen)
+    if (el.closest('[data-no-widont]')) continue;
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
     let last: Text | null = null;
     for (let n = walker.nextNode(); n; n = walker.nextNode()) {
