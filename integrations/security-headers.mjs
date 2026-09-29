@@ -65,7 +65,7 @@ export default function securityHeaders() {
           "default-src 'self'",
           `script-src 'self' ${[...hashes].sort().join(' ')}`.trimEnd(),
           "style-src 'self' 'unsafe-inline'",
-          "img-src 'self' data:",
+          "img-src 'self' data: blob:",
           "font-src 'self'",
           // the build beacon: src/scripts/beacon.ts asks it about last night
           `connect-src 'self' ${new URL(BEACON).origin}`,
