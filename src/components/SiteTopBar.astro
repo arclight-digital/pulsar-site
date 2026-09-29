@@ -297,9 +297,12 @@ const groups = await searchIndex();
     .bar::part(actions) {
       display: none;
     }
+    /* and the bar's own gap is wider than the icons' step elsewhere
+       (.actions): pull search in to that */
     .find {
       width: 2.25rem;
       height: 2.25rem;
+      margin-right: calc(var(--space-xs) - var(--space-md));
       border-color: transparent;
       background: transparent;
       backdrop-filter: none;
