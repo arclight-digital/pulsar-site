@@ -217,8 +217,11 @@ function sub(text: string, size = SUB, maxWidth = 1040): Node {
 // the accent and an optional comment beside it. Sized to the longest thing it must hold,
 // never under the floor.
 const STRIP = 30;
+// an icon beside the command is one line tall, so every card's strip is the
+// same height with or without one (gamescale's was 56px and stood taller)
+const STRIP_ICON = Math.round(STRIP * 1.3);
 function strip(line: Line, width: number, icon?: string): Node {
-  const iconW = icon ? 56 + 20 : 0;
+  const iconW = icon ? STRIP_ICON + 16 : 0;
   const cols = 2 + line.cmd.length + (line.note ? 3 + line.note.length : 0);
   const size = Math.min(STRIP, Math.floor((width - iconW) / (cols * MONO)));
   if (size < MIN_TEXT) throw new Error(`og: "${line.cmd}" is too long for a card's strip (${size}px); shorten it`);
@@ -233,7 +236,7 @@ function strip(line: Line, width: number, icon?: string): Node {
       fontFamily: 'JetBrains Mono',
       whiteSpace: 'pre',
     },
-    icon ? img(GAMESCALE, 56, 56, { marginRight: 20 }) : null,
+    icon ? img(GAMESCALE, STRIP_ICON, STRIP_ICON, { marginRight: 16 }) : null,
     h('span', { color: CYAN, fontSize: size }, '$ '),
     h('span', { color: STAR, fontSize: size }, line.cmd),
     line.note ? h('span', { color: MUTED, fontSize: size }, `   # ${line.note}`) : null,
@@ -283,7 +286,7 @@ async function inner(card: Card): Promise<Node> {
   const v = card.visual;
   const width = W - 2 * PAD;
   const top = PAD - 12;
-  const STRIP_H = 22 + (v.kind === 'terminal' && v.icon ? 56 : STRIP * 1.3);
+  const STRIP_H = 22 + STRIP * 1.3;
   // what the headline has once the lockup row, the sub, the strip and the
   // air between them are paid for
   const room = H - top - 48 - 40 - (card.sub ? 24 + 2 * SUB * 1.3 : 0) - 40 - STRIP_H - PAD;

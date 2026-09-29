@@ -256,9 +256,10 @@ const MODES = [
   /* Every screen is the same size (--fw), so the three read at one scale.
      Each render is --k times it, centered on it; each row's slot is as tall
      as whichever of the two is taller (--slot), so the 150% render spills
-     past its own screen but never into the next row. */
+     past its own screen but never into the next row. On a phone the screens
+     shrink with the viewport (never past 9rem), so the words keep a column. */
   .modes {
-    --fw: 9rem;
+    --fw: clamp(5rem, 22vw, 9rem);
     margin: 0;
   }
   .modes figcaption {

@@ -262,10 +262,26 @@ const groups = await searchIndex();
       display: none;
     }
   }
-  /* a phone keeps the mark, search, the toggle and Install; the word is the
-     hero's first line, and the source link is also in the footer */
+  /* A phone: the mark and word, then search, Docs and Install as one row --
+     search a bare icon like the rest, not a boxed field. The source link is
+     also in the footer, and light/dark is also in the theme picker. */
   @media (max-width: 30rem) {
     .actions arc-icon-button,
+    .actions arc-theme-toggle {
+      display: none;
+    }
+    .actions arc-button {
+      margin-left: var(--space-xs);
+    }
+    .find {
+      border-color: transparent;
+      background: transparent;
+      backdrop-filter: none;
+      color: var(--text-secondary);
+    }
+  }
+  /* the narrowest phones: the mark alone, so the row still fits */
+  @media (max-width: 24rem) {
     .word {
       display: none;
     }
