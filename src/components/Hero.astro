@@ -53,7 +53,7 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
       </span>
     </h1>
     <p class="tagline">Your lighthouse in the sky.</p>
-    <p class="sub">A stylish, atomic, agentic Linux that looks after itself.</p>
+    <p class="sub">Stylish, atomic, modern Linux, rebuilt every night.</p>
     <div class="go">
       <arc-button href="#install" variant="primary" size="lg">Get started</arc-button>
     </div>
@@ -107,19 +107,21 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
      sky still reads as alive around the lockup. --bg-deep follows the page
      theme and the site-wide theme picker, so it never shows as a dark box on
      a light page. The dither tile sits on top: a CSS gradient over the sky
-     bands without it. */
+     bands without it.
+
+     The falloff is a mask, not the fill's own gradient: a gradient only fades
+     the wash, and the dither tile over it stayed at full strength to the
+     rectangle's edge -- a faint hatched box with a visible line around the
+     lockup. Masked, the wash and its dither fade out together. The stops
+     keep the old 70% / 40% / 0 profile (0.57 = 40 / 70). */
   .inner::before {
     content: '';
     position: absolute;
     inset: 0 -40%;
     z-index: -1;
     pointer-events: none;
-    background: url('/assets/dither.png') repeat, radial-gradient(
-      ellipse closest-side at 50% 50%,
-      color-mix(in oklab, var(--bg-deep) 70%, transparent) 0%,
-      color-mix(in oklab, var(--bg-deep) 40%, transparent) 50%,
-      transparent 100%
-    );
+    background: url('/assets/dither.png') repeat, color-mix(in oklab, var(--bg-deep) 70%, transparent);
+    mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 0%, rgb(0 0 0 / 0.57) 50%, transparent 100%);
   }
 
   .hero :global(.mark) {

@@ -1,78 +1,54 @@
 ---
-// The home page. The order is the order a visitor's questions arrive in:
-// what is it (the intro, with the desktop itself), how do I get it (install,
-// where "Get started" lands), will it break (it can't rot), what does it do
-// for me (the agent, the themes, the games), and can I check any of this (last
-// night's changelog, the paper trail). Copy is earnest and short: say what
-// it does for a person, then how, and never argue with anyone else's OS.
+// The home page: one idea per section, each in a shape of its own so the page
+// never reads as one long list. What it is (the desktop), what it looks like
+// (the themes), what it does for you (the agent, the games), why it stays good
+// (the nightly loop), and how to get it. A sentence or two and a picture
+// each; the detail lives in the docs they link to.
 import Agents from './Agents.astro';
-import Gamescale from './Gamescale.astro';
 import GetPulsar from './GetPulsar.astro';
 import Hero from './Hero.astro';
-import Inside from './Inside.astro';
-import Ledger from './Ledger.astro';
-import Pipeline from './Pipeline.astro';
 import ThemeShowcase from './ThemeShowcase.astro';
-import Version from './Version.astro';
 import Base from '../layouts/Base.astro';
-import { changelog, version } from '../data/build';
-import { arithmetic, digest } from '../data/digest';
+import { version } from '../data/build';
 import { THEMES, label, variant } from '../data/themes';
 
-const lead = digest.lead;
-const extra = lead ? lead.members.length - 1 : 0;
-const headline = digest.baseline ? 'First build.' : digest.quiet ? 'Nothing moved.' : lead?.label;
-
 const DESCRIPTION =
-  'A stylish, atomic, agentic Linux, built nightly on Fedora: sixteen GNOME themes in one command, a machine you can hand to a coding agent, and games that just run.';
+  'Stylish, atomic, modern Linux, rebuilt every night on Fedora: sixteen desktop themes, games that just run, and a coding agent if you want one.';
 
 // The desktop, as the theme harness photographed it: Pulsar Holo, the house's
 // other theme, since the themes section below opens on Pulsar's own.
 const HOLO = THEMES.find((t) => t.slug === 'pulsar-holo') ?? THEMES[0]!;
 const DESKTOP = variant(HOLO, 'dark').desktop;
 
-// The nightly loop, left to right: what happens between one build and the
-// next, including the part nobody has to do anything for.
+// What a fresh install already has, one line each.
+const READY = [
+  'Thousands of apps, a click away',
+  'Steam and your game launchers',
+  'Sixteen themes to switch between',
+  'A coding agent, if you want one',
+];
+
+// The nightly loop, left to right. The last station is the safety net.
 const LOOP = [
-  { i: 'moon', t: 'Tonight, a new system is built', d: 'From the latest Fedora packages, on a fresh machine, and compared with yesterday’s line by line.' },
-  { i: 'bell', t: 'When it’s ready, you’re told', d: 'One quiet notification when there’s something new. Nothing installs itself.' },
-  { i: 'arrow-clockwise', t: 'When you say update, it waits for a restart', d: 'The new system is fetched beside the one you’re using and swaps in cleanly at your next restart.' },
-  { i: 'shield-check', t: 'If it fails, it undoes itself', d: 'If it can’t boot, your computer goes back to the last good one, on its own.' },
+  { i: 'moon', t: 'Built nightly', d: 'From current Fedora packages.' },
+  { i: 'bell', t: 'You get a notification', d: 'Update when it suits you.' },
+  { i: 'arrow-clockwise', t: 'Applied on reboot', d: 'Downloaded next to the running system.' },
+  { i: 'shield-check', t: 'Automatic rollback', d: 'If the new version fails to boot.' },
 ];
 
-const ROT = [
-  {
-    t: 'The same system, every boot',
-    d: 'The system is one image, read-only while it runs. Nothing drifts, nothing half-updates, and your files live apart from it.',
-  },
-  {
-    t: 'It stays GNOME',
-    d: 'Stock GNOME underneath, the way Fedora ships it. Nothing new to learn, and a theme is always a change you can take back.',
-  },
-  {
-    t: 'Ready for real work',
-    d: 'Toolboxes for any Linux userland, virtual machines out of the box, and every app on an unfiltered Flathub.',
-  },
-];
-
-const GAMING = [
-  {
-    t: 'Tuned the way games want',
-    d: 'Gamescope, GameMode and MangoHud are built in. ntsync is there for Proton, and the kernel limits games trip over are already raised.',
-  },
-  {
-    t: 'The launchers are already there',
-    d: 'Steam, Heroic, Faugus, ProtonPlus, Protontricks and Bottles install on your first boot, with a video player, a music player and the GNOME apps.',
-  },
-  {
-    t: 'NVIDIA, signed for Secure Boot',
-    d: 'The open NVIDIA driver is built for each image and signed for Secure Boot; you enroll its key once after installing. Flatpak games get their piece of the driver before you restart into an update, so they never lose the GPU.',
-  },
+// gamescale's argument is arithmetic, so it is drawn: on a 2560x1600 laptop
+// at 133%, each row's box is the size an X11 game renders at, against the
+// screen's outline. Too small gets stretched, too big gets shrunk.
+const SCREEN = 2560;
+const MODES = [
+  { what: 'GNOME default', res: [1920, 1200], you: 'Stretched to fit, blurry' },
+  { what: 'GNOME, XWayland native scaling', res: [3840, 2400], you: 'Shrunk to fit, 2.25× the GPU work' },
+  { what: 'With gamescale', res: [2560, 1600], you: 'Native, pixel for pixel', native: true },
 ];
 ---
 
 <Base
-  title="Pulsar — stylish, atomic, agentic Linux, built on Fedora"
+  title="Pulsar — stylish, atomic, modern Linux, built on Fedora"
   ogTitle="Pulsar — your lighthouse in the sky"
   description={DESCRIPTION}
   path="/"
@@ -81,50 +57,92 @@ const GAMING = [
   <Hero />
   <main id="main">
     <arc-container size="lg">
-      {/* ---- what it is ------------------------------------------------ */}
       <section class="chapter intro" id="about" aria-labelledby="about-h">
         <div class="intro-copy">
           <h2 id="about-h" class="statement">
-            Set up with care, <span class="lift">and it stays that way.</span>
+            Your desktop, <span class="lift">ready to use.</span>
           </h2>
           <p class="big">
-            Pulsar makes the hard choices for you, then keeps them working, so the computer gets out of
-            your way.
+            It looks good the moment you log in, your apps and games are already there, and a fresh
+            version is built for it every night.
           </p>
-          <p>
-            The GNOME desktop environment plus 16 unique themes — and easily add your own. Your games
-            are ready the moment you log in. Your coding agent gets the whole machine to help with, or a
-            sandbox that holds only your project.
-          </p>
-          <p class="own">We sweated the small stuff so you don’t have to. It’s still your computer, though, so poke around and make it a little weird.</p>
+          <ul class="ready">
+            {READY.map((r) => <li>{r}</li>)}
+          </ul>
         </div>
         <figure class="desk">
-          <div class="desk-frame">
-            <img
-              src={DESKTOP}
-              alt={`The Pulsar desktop in the ${label(HOLO)} theme: GNOME with the top bar, a terminal and the wallpaper.`}
-              width="1600"
-              height="1000"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
-          <figcaption>{label(HOLO)}, one of the sixteen. A real screenshot, not a mockup.</figcaption>
+          <img
+            src={DESKTOP}
+            alt={`The Pulsar desktop in the ${label(HOLO)} theme: GNOME with the top bar, a terminal and the wallpaper.`}
+            width="1600"
+            height="1000"
+            loading="lazy"
+            decoding="async"
+          />
+          <figcaption>The {label(HOLO)} theme.</figcaption>
         </figure>
       </section>
 
-      {/* ---- how to get it -------------------------------------------- */}
-      <GetPulsar />
+      <ThemeShowcase />
 
-      {/* ---- will it break -------------------------------------------- */}
+      <Agents />
+
+      <section class="chapter games" id="games" aria-labelledby="games-h">
+        <div>
+          <h2 id="games-h">Gaming</h2>
+          <p class="lede">
+            Steam, Heroic and Bottles install on your first boot, with the performance tools games want
+            already set up. NVIDIA graphics work out of the box.
+          </p>
+          <h3 class="gs-h">
+            <img src="/assets/gamescale.svg" alt="" width="32" height="32" loading="lazy" decoding="async" />
+            gamescale
+          </h3>
+          <p class="gs-p">
+            With display scaling on, many games get the wrong resolution and look blurry. gamescale sets
+            the display to 100% while a game runs, and puts your scaling back when it quits.
+          </p>
+          <arc-code-block class="theme-fixed-dark" language="bash" filename="Steam launch options" code="gamescale %command%"></arc-code-block>
+          <p class="more"><a href="/docs/gamescale">How gamescale works →</a></p>
+        </div>
+        <figure class="modes">
+          <figcaption>
+            <span class="m-cap">A 2560×1600 laptop at 133% scaling</span>
+            <span class="legend">
+              <span><i class="key key-screen" aria-hidden="true"></i>Your screen</span>
+              <span><i class="key key-render" aria-hidden="true"></i>What the game renders</span>
+            </span>
+          </figcaption>
+          <ul>
+            {
+              MODES.map((m) => {
+                const k = m.res[0] / SCREEN;
+                return (
+                  <li class={m.native ? 'native' : undefined} style={`--k:${k};--slot:${Math.max(1, k)}`}>
+                    <div class="slot" aria-hidden="true">
+                      <span class="render" />
+                      <span class="screen" />
+                    </div>
+                    <div class="m-x">
+                      <p class="m-what">{m.what}</p>
+                      <p class="m-res mono">{m.res[0]}×{m.res[1]}</p>
+                      <p class="m-you">{m.you}</p>
+                    </div>
+                  </li>
+                );
+              })
+            }
+          </ul>
+        </figure>
+      </section>
+
       <section class="chapter" id="rot" aria-labelledby="rot-h">
-        <h2 id="rot-h">It can’t rot</h2>
-        <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
+        <h2 id="rot-h">Updates with an undo</h2>
         <p class="lede">
-          Most computers get worse the longer you own them. Pulsar is rebuilt from scratch every night,
-          so yours never has the chance.
+          A fresh version is built every night from the latest Fedora. When you update, it downloads
+          next to the one you’re using and takes over at your next restart. If it won’t start, you’re
+          back on the old one.
         </p>
-
         <ol class="loop" aria-label="What happens between one build and the next">
           {
             LOOP.map((s, i) => (
@@ -136,102 +154,21 @@ const GAMING = [
             ))
           }
         </ol>
-
-        <Inside facts={ROT} manifest />
+        <p class="hint buildline">
+          Last night’s build: <a href="/docs/changelog" class="mono" id="build-version" data-build-version>{version}</a>
+          <span id="build-note" hidden></span>
+          · <a href="/docs/updates">How updates work</a>
+        </p>
+        <p class="hint skip-note" data-skip-note hidden></p>
       </section>
 
-      {/* ---- what it does for you ------------------------------------- */}
-      <Agents />
-
-      <ThemeShowcase layout="wide" />
-
-      <section class="chapter" id="games" aria-labelledby="games-h">
-        <h2 id="games-h">Games that just work</h2>
-        <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
-        <p class="lede">
-          Pulsar started life as a gaming machine, and it still is one.
-          {' '}<span class="sent">Install a game, press&nbsp;play.</span>
-        </p>
-        <h3 class="gs-h">
-          <img class="gs-icon" src="/assets/gamescale.svg" alt="" width="40" height="40" loading="lazy" decoding="async" />
-          <span>gamescale</span>
-        </h3>
-        <Gamescale compact />
-        <div class="games-facts">
-          <Inside facts={GAMING} />
-        </div>
-      </section>
-
-      {/* ---- can I check it ------------------------------------------- */}
-      <section class="chapter" id="changelog" aria-labelledby="changelog-h">
-        <h2 id="changelog-h">What changed last night</h2>
-        <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
-        {/* last night's build, from the manifest the build host committed,
-            checked against the registry by src/scripts/beacon.ts */}
-        <p class="buildline">
-          <a class="build-chip" href="/docs/changelog" id="build-chip">
-            <span class="build-dot" aria-hidden="true"></span>
-            build <strong id="build-version" data-build-version>{version}</strong>
-          </a>
-          <span class="buildnote hint" id="build-note" hidden></span>
-        </p>
-        <div class="lead">
-          <p class="lead-tx">
-            <span class="lead-pkg">{headline}</span>
-            {
-              lead && !digest.baseline && !digest.quiet && (
-                <>
-                  {extra > 0 && <arc-badge size="sm" class="mono">+{extra} related {extra === 1 ? 'package' : 'packages'}</arc-badge>}
-                  <span class="lead-ver" aria-hidden="true">
-                    <Version delta={lead.delta} from={lead.from} to={lead.to} />
-                  </span>
-                  <span class="sr-only">{lead.label}, {lead.from} to {lead.to}</span>
-                </>
-              )
-            }
-          </p>
-          <p class="lead-sub">{arithmetic()}</p>
-          <p class="prov mono">
-            {
-              digest.fromDigest && digest.toDigest && (
-                <>
-                  <span class="dim">image</span>
-                  <span>{digest.fromDigest}</span>
-                  <span class="dim" aria-hidden="true">→</span>
-                  <span>{digest.toDigest}</span>
-                </>
-              )
-            }
-            <span><span class="dim">diffed</span> <arc-time-ago datetime={changelog.generated}></arc-time-ago></span>
-          </p>
-          {/* Filled by src/scripts/beacon.ts when the newest nightly built
-              nothing. Hidden in the served HTML: skips commit nothing. */}
-          <p class="hint skip-note" data-skip-note hidden></p>
-        </div>
-        <Ledger />
-        <p class="hint">
-          Every row, unsummarized: <a href="/changelog.json">changelog.json</a>. On a Pulsar machine,
-          <code>pulsar changelog</code> prints the same&nbsp;list.
-        </p>
-      </section>
-
-      <section class="chapter" id="provenance" aria-labelledby="provenance-h">
-        <h2 id="provenance-h">Every image has a paper trail</h2>
-        <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
-        <p class="lede">
-          Built on a machine that exists for one night, and published with its full package list
-          attached.
-          {' '}<span class="sent">Check any of it from your own&nbsp;terminal.</span>
-        </p>
-        <Pipeline compact />
-        <p class="more"><a href="/docs/provenance">How the pipeline works →</a></p>
-      </section>
+      <GetPulsar />
     </arc-container>
   </main>
 </Base>
 
 <style>
-  /* ---- intro: a statement beside the thing itself ---------------------- */
+  /* ---- intro: a statement and a short list beside the thing itself ---- */
   .intro {
     display: grid;
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
@@ -245,46 +182,38 @@ const GAMING = [
     letter-spacing: -0.035em;
     margin: 0 0 var(--space-lg);
   }
-  /* the promise's second half on its own line, so the glow never starts
-     mid-line */
   .lift {
     display: block;
     color: var(--accent-primary);
-    text-shadow: var(--glow-xs);
   }
-  .intro-copy p {
-    max-width: 46ch;
-    color: var(--text-secondary);
-    text-wrap: pretty;
+  .big {
+    font-size: var(--text-lg);
+    text-wrap: balance;
     margin: 0 0 var(--space-md);
   }
-  .intro-copy .big {
-    font-size: var(--text-lg);
-    color: var(--text-primary);
+  .ready {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
-  .intro-copy .own {
-    margin-top: var(--space-lg);
-    color: var(--text-primary);
-    font-family: var(--font-display);
-    font-weight: var(--font-display-weight);
+  .ready li {
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
   }
   .desk {
     margin: 0;
     min-width: 0;
   }
-  .desk-frame {
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    border: 1px solid var(--border-default);
-    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6), var(--glow-hover);
-    aspect-ratio: 16 / 10;
-    background: var(--ink);
-  }
-  .desk-frame img {
+  .desk img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
+    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6);
+    background: var(--ink);
   }
   .desk figcaption {
     margin-top: var(--space-sm);
@@ -292,10 +221,139 @@ const GAMING = [
     color: var(--text-muted);
   }
 
-  /* ---- the nightly loop: four stations on one lit line ---------------- */
+  /* ---- games: the copy, and the arithmetic beside it ------------------- */
+  .games {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: var(--space-2xl);
+    align-items: center;
+  }
+  .games arc-code-block {
+    display: block;
+    max-width: 24rem;
+    margin-bottom: var(--space-md);
+  }
+  .gs-h {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-xl);
+    margin: var(--space-xl) 0 var(--space-sm);
+  }
+  .gs-h img {
+    display: block;
+  }
+  .gs-p {
+    max-width: 52ch;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-md);
+  }
+  /* ---- the gamescale diagram ----------------------------------------- */
+  /* Every screen is the same size (--fw), so the three read at one scale.
+     Each render is --k times it, centered on it; each row's slot is as tall
+     as whichever of the two is taller (--slot), so the 150% render spills
+     past its own screen but never into the next row. */
+  .modes {
+    --fw: 9rem;
+    margin: 0;
+  }
+  .modes figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
+    margin: 0 0 var(--space-sm);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .legend {
+    display: flex;
+    gap: var(--space-md);
+  }
+  .legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+  .key {
+    display: inline-block;
+    width: 1.25rem;
+    height: 0.8rem;
+    border-radius: 2px;
+  }
+  .key-screen {
+    border: 1px dashed var(--text-muted);
+  }
+  .key-render {
+    background: color-mix(in oklab, var(--text-primary) 16%, transparent);
+    border: 1px solid color-mix(in oklab, var(--text-primary) 30%, transparent);
+  }
+  .modes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .modes li {
+    display: grid;
+    grid-template-columns: calc(var(--fw) * 1.5 + var(--space-md)) minmax(0, 1fr);
+    gap: var(--space-lg);
+    align-items: center;
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .slot {
+    position: relative;
+    height: calc(var(--fw) * 10 / 16 * var(--slot));
+  }
+  .screen,
+  .render {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    aspect-ratio: 16 / 10;
+  }
+  .screen {
+    width: var(--fw);
+    border: 1px dashed var(--text-muted);
+    border-radius: var(--radius-sm);
+  }
+  .render {
+    width: calc(var(--fw) * var(--k));
+    border-radius: 2px;
+    background: color-mix(in oklab, var(--text-primary) 16%, transparent);
+    border: 1px solid color-mix(in oklab, var(--text-primary) 30%, transparent);
+  }
+  .native .render {
+    background: color-mix(in oklab, var(--accent-primary) 35%, transparent);
+    border-color: var(--accent-primary);
+  }
+  .native .screen {
+    border-color: transparent;
+  }
+  .m-x p {
+    margin: 0;
+  }
+  .m-what {
+    color: var(--text-primary);
+  }
+  .m-res {
+    font-size: var(--text-xl);
+    line-height: 1.3;
+    color: var(--text-secondary);
+  }
+  .native .m-res {
+    color: var(--accent-primary);
+  }
+  .m-you {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  /* ---- the nightly loop: four stations on one line -------------------- */
   .loop {
     list-style: none;
-    margin: var(--space-xl) 0 var(--space-2xl);
+    margin: var(--space-xl) 0 var(--space-lg);
     padding: 0;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -308,10 +366,8 @@ const GAMING = [
     top: 23px;
     left: 24px;
     right: 24px;
-    height: 2px;
-    border-radius: var(--radius-full);
-    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary) 70%, var(--color-success));
-    opacity: 0.45;
+    height: 1px;
+    background: var(--border-default);
   }
   .station {
     position: relative;
@@ -326,14 +382,12 @@ const GAMING = [
     margin-bottom: var(--space-md);
     border-radius: var(--radius-full);
     background: var(--bg-deep);
-    border: 1px solid var(--accent-primary);
-    box-shadow: var(--glow-sm);
+    border: 1px solid var(--border-default);
     color: var(--accent-primary);
   }
   .safety .badge {
     border-color: var(--color-success);
     color: var(--color-success);
-    box-shadow: 0 0 10px color-mix(in oklab, var(--color-success) 45%, transparent);
   }
   .st-t {
     font-family: var(--font-display);
@@ -345,127 +399,19 @@ const GAMING = [
   .st-d {
     margin: 0;
     color: var(--text-secondary);
-    text-wrap: pretty;
   }
-
-  /* ---- games ----------------------------------------------------------- */
-  .gs-h {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-size: var(--text-2xl);
-    margin: var(--space-xl) 0 var(--space-md);
-  }
-  .gs-icon {
-    display: block;
-    width: 40px;
-    height: 40px;
-  }
-  .games-facts {
-    margin-top: var(--space-2xl);
-  }
-
-  /* ---- changelog ------------------------------------------------------- */
   .buildline {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-sm) var(--space-md);
-    margin: 0 0 var(--space-lg);
-    font-size: var(--text-xs);
-    letter-spacing: 0.02em;
-  }
-  .build-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-sm);
-    border-radius: var(--radius-full);
-    background: var(--chip);
-    border: 1px solid var(--chip-line);
-    color: var(--on-chip);
-    font-family: var(--font-mono);
-    text-decoration: none;
-    transition: box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
-  }
-  .build-chip:hover {
-    border-color: var(--cyan);
-    box-shadow: var(--glow-xs);
-  }
-  .build-chip strong {
-    font-weight: var(--font-mono-weight);
-    font-variant-numeric: tabular-nums;
-    color: var(--cyan);
-  }
-  .build-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: var(--radius-full);
-    background: var(--cyan);
-    box-shadow: var(--glow-sm);
-    animation: pulse 2.4s var(--ease-out) infinite;
-  }
-  .build-chip[data-stale] .build-dot {
-    animation: none;
-    background: var(--text-ghost);
-    box-shadow: none;
-  }
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.35;
-    }
-  }
-  .buildnote {
     margin: 0;
   }
-  .lead {
-    margin: 0 0 var(--space-xl);
-  }
-  .lead-tx {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--space-sm);
-    margin: 0 0 var(--space-md);
-  }
-  .lead-pkg {
-    font-family: var(--font-display);
-    font-weight: var(--font-display-weight);
-    font-size: var(--text-3xl);
-    line-height: 1;
-    letter-spacing: -0.03em;
-    overflow-wrap: anywhere;
-    color: var(--accent-primary);
-    text-shadow: var(--glow-xs);
-  }
-  .lead-ver {
-    font-size: var(--text-lg);
-  }
-  .lead-sub {
-    max-width: 62ch;
-    font-size: var(--text-lg);
-    margin: 0 0 var(--space-sm);
-  }
-  .prov {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-sm) var(--space-md);
-    font-size: var(--text-xs);
+  .buildline a {
     color: var(--text-secondary);
-    margin: 0;
-  }
-  .dim {
-    color: var(--text-ghost);
   }
   .skip-note {
     margin: var(--space-sm) 0 0;
   }
+
   .more {
-    margin: var(--space-lg) 0 0;
+    margin: 0;
   }
   .more a {
     text-decoration: none;
@@ -474,31 +420,23 @@ const GAMING = [
     text-decoration: underline;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .build-dot {
-      animation: none;
-    }
-  }
-
   @media (max-width: 56rem) {
-    .intro {
+    .intro,
+    .games {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-xl);
     }
     .loop {
       grid-template-columns: minmax(0, 1fr);
-      gap: var(--space-lg);
       padding-left: calc(48px + var(--space-md));
     }
-    /* the line runs down the badges on a phone */
     .loop::before {
       top: 24px;
       bottom: 24px;
       left: 23px;
       right: auto;
-      width: 2px;
+      width: 1px;
       height: auto;
-      background: linear-gradient(180deg, var(--accent-primary), var(--accent-secondary) 70%, var(--color-success));
     }
     .badge {
       position: absolute;

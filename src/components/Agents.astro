@@ -1,87 +1,34 @@
 ---
-// The agent pillar, as two columns you can read across: what an agent CAN do
-// on this machine, and what it CAN'T. The second column is the point -- it is
-// what nobody can promise on a mutable system -- so it gets the same weight
-// as the first, not a footnote. Every row ends in the command that makes it
-// true, and every command ships in the image.
-//
-// The notification is the real one: its words are crash_notify_one's in
-// cli/pulsar, drawn here the way GNOME draws a notification, as the one
-// picture that shows an agent being handed a problem.
-//
-// The limit is stated on the page, not buried: rollback covers the system,
-// never the home folder. docs/AGENTS-SAFETY.md is the long version.
+// The agent pillar: the one picture of an agent being handed a problem (the
+// real crash notification, its words crash_notify_one's in cli/pulsar), and
+// two short lists read across -- what an agent can do here and what it can't.
+// The second list is the point, so it gets the same weight as the first.
+// Titles only: every row is a page section in /docs/agents, and the limit
+// (rollback covers the system, never the home folder) is linked, not buried.
 
 const CAN = [
-  {
-    i: 'robot',
-    t: 'Arrive when you do',
-    d: 'Pick Claude Code, Codex, Gemini, opencode or aider the first time you log in, or none. Each one lives in its own box, away from the system.',
-    c: 'pulsar agent add claude',
-  },
-  {
-    i: 'compass',
-    t: 'Know the machine',
-    d: 'It gets a briefing on how Pulsar works, and tools to check its health, its updates and its crashes for itself.',
-    c: 'pulsar mcp',
-  },
-  {
-    i: 'bug',
-    t: 'Take a crash off your hands',
-    d: 'Click the notification and it reads the stack trace and the logs, explains what happened, and helps you report it.',
-    c: 'pulsar agent ask --crash latest',
-  },
-  {
-    i: 'palette',
-    t: 'Make you a theme',
-    d: 'Describe a look. It builds the theme, checks it is readable, and applies it when you say so.',
-    c: 'skill: pulsar-theme',
-  },
-  {
-    i: 'cpu',
-    t: 'Think on your own hardware',
-    d: 'Run a model on your graphics card, for an agent that needs no account at all.',
-    c: 'pulsar agent model on',
-  },
+  'Read crash reports and logs',
+  'Check system health and updates',
+  'Create and apply themes',
+  'Use a local model on your GPU',
 ];
 
 const CANT = [
-  {
-    i: 'shield-check',
-    t: 'Break the system',
-    d: 'The system is read-only. Every change becomes a new version, and the last good one is a restart away.',
-    c: 'pulsar rollback',
-  },
-  {
-    i: 'lock-key',
-    t: 'Install things behind your back',
-    d: 'Turn on guard and installing system software asks for your password, for your agent and for you.',
-    c: 'pulsar agent guard on',
-  },
-  {
-    i: 'folder-lock',
-    t: 'Wander through your home folder',
-    d: 'In the sandbox it sees one project. It can push your code, but it never holds your keys, and it can’t force-push or delete.',
-    c: 'pulsar agent sandbox on',
-  },
-  {
-    i: 'clock-counter-clockwise',
-    t: 'Change settings without a trace',
-    d: 'Take a checkpoint before a session. Afterwards, see exactly what changed and put any of it back.',
-    c: 'pulsar checkpoint',
-  },
+  'Modify the read-only system image',
+  'Install system packages without your password (guard on)',
+  'Read files outside the project (sandbox on)',
+  'Change system config without a record (checkpoint taken)',
 ];
 ---
 
 <section class="chapter" id="agents" aria-labelledby="agents-h">
   <div class="head">
     <div>
-      <h2 id="agents-h">Your agent, at home</h2>
-      <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
+      <h2 id="agents-h">Coding agents, if you want them</h2>
       <p class="lede">
-        Pulsar is built to be handed to a coding agent. It can help you understand, fix and shape
-        the whole machine.
-        {' '}<span class="sent">Sandboxed, it sees only the project you gave&nbsp;it.</span>
+        Pick Claude Code, Codex, Gemini CLI, opencode or aider at first login, or skip it and nothing
+        gets installed. The ones you pick know how Pulsar works, and a sandbox keeps them to one
+        project.
       </p>
     </div>
 
@@ -89,10 +36,7 @@ const CANT = [
         hand an agent, so the button is a picture of one. */}
     <figure class="notice" aria-label="The notification Pulsar shows when a program crashes">
       <div class="note" aria-hidden="true">
-        <p class="note-app">
-          <arc-icon name="warning" size="sm"></arc-icon>
-          Pulsar <span>· now</span>
-        </p>
+        <p class="note-app">Pulsar <span>· now</span></p>
         <p class="note-title">wireplumber crashed</p>
         <p class="note-body">
           Claude Code can read the stack trace and the logs, and help you fix or report it. Nothing
@@ -100,51 +44,23 @@ const CANT = [
         </p>
         <span class="note-btn">Ask Claude Code</span>
       </div>
-      <figcaption>What a crash looks like on Pulsar. The click is the only way anything reaches your agent.</figcaption>
     </figure>
   </div>
 
   <div class="split">
-    <div class="col can">
+    <div class="can">
       <h3 class="col-h">It can</h3>
-      <ul class="rows">
-        {
-          CAN.map((r) => (
-            <li class="row">
-              <span class="row-i" aria-hidden="true"><arc-icon name={r.i} size="md"></arc-icon></span>
-              <div class="row-x">
-                <p class="row-t">{r.t}</p>
-                <p class="row-d">{r.d}</p>
-                <code class="row-c">{r.c}</code>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
+      <ul class="rows">{CAN.map((r) => <li>{r}</li>)}</ul>
     </div>
-    <div class="col cant">
+    <div>
       <h3 class="col-h">It can’t</h3>
-      <ul class="rows">
-        {
-          CANT.map((r) => (
-            <li class="row">
-              <span class="row-i" aria-hidden="true"><arc-icon name={r.i} size="md"></arc-icon></span>
-              <div class="row-x">
-                <p class="row-t">{r.t}</p>
-                <p class="row-d">{r.d}</p>
-                <code class="row-c">{r.c}</code>
-              </div>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="limit">
-        <strong>One honest limit.</strong> Rollback covers the system, not your files. For anything
-        you don’t fully trust, use the sandbox, and keep your backups.{' '}
-        <a href="/docs/agents-safety">Exactly what an agent can reach&nbsp;→</a>
-      </p>
+      <ul class="rows">{CANT.map((r) => <li>{r}</li>)}</ul>
     </div>
   </div>
+  <p class="hint">
+    Rollback restores the system, not your home folder. Keep backups.
+    {' '}<a href="/docs/agents-safety">What an agent can access&nbsp;→</a>
+  </p>
 </section>
 
 <style>
@@ -156,9 +72,6 @@ const CANT = [
   }
   .lede {
     max-width: 52ch;
-  }
-  .sent {
-    color: var(--text-primary);
   }
 
   /* ---- the notification, drawn the way GNOME draws one ------------------ */
@@ -174,9 +87,8 @@ const CANT = [
     border-radius: var(--radius-xl);
     background: var(--bg-elevated);
     border: 1px solid var(--border-default);
-    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55), var(--glow-hover);
+    box-shadow: 0 18px 40px -18px rgba(0, 0, 0, 0.55);
     color: var(--text-primary);
-    transform: rotate(-1.2deg);
   }
   .note p {
     margin: 0;
@@ -188,9 +100,6 @@ const CANT = [
     font-size: var(--text-xs);
     color: var(--text-muted);
     margin-bottom: var(--space-sm) !important;
-  }
-  .note-app arc-icon {
-    color: var(--accent-primary);
   }
   .note-app span {
     color: var(--text-ghost);
@@ -217,14 +126,8 @@ const CANT = [
     font-weight: var(--font-display-weight);
     font-size: var(--text-sm);
   }
-  .notice figcaption {
-    max-width: 30ch;
-    text-align: center;
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-  }
 
-  /* ---- can / can't ------------------------------------------------------ */
+  /* ---- can / can't: two plain ruled lists ------------------------------- */
   .split {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -239,82 +142,16 @@ const CANT = [
   }
   .can .col-h {
     color: var(--accent-primary);
-    text-shadow: var(--glow-xs);
-  }
-  .cant .col-h {
-    color: var(--text-primary);
   }
   .rows {
     list-style: none;
     margin: 0;
     padding: 0;
-    border-bottom: 1px solid var(--border-subtle);
   }
-  .row {
-    display: grid;
-    grid-template-columns: 40px minmax(0, 1fr);
-    gap: var(--space-md);
-    padding: var(--space-md) 0;
+  .rows li {
+    padding: var(--space-sm) 0;
     border-top: 1px solid var(--border-subtle);
-  }
-  .row-i {
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-md);
-    background: color-mix(in oklab, var(--text-primary) 6%, transparent);
     color: var(--text-secondary);
-  }
-  .can .row-i {
-    background: color-mix(in oklab, var(--accent-primary) 12%, transparent);
-    color: var(--accent-primary);
-  }
-  .row-x {
-    min-width: 0;
-  }
-  .row p {
-    margin: 0;
-  }
-  .row-t {
-    font-family: var(--font-display);
-    font-weight: var(--font-display-weight);
-    font-size: var(--text-md);
-    line-height: var(--heading-lh);
-    color: var(--text-primary);
-    margin-bottom: var(--space-xs) !important;
-  }
-  .row-d {
-    color: var(--text-secondary);
-    text-wrap: pretty;
-  }
-  .row-c {
-    display: inline-block;
-    margin-top: var(--space-sm);
-    padding: 2px var(--space-sm);
-    border-radius: var(--radius-sm);
-    background: var(--chip);
-    border: 1px solid var(--chip-line);
-    color: var(--on-chip);
-    font-size: var(--text-xs);
-  }
-  .can .row-c {
-    color: var(--cyan);
-  }
-  .limit {
-    margin: var(--space-lg) 0 0;
-    padding: var(--space-md) var(--space-lg);
-    border-radius: var(--radius-lg);
-    background: color-mix(in oklab, var(--color-warning) 8%, transparent);
-    border: 1px solid color-mix(in oklab, var(--color-warning) 28%, transparent);
-    color: var(--text-secondary);
-    text-wrap: pretty;
-  }
-  .limit strong {
-    color: var(--text-primary);
-  }
-  .limit a {
-    white-space: nowrap;
   }
 
   @media (max-width: 56rem) {
@@ -325,9 +162,6 @@ const CANT = [
     }
     .notice {
       justify-items: start;
-    }
-    .notice figcaption {
-      text-align: left;
     }
   }
 </style>

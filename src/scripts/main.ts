@@ -9,7 +9,9 @@ import { initTheme } from './theme';
 import { initHeroThemes } from './herothemes';
 import { initThemes } from './themes';
 import { initWallpaper } from './wallpaper';
+import { initWidont } from './widont';
 
+initWidont();
 initTheme();
 initSpin();
 initSky();

@@ -9,48 +9,14 @@
 // adds the switching (src/scripts/themes.ts).
 import { THEMES, label, setCommand, tileAttrs, variant } from '../data/themes';
 
-interface Props {
-  // 'wide' is the full-width gallery hero option (b) puts straight under
-  // the hero; 'section' is the ordinary chapter.
-  layout?: 'section' | 'wide';
-}
-const { layout = 'section' } = Astro.props;
-
 const first = THEMES[0];
-const FACTS = [
-  {
-    t: 'The whole desktop, at once',
-    d: 'Accent, apps, older GTK apps, the terminal, the text editor, btop, the top bar, quick settings and the wallpaper. One command, one change.',
-  },
-  {
-    t: 'Light and dark, your call',
-    d: 'Twelve themes follow GNOME’s Dark Style switch: flip it and the theme flips with you. Four are single-mode on purpose: Dracula and the Phosphor and Amber terminals are dark, Alucard is light.',
-  },
-  {
-    t: 'Readable, by rule',
-    d: 'Every palette passes a WCAG AA contrast check. Where a color fell short, its lightness moved and its hue stayed, so Gruvbox still looks like Gruvbox.',
-  },
-  {
-    t: 'Undo is exact',
-    d: 'pulsar theme revert puts stock GNOME back, file for file and setting for setting.',
-  },
-  {
-    t: 'Never loses your work',
-    d: 'Apps that were already open are offered a restart. Each one is asked to quit the way Ctrl+Q asks, so anything unsaved keeps its save dialog.',
-  },
-  {
-    t: 'In the image, and yours',
-    d: 'The themes ship inside the image, so every machine has them and an update keeps them current. Your own sit beside them, and any base16 scheme imports in one line.',
-  },
-];
 ---
 
-<section class={`chapter showcase ${layout}`} id="themes" data-showcase>
-  <h2>Make it yours in one command</h2>
-  <arc-divider class="h-rule" align="left" variant="line-gradient"></arc-divider>
+<section class="chapter showcase" id="themes" data-showcase>
+  <h2>16 themes</h2>
   <p class="lede">
-    Sixteen themes ship in the image, and each one changes everything you look at.
-    {' '}<span class="sent">A fresh install starts in Pulsar’s own. Yours is one line&nbsp;away.</span>
+    Each one changes everything at once: the colors, your apps, the terminal and the wallpaper.
+    You can always put the original look back.
   </p>
 
   <figure class="preview">
@@ -113,16 +79,7 @@ const FACTS = [
     }
   </ul>
 
-  <dl class="facts">
-    {
-      FACTS.map((f) => (
-        <div class="fact">
-          <dt>{f.t}</dt>
-          <dd>{f.d}</dd>
-        </div>
-      ))
-    }
-  </dl>
+  <p class="more"><a href="/docs/themes">Theme docs →</a></p>
 </section>
 
 <style>
@@ -200,7 +157,7 @@ const FACTS = [
     border-radius: var(--radius-md);
     overflow: hidden;
     border: 1px solid var(--border-subtle);
-    transition: box-shadow 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+    transition: border-color 0.2s var(--ease-out);
   }
   .wall img {
     position: absolute;
@@ -246,11 +203,10 @@ const FACTS = [
     font-size: var(--text-sm);
   }
   .tile:hover .wall {
-    box-shadow: var(--glow-hover);
+    border-color: var(--border-bright);
   }
   .tile[aria-pressed='true'] .wall {
     border-color: var(--accent-primary);
-    box-shadow: var(--glow-sm);
   }
   .tile[aria-pressed='true'] .t-name {
     color: var(--text-primary);
@@ -263,27 +219,14 @@ const FACTS = [
     outline-offset: 2px;
   }
 
-  .facts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-    gap: 0 var(--space-xl);
+  .more {
     margin: 0;
   }
-  .fact {
-    padding: var(--space-md) 0;
-    border-top: 1px solid var(--border-subtle);
+  .more a {
+    text-decoration: none;
   }
-  dt {
-    font-family: var(--font-display);
-    font-weight: var(--font-display-weight);
-    font-size: var(--text-md);
-    color: var(--text-primary);
-    margin-bottom: var(--space-xs);
-  }
-  dd {
-    margin: 0;
-    color: var(--text-secondary);
-    text-wrap: pretty;
+  .more a:hover {
+    text-decoration: underline;
   }
 
   @media (max-width: 64rem) {

@@ -135,6 +135,17 @@ figcaption {
   color: var(--text-secondary);
   max-width: 62ch;
   margin-bottom: var(--space-lg);
+  /* a lede is two or three lines: even them out rather than leave a word
+     alone on the last */
+  text-wrap: balance;
+}
+
+/* A short link in running text is one unit: "What an agent can access →"
+   moves to the next line whole instead of leaving "What an agent" behind. */
+.lede a,
+.hint a,
+.more a {
+  white-space: nowrap;
 }
 
 .hint {
@@ -170,7 +181,7 @@ arc-code-block {
 }
 
 /* Section rhythm: one scale, more air above a heading than below it. The
-   line between chapters is ARC's glow hairline, not a border. */
+   line between chapters is a plain hairline: no glow, nothing to look at. */
 /* An inner page's h1 sat at ARC's --heading-size (--text-xl), a step BELOW
    the --text-2xl chapter h2s under it, so every inner page read upside down.
    The header's own tokens are the knob, not its parts. */
@@ -187,8 +198,7 @@ arc-page-header {
   position: absolute;
   inset: 0 0 auto 0;
   height: 1px;
-  background: var(--glow-line-gradient);
-  opacity: 0.6;
+  background: var(--border-subtle);
 }
 
 /* The house heading: a short gradient rule under every h2, the way
