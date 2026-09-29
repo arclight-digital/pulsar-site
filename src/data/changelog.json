@@ -1,17 +1,17 @@
 {
-  "generated": "2026-09-29T03:32:56Z",
+  "generated": "2026-09-29T22:28:29Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:d2cc5ceb01e29c00e2308b477969094bf0a5025fbc81b052161dbbe502c01c90",
-    "digest": "sha256:d2cc5ceb01e29c00e2308b477969094bf0a5025fbc81b052161dbbe502c01c90"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:504d06659f37d24f91ba75344b5155c104d3f0782ee8f578c5bf26ab4b63ae39",
     "digest": "sha256:504d06659f37d24f91ba75344b5155c104d3f0782ee8f578c5bf26ab4b63ae39"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:f22e8edcd8e52dde9749c9027c89e9e7e7fdfa483db9ea58d3896849fcadaab3",
+    "digest": "sha256:f22e8edcd8e52dde9749c9027c89e9e7e7fdfa483db9ea58d3896849fcadaab3"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 12,
+    "upgraded": 6,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,75 +19,39 @@
   "removed": [],
   "changed": [
     {
-      "name": "dnf5",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
+      "name": "google-noto-color-emoji-fonts",
+      "from": "20250623-4.fc44",
+      "to": "20260921-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5-plugins",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
+      "name": "google-noto-emoji-fonts",
+      "from": "20250623-4.fc44",
+      "to": "20260921-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5daemon-server",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "dnf5daemon-server-polkit",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-cli",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-appstream",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-expired-pgp-keys",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-systemd-inhibit",
-      "from": "5.4.5.0-1.fc44",
-      "to": "5.4.6.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libmaxminddb",
-      "from": "1.13.3-1.fc44",
-      "to": "1.14.0-1.fc44",
+      "name": "ibus-typing-booster",
+      "from": "2.31.0-1.fc44",
+      "to": "2.31.1-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.9.15-1",
-      "to": "2026.9.16-1",
+      "from": "2026.9.16-1",
+      "to": "2026.9.17-1",
       "direction": "upgraded"
     },
     {
-      "name": "unicode-ucd",
-      "from": "17.0.0-2.fc44",
-      "to": "18.0.0-2.fc44",
+      "name": "python3-urllib3",
+      "from": "2.7.0-1.fc44",
+      "to": "2.8.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-urllib3+socks",
+      "from": "2.7.0-1.fc44",
+      "to": "2.8.0-1.fc44",
       "direction": "upgraded"
     }
   ]
