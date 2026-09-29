@@ -244,6 +244,11 @@ const first = THEMES[0];
   }
 
   @media (max-width: 40rem) {
+    /* a phone will not run it: the command to read, without its copy
+       button (ARC's documented part, removed rather than restyled) */
+    [data-preview-cmd]::part(copy) {
+      display: none;
+    }
     .cap {
       grid-template-columns: minmax(0, 1fr);
     }

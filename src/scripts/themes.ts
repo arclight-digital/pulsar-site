@@ -76,6 +76,9 @@ function preview(detail: ThemeDetail) {
     });
   });
   document.querySelectorAll('[data-preview-name]').forEach((el) => (el.textContent = detail.name));
+  // the theme button names what it is wearing
+  document.querySelectorAll('[data-fab-name]').forEach((el) => (el.textContent = detail.name));
+  document.querySelectorAll('[data-fab]').forEach((b) => b.setAttribute('aria-label', `Choose a theme (now ${detail.name})`));
   const cmd = `pulsar theme set ${detail.slug}`;
   document.querySelectorAll('[data-preview-cmd]').forEach((el) => {
     // an ARC code block takes the command as its attribute; a caption is text
@@ -156,17 +159,46 @@ function tellOnce(slug: string) {
   }
   const toast = document.querySelector<HTMLElement & { show?: (o: object) => void }>('[data-theme-toast]');
   const cmd = `pulsar theme set ${slug}`;
+  // a phone will not run the command: the line, without the copy button
+  const phone = matchMedia('(max-width: 40rem), (pointer: coarse)').matches;
   toast?.show?.({
     message: `In Pulsar: Super+T, or ${cmd}`,
     duration: 9000,
-    actionLabel: 'Copy command',
-    action: () => {
-      navigator.clipboard?.writeText(cmd).catch(() => {});
-    },
+    ...(phone
+      ? {}
+      : {
+          actionLabel: 'Copy command',
+          action: () => {
+            navigator.clipboard?.writeText(cmd).catch(() => {});
+          },
+        }),
   });
 }
 
+// The theme button folds to its dots once the page is scrolled half a screen.
+function compactFab() {
+  const fab = document.querySelector<HTMLElement>('[data-fab]');
+  if (!fab) return;
+  let queued = false;
+  const set = () => {
+    queued = false;
+    fab.classList.toggle('is-compact', scrollY > innerHeight * 0.5);
+  };
+  addEventListener(
+    'scroll',
+    () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(set);
+      }
+    },
+    { passive: true },
+  );
+  set();
+}
+
 export function initThemes(): void {
+  compactFab();
   document.addEventListener('pulsar:theme', (e) => show((e as CustomEvent<ThemeDetail>).detail));
   // intent: a tile under the pointer or the keyboard starts its picture
   for (const ev of ['pointerover', 'focusin'] as const) {
