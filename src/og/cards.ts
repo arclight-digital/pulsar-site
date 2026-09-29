@@ -131,7 +131,7 @@ export const CARDS: Card[] = [
     path: '/docs/agents-safety',
     headline: 'The safest machine to hand an agent.',
     lift: 'hand an agent.',
-    sub: 'It can help with anything. It can’t break the system.',
+    sub: 'It can help with anything. Sandboxed, it sees only your project.',
     alt: 'The Pulsar logo, the line "The safest machine to hand an agent.", and the command pulsar agent sandbox on.',
     visual: { kind: 'terminal', line: { cmd: 'pulsar agent sandbox on', note: 'one project, no keys' } },
   },
