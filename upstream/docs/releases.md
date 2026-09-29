@@ -1,26 +1,25 @@
 # Releases
 
-Pulsar has two kinds of change, and two changelogs for them.
+- **Releases** (`YY.M.N`, written up here) are changes to what Pulsar adds
+  on top of Silverblue: the year, the month, and that month's release
+  number, so `26.9.1` is September 2026's first. The About page, the boot
+  menu, `pulsar manifest` and `pulsar doctor` all show it.
+- **Nightly builds** (`44.20260929.0`) carry each day's Fedora and Silverblue
+  updates, listed in the [nightly changelog](/docs/changelog), generated from
+  the images.
 
-**Releases** are Pulsar's own: new features and fixes to what Pulsar adds on
-top of Silverblue. They are numbered `MAJOR.MINOR.PATCH` and written up here.
-Settings' About page and the boot menu call a release by its first two
-numbers ("Pulsar 1.0"); `pulsar manifest` and `pulsar doctor` show all three.
+Releases ship inside a nightly; both arrive through the same update. The two
+move independently: a month with no new Pulsar features keeps its release
+while the builds go on, so the About page may read
+`Pulsar 26.9.1 (44.20261103.0)` in November.
 
-**Nightly builds** carry everything else: each night's image picks up the
-Fedora and Silverblue updates published that day, and gets a build number like
-`44.20260929.0`. Those are listed package by package in the
-[nightly changelog](/docs/changelog), generated from the images themselves.
-You get both the same way, from the same update: releases ship inside a
-nightly.
-
-## 1.0.0
+## 26.9.1
 
 The first numbered release: Pulsar's own look, and glass.
 
 ### Themes
 
-- 16 themes, each recoloring the whole desktop in one step: GNOME Shell, GTK
+- 20 themes, each recoloring the whole desktop in one step: GNOME Shell, GTK
   4 and GTK 3 apps, the terminal, Text Editor, btop, coding agents and the
   wallpaper. Two-mode themes follow Dark Style on their own.
 - The theme picker (Super+T) shows every theme as a card in its own colors;
