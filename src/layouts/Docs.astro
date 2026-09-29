@@ -3,8 +3,9 @@
 // came to do, the article, and a table of contents that follows the scroll.
 // It sits inside the site's own Base, so the bar, the footer and the theme
 // picker are the ones every page wears.
+import { getCollection } from 'astro:content';
 import Base from './Base.astro';
-import { DOCS_NAV, hrefOf } from '../data/docs';
+import { DOCS_NAV as ALL_NAV, hrefOf } from '../data/docs';
 import { REPO } from '../data/site';
 
 interface Props {
@@ -17,6 +18,11 @@ interface Props {
   jsonLd?: Record<string, unknown>[];
 }
 const { title, description, path, headings = [], fullTitle, jsonLd = [] } = Astro.props;
+// A repo doc is listed only once a published nightly has shipped it, so the
+// sidebar never points at a page that is not there yet (releases.md arrives
+// with the release it describes).
+const shipped = new Set((await getCollection('docs')).map((d) => d.id));
+const DOCS_NAV = ALL_NAV.map((g) => ({ ...g, links: g.links.filter((l) => !l.slug || shipped.has(l.slug)) })).filter((g) => g.links.length);
 const here = (href: string) => path === href;
 const current = DOCS_NAV.flatMap((g) => g.links).find((l) => here(hrefOf(l)));
 ---

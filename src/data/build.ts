@@ -57,6 +57,9 @@ export interface Changelog {
 export interface Manifest {
   image: string;
   variant?: string;
+  /** Pulsar's own release, semver (1.0.0); absent before 1.0.0 shipped */
+  release?: string;
+  /** the nightly build, 44.YYYYMMDD.N */
   version: string;
   base: string;
   built: string;
@@ -73,3 +76,6 @@ export const manifest = manifestJson as Manifest;
 
 /** The build the whole page names: the hero chip, the manifest card, the diff. */
 export const version = manifest.version || 'nightly';
+
+/** The Pulsar release the build carries, as people say it: MAJOR.MINOR. */
+export const release = manifest.release ? manifest.release.split('.').slice(0, 2).join('.') : '';

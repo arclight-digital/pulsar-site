@@ -44,7 +44,8 @@ export const DOCS_NAV: DocGroup[] = [
     links: [
       { label: 'Signing', slug: 'signing', icon: 'seal-check' },
       { label: 'Provenance', href: '/docs/provenance', icon: 'git-commit' },
-      { label: 'Changelog', href: '/docs/changelog', icon: 'clock-counter-clockwise' },
+      { label: 'Releases', slug: 'releases', icon: 'rocket-launch' },
+      { label: 'Nightly builds', href: '/docs/changelog', icon: 'clock-counter-clockwise' },
     ],
   },
 ];

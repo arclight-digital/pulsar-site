@@ -1,6 +1,7 @@
 ---
 // The close. Pinned dark in both themes, the way the terminals are: the page
 // ends on ink, under a spectrum line that is the palette read left to right.
+import { getCollection } from 'astro:content';
 import ByArclight from './ByArclight.astro';
 import Mark from './Mark.astro';
 import { REPO, SUPPORT_URL } from '../data/site';
@@ -11,7 +12,9 @@ const SITE = [
   { label: 'Themes', href: '/#themes' },
   { label: 'gamescale', href: '/docs/gamescale' },
   { label: 'Provenance', href: '/docs/provenance' },
-  { label: 'Changelog', href: '/docs/changelog' },
+  // release notes once a nightly has shipped them (see Docs.astro)
+  ...((await getCollection('docs')).some((d) => d.id === 'releases') ? [{ label: 'Releases', href: '/docs/releases' }] : []),
+  { label: 'Nightly builds', href: '/docs/changelog' },
   { label: 'The pulsar command', href: '/docs/cli' },
 ];
 
