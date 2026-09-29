@@ -45,9 +45,15 @@ export function initWallpaper(): void {
       if (b.hasAttribute('data-look')) b.toggleAttribute('data-live-on', next === 'pulsar');
       else b.setAttribute('aria-pressed', String(on));
     }
-    if (!layer) return;
     const b = choices().find((x) => x.dataset.wall === next && !x.hasAttribute('data-look'));
     const src = b && (mode() === 'light' ? b.dataset.light : b.dataset.dark);
+    // the install section's stage wears the same wallpaper as the hero: its
+    // CSS falls back to Silk's still while this is unset
+    for (const stage of document.querySelectorAll<HTMLElement>('[data-wallstage]')) {
+      if (next === 'pulsar' || !src) stage.style.removeProperty('--stage-wall');
+      else stage.style.setProperty('--stage-wall', `url("${src}")`);
+    }
+    if (!layer) return;
     if (next === 'pulsar' || !src) {
       layer.removeAttribute('data-on');
       return;
