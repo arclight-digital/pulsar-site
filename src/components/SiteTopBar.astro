@@ -33,7 +33,7 @@ const NAV = [
 const groups = await searchIndex();
 ---
 
-<arc-top-bar fixed contained="lg" immersive={immersive || undefined} home-href="/" class="bar">
+<arc-top-bar fixed contained="lg" immersive={immersive || undefined} home-href="/" class="bar" mobile-menu="nav" menu-position="right" mobile-center="end">
   <a slot="logo" class="lockup" href="/" aria-label="Pulsar home">
     <Mark kind="bar" size={28} class="bar-mark" />
     <span class="word">PULSAR</span>
@@ -64,6 +64,19 @@ const groups = await searchIndex();
     <arc-button href="/#install" variant="primary" size="sm">Install</arc-button>
   </div>
 </arc-top-bar>
+
+{/* The phone menu: ARC's navigation menu opens its own slide-down panel (in
+    a portal on body) when the bar's menu button fires arc-mobile-menu-toggle.
+    It lives beside the bar only so its desktop pills never show beside the
+    site's own links: in a zero-size box they fold away (ARC hides them in a
+    narrow container), and only the phone panel is left. */}
+<div class="phone-nav">
+  <arc-navigation-menu>
+    {NAV.map((l) => <arc-nav-item href={l.href} active={l.on || undefined}>{l.label}</arc-nav-item>)}
+    <arc-nav-item href="/#install" variant="primary">Install</arc-nav-item>
+    <arc-nav-item href={REPO} variant="muted">Source on GitHub</arc-nav-item>
+  </arc-navigation-menu>
+</div>
 
 <arc-command-palette data-search placeholder="Search docs, themes, commands…" max-results="12">
   {
@@ -220,12 +233,6 @@ const groups = await searchIndex();
   :global(:root[data-mode-pinned]) .actions arc-theme-toggle {
     visibility: hidden;
   }
-  /* No sidebar to toggle: ARC's bar still renders its hamburger on narrow
-     screens, where it would toggle nothing. Hidden through its documented
-     part -- a dead control removed, not a part restyled. */
-  .bar::part(menu-btn) {
-    display: none;
-  }
 
   .docs-compact {
     display: none;
@@ -262,16 +269,28 @@ const groups = await searchIndex();
       display: none;
     }
   }
-  /* A phone: the mark and word, then search, Docs and Install as one row --
-     search a bare icon like the rest, not a boxed field. The source link is
-     also in the footer, and light/dark is also in the theme picker. */
+  .phone-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+  }
+  /* where ARC shows the menu button (900px), Docs lives in the menu */
+  @media (max-width: 900px) {
+    .docs-compact {
+      display: none !important;
+    }
+  }
+  /* A phone: the mark and word on the left; search and the menu on the
+     right (mobile-center="end" puts the center slot beside the menu
+     button). Install, Docs and the source link are in the menu, light/dark
+     in the theme picker. */
   @media (max-width: 30rem) {
     .actions arc-icon-button,
-    .actions arc-theme-toggle {
-      display: none;
-    }
+    .actions arc-theme-toggle,
     .actions arc-button {
-      margin-left: var(--space-xs);
+      display: none;
     }
     .find {
       border-color: transparent;
