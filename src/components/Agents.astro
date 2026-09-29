@@ -49,11 +49,11 @@ const CANT = [
 
   <div class="split">
     <div class="can">
-      <h3 class="col-h"><span class="mark yes" aria-hidden="true"><arc-icon name="check" size="md"></arc-icon></span>Agents can:</h3>
+      <h3 class="col-h"><span class="mark yes" aria-hidden="true"><arc-icon name="check" size="lg"></arc-icon></span>Agents can:</h3>
       <ul class="rows">{CAN.map((r) => <li>{r}</li>)}</ul>
     </div>
     <div>
-      <h3 class="col-h"><span class="mark no" aria-hidden="true"><arc-icon name="x" size="md"></arc-icon></span>Agents can’t:</h3>
+      <h3 class="col-h"><span class="mark no" aria-hidden="true"><arc-icon name="x" size="lg"></arc-icon></span>Agents can’t:</h3>
       <ul class="rows">{CANT.map((r) => <li>{r}</li>)}</ul>
     </div>
   </div>
@@ -148,8 +148,8 @@ const CANT = [
     flex: none;
     display: grid;
     place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: var(--radius-full);
   }
   .mark.yes {
