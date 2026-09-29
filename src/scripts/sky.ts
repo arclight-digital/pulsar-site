@@ -14,7 +14,7 @@
 // than fetched at runtime: the page and the OS cannot show different skies,
 // and the hero never waits on a second request.
 //
-// Falls back to the page's CSS ground -- the CI-rendered silk still -- when
+// Falls back to the page's CSS ground -- the CI-rendered nebula still -- when
 // WebGL is missing. prefers-reduced-motion gets still frames that redraw only
 // when a control is used.
 import pulsarEntry from '../../upstream/assets/shaders/pulsar.frag?raw';
@@ -200,7 +200,7 @@ export function initSky(): void {
       gl.uniform1f(P.loc('u_theme'), dawn);
       gl.uniform1f(P.loc('u_look'), look);
       // The live sky runs the luminescence at a hint of its wallpaper
-      // strength: at full strength silk's filaments made the hero text hard
+      // strength: at full strength nebula's filaments made the hero text hard
       // to read.
       gl.uniform1f(P.loc('u_live'), 1);
       gl.uniform1f(P.loc('u_palette_on'), 0);
@@ -274,7 +274,7 @@ export function initSky(): void {
 
   // ---- the install section's stage wears this sky too ----------------------
   // A still of the live canvas (preserveDrawingBuffer keeps the last frame),
-  // taken a moment after the picture settles. Its CSS falls back to Silk's
+  // taken a moment after the picture settles. Its CSS falls back to Nebula's
   // still while there is none: no WebGL, no JS.
   let stageURL = '';
   let stageTimer = 0;
@@ -302,7 +302,7 @@ export function initSky(): void {
   // Freeze the outgoing frame on the overlay canvas and let it dissolve over
   // the new picture: for a switch the shader cannot ease (another look, or
   // another theme's uniforms). Pulsar's looks must not ease either: the
-  // shader chain-mixes them, so a sweep from holo to silk marches through
+  // shader chain-mixes them, so a sweep from holo to nebula marches through
   // satin and leak on the way.
   const dissolve = (): void => {
     if (!fadeContext || !running) return;

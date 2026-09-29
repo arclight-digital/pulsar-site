@@ -1,5 +1,5 @@
 // What the header's search finds, gathered at build time from what the site
-// already knows: every docs page and its sections, the 16 themes, and each
+// already knows: every docs page and its sections, the 20 themes, and each
 // `pulsar` command. No index service and no runtime fetch: ARC's command
 // palette ranks these on the page itself.
 import { getCollection, render } from 'astro:content';

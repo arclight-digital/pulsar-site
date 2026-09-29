@@ -59,13 +59,13 @@ const FILES = [
   ['assets/fonts/JetBrains_Mono/OFL.txt', 'OFL-jetbrains-mono.txt'],
 
   // Committed stills: the no-WebGL and still-loading hero ground, plus the
-  // gamescale icon. The one place rendered output lives in git -- silk is
+  // gamescale icon. The one place rendered output lives in git -- nebula is
   // locked, the pair is ~180KB, and re-rendering is documented beside the
-  // files. src/og/render.ts also reads silk-still-dark as the share cards ground.
+  // files. src/og/render.ts also reads nebula-still-dark as the share cards ground.
   //
   // The share card is NOT here any more: it is rendered at build time.
-  ['./assets-static/silk-still-dark.jpg', 'silk-still-dark.jpg'],
-  ['./assets-static/silk-still-light.jpg', 'silk-still-light.jpg'],
+  ['./assets-static/nebula-still-dark.jpg', 'nebula-still-dark.jpg'],
+  ['./assets-static/nebula-still-light.jpg', 'nebula-still-light.jpg'],
   ['./assets-static/gamescale.svg', 'gamescale.svg'],
   // 64px tile of +-2-step triangular noise at a tiny alpha: dithers the
   // hero's CSS readability wash, which browsers (Firefox) draw undithered.

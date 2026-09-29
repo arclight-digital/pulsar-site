@@ -1,6 +1,6 @@
 ---
 // #install on the home page, and the page's one destination: "Get started"
-// in the hero lands here. The downloads sit on Silk, the wallpaper the hero
+// in the hero lands here. The downloads sit on Nebula, the wallpaper the hero
 // draws live, so the page ends on the desktop it began with. Then the path
 // from a stick to a desktop, the two things some people need (the NVIDIA key,
 // checking the download) as folds, and the switch for people already on an
@@ -158,7 +158,7 @@ const VERIFY = [
      snapshots the canvas whenever the picture changes -- the site theme's
      recolor of the look on show), under a wash in the theme's colors: its
      accent from the top corner, then its ground deepening toward the
-     downloads so every line of text keeps its contrast. Silk's still until
+     downloads so every line of text keeps its contrast. Nebula's still until
      then, and with no WebGL. */
   .stage {
     position: relative;
@@ -179,18 +179,18 @@ const VERIFY = [
   }
   .stage::before {
     z-index: -2;
-    background: var(--stage-wall, url('/assets/silk-still-dark.jpg')) center / cover;
+    background: var(--stage-wall, url('/assets/nebula-still-dark.jpg')) center / cover;
   }
   :global(:root[data-theme='light']) .stage::before {
-    background: var(--stage-wall, url('/assets/silk-still-light.jpg')) center / cover;
+    background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
   }
   @media (prefers-color-scheme: light) {
     :global(:root[data-theme='auto']) .stage::before {
-      background: var(--stage-wall, url('/assets/silk-still-light.jpg')) center / cover;
+      background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
     }
   }
   /* On a dark page the sky runs brighter than the theme's ground (a pale
-     satin cloth, a lit silk), so the picture itself is dimmed there before
+     satin cloth, a lit nebula), so the picture itself is dimmed there before
      the wash: the wash can stay light enough to show it, and the text keeps
      WCAG contrast over every theme's preferred look (measured, both modes). */
   :global(:root[data-theme='dark']) .stage::before {

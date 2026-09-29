@@ -185,7 +185,7 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
         first paint from waiting on discovery. Fonts need crossorigin even
         same-origin -- font fetches are CORS-mode, and a preload that does not
         match is a double download. */}
-    {/* TODO(site-hero-follow): the silk stills are preloaded because
+    {/* TODO(site-hero-follow): the nebula stills are preloaded because
         Hero.astro still paints them as the hero's ground under the shader.
         When the hero goes live-only WebGL, nothing paints them and these two
         links become a wasted download competing with the fonts: delete them
@@ -197,13 +197,13 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
           <link
             rel="preload"
             as="image"
-            href="/assets/silk-still-dark.jpg"
+            href="/assets/nebula-still-dark.jpg"
             media="(prefers-color-scheme: dark)"
           />
           <link
             rel="preload"
             as="image"
-            href="/assets/silk-still-light.jpg"
+            href="/assets/nebula-still-light.jpg"
             media="(prefers-color-scheme: light)"
           />
         </>

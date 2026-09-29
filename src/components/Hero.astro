@@ -68,18 +68,18 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
     display: grid;
     place-items: center;
     overflow: hidden;
-    background: url('/assets/silk-still-dark.jpg') center / cover no-repeat var(--ink);
+    background: url('/assets/nebula-still-dark.jpg') center / cover no-repeat var(--ink);
     color: var(--star);
     --glow-a: 1;
   }
   :global(:root[data-theme='light']) .hero {
-    background-image: url('/assets/silk-still-light.jpg');
+    background-image: url('/assets/nebula-still-light.jpg');
     color: var(--deep);
     --glow-a: 0.4;
   }
   @media (prefers-color-scheme: light) {
     :global(:root[data-theme='auto']) .hero {
-      background-image: url('/assets/silk-still-light.jpg');
+      background-image: url('/assets/nebula-still-light.jpg');
       color: var(--deep);
       --glow-a: 0.4;
     }

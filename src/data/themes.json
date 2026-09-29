@@ -44,7 +44,8 @@
         "deep": "#f1f3fa",
         "raised": "#e6e9f5",
         "fg": "#241f3d",
-        "wall": "/assets/themes/pulsar/wall-light.webp"
+        "wall": "/assets/themes/pulsar/wall-light.webp",
+        "desktop": "/assets/themes/pulsar/desktop-light.webp"
       }
     }
   },
@@ -599,6 +600,106 @@
     }
   },
   {
+    "slug": "one",
+    "name": "One",
+    "author": "Atom (atom/one-dark-syntax, one-light-syntax), MIT",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#282c34",
+          "#32373f",
+          "#61afef",
+          "#e36f78",
+          "#e5c07b",
+          "#98c379",
+          "#56b6c2",
+          "#61afef",
+          "#c678dd",
+          "#abb2bf"
+        ],
+        "accent": "#61afef",
+        "bg": "#282c34",
+        "deep": "#1b1d23",
+        "raised": "#32373f",
+        "fg": "#abb2bf",
+        "wall": "/assets/themes/one/wall-dark.webp",
+        "desktop": "/assets/themes/one/desktop-dark.webp"
+      },
+      "light": {
+        "swatch": [
+          "#fafafa",
+          "#eaebeb",
+          "#4078f2",
+          "#cb3e34",
+          "#a16600",
+          "#308231",
+          "#0078af",
+          "#356be4",
+          "#a626a4",
+          "#383a42"
+        ],
+        "accent": "#4078f2",
+        "bg": "#fafafa",
+        "deep": "#eaeaeb",
+        "raised": "#eaebeb",
+        "fg": "#383a42",
+        "wall": "/assets/themes/one/wall-light.webp",
+        "desktop": "/assets/themes/one/desktop-light.webp"
+      }
+    }
+  },
+  {
+    "slug": "oxocarbon",
+    "name": "Oxocarbon",
+    "author": "nyoom-engineering (oxocarbon.nvim), MIT; IBM Carbon palette",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#161616",
+          "#282828",
+          "#ff7eb6",
+          "#ee5396",
+          "#f1c21b",
+          "#42be65",
+          "#3ddbd9",
+          "#78a9ff",
+          "#be95ff",
+          "#f2f4f8"
+        ],
+        "accent": "#ff7eb6",
+        "bg": "#161616",
+        "deep": "#0e0e0e",
+        "raised": "#282828",
+        "fg": "#f2f4f8",
+        "wall": "/assets/themes/oxocarbon/wall-dark.webp",
+        "desktop": "/assets/themes/oxocarbon/desktop-dark.webp"
+      },
+      "light": {
+        "swatch": [
+          "#ffffff",
+          "#ececec",
+          "#ee5396",
+          "#d1377e",
+          "#9a6d00",
+          "#008831",
+          "#008180",
+          "#0f62fe",
+          "#673ab7",
+          "#161616"
+        ],
+        "accent": "#ee5396",
+        "bg": "#ffffff",
+        "deep": "#dde1e6",
+        "raised": "#ececec",
+        "fg": "#161616",
+        "wall": "/assets/themes/oxocarbon/wall-light.webp",
+        "desktop": "/assets/themes/oxocarbon/desktop-light.webp"
+      }
+    }
+  },
+  {
     "slug": "dracula",
     "name": "Dracula",
     "author": "Dracula Theme (draculatheme.com), MIT",
@@ -624,6 +725,64 @@
         "fg": "#f8f8f2",
         "wall": "/assets/themes/dracula/wall-dark.webp",
         "desktop": "/assets/themes/dracula/desktop-dark.webp"
+      }
+    }
+  },
+  {
+    "slug": "poimandres",
+    "name": "Poimandres",
+    "author": "drcmda (poimandres-theme), MIT",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#1b1e28",
+          "#2b2f39",
+          "#5de4c7",
+          "#d0679d",
+          "#fffac2",
+          "#5de4c7",
+          "#89ddff",
+          "#add7ff",
+          "#fcc5e9",
+          "#e4f0fb"
+        ],
+        "accent": "#5de4c7",
+        "bg": "#1b1e28",
+        "deep": "#15171f",
+        "raised": "#2b2f39",
+        "fg": "#e4f0fb",
+        "wall": "/assets/themes/poimandres/wall-dark.webp",
+        "desktop": "/assets/themes/poimandres/desktop-dark.webp"
+      }
+    }
+  },
+  {
+    "slug": "synthwave-84",
+    "name": "Synthwave '84",
+    "author": "Robb Owen (synthwave-vscode), MIT",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#262335",
+          "#373545",
+          "#ff7edb",
+          "#ff4853",
+          "#fede5d",
+          "#72f1b8",
+          "#36f9f6",
+          "#7e89c6",
+          "#ff7edb",
+          "#ffffff"
+        ],
+        "accent": "#ff7edb",
+        "bg": "#262335",
+        "deep": "#171520",
+        "raised": "#373545",
+        "fg": "#ffffff",
+        "wall": "/assets/themes/synthwave-84/wall-dark.webp",
+        "desktop": "/assets/themes/synthwave-84/desktop-dark.webp"
       }
     }
   },

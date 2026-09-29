@@ -7,12 +7,12 @@
 // never disagree with the page tokens.
 //
 // The look -- which of the four shipped wallpapers the hero renders -- is
-// still ours. A stored choice beats the default; the default is silk.
+// still ours. A stored choice beats the default; the default is nebula.
 import { LOOK_NAMES } from '../data/looks';
 import { store } from './store';
 
 export type Theme = 'dark' | 'light';
-/** an index into LOOK_NAMES (src/data/looks.ts): 0 silk .. 7 beacon */
+/** an index into LOOK_NAMES (src/data/looks.ts): 0 nebula .. 7 beacon */
 export type Look = number;
 
 const LOOK_KEY = 'pulsar-look';
@@ -106,7 +106,7 @@ export function initTheme(): void {
     });
   }
 
-  // "Back to Pulsar" puts the sky back to its own look too: Silk.
+  // "Back to Pulsar" puts the sky back to its own look too: Nebula.
   document.addEventListener('pulsar:reset', () => setLook(0));
 
   // arc-theme-toggle writes data-theme; this is how the shader hears about it.
