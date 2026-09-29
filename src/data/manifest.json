@@ -1,7 +1,7 @@
 {
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
-  "release": "1.0.0",
+  "release": "26.9.1",
   "version": "44.20260929.0",
   "base": "fedora-silverblue:44",
   "built": "2026-09-29T02:51:31Z",
