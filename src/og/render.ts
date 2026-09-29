@@ -19,6 +19,7 @@ import { SITE as SITE_URL } from '../data/site';
 
 const SITE_HOST = new URL(SITE_URL).host;
 import { THEMES, variant } from '../data/themes';
+import { unversioned } from '../data/versioned';
 import { buildDate, version, type Card, type Line } from './cards';
 
 export const W = 1200;
@@ -98,7 +99,7 @@ async function desktopShot(slug: string, v: 'dark' | 'light', width: number): Pr
   const src = variant(theme, v).desktop;
   if (!src) throw new Error(`og: theme "${slug}" has no ${v} desktop screenshot`);
   // "/assets/themes/<slug>/desktop-dark.webp" is staged from assets-static.
-  const file = join(SITE, 'assets-static', src.replace(/^\/assets\//, ''));
+  const file = join(SITE, 'assets-static', unversioned(src).replace(/^\/assets\//, ''));
   const jpeg = await sharp(asset(file))
     .resize({ width: width * 2 })
     .jpeg({ quality: 82, mozjpeg: true })

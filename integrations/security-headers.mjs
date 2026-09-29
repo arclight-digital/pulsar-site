@@ -13,6 +13,11 @@
 // style attributes, which a hash cannot cover. Nothing on this site takes
 // user input, so the script and connect rules are the ones that matter.
 //
+// It also sets how long browsers and Cloudflare's edge keep each kind of file
+// (CACHE below). Anything unlisted -- the pages, robots.txt, the sitemaps --
+// keeps Cloudflare's default, public, max-age=0, must-revalidate: always
+// checked, a 304 when unchanged, so a deploy is live at once.
+//
 // Run after arc-dsd, which rewrites the HTML this reads.
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile } from 'node:fs/promises';
@@ -28,6 +33,32 @@ const runs = (attrs) => {
   const type = attrs.match(/\btype\s*=\s*["']?([^"'\s>]+)/i)?.[1]?.toLowerCase();
   return !type || type === 'module' || type === 'text/javascript' || type === 'application/javascript';
 };
+
+const YEAR = 'public, max-age=31536000, immutable';
+// A day, then a week more served from cache while it is re-checked behind
+// the visitor: files whose URLs never change, so a replaced one must still
+// arrive, just not on every page view.
+const DAY = 'public, max-age=86400, stale-while-revalidate=604800';
+// Most specific last. Cloudflare merges every rule that matches a path, and
+// two Cache-Control values would be joined into one contradictory header, so
+// a narrower rule detaches the broader one's first ("! Cache-Control";
+// checked in wrangler dev).
+const CACHE = [
+  // content-hashed names: Vite's bundles, arc-dsd's stylesheets
+  ['/_astro/*', YEAR],
+  ['/_arc/*', YEAR],
+  // brand marks, favicons, fonts, the hero's stills: fixed names the CSS and
+  // the preloads must agree on, so they are not versioned
+  ['/assets/*', DAY],
+  // the theme showcase's pictures, ~20 MB: every URL carries ?v=<content
+  // hash> (src/data/versioned.ts), so a changed picture is a new URL
+  ['/assets/themes/*', YEAR, true],
+  // share cards: re-rendered each build under the same absolute URL, which
+  // outlives the deploy in every card that cites it
+  ['/og/*', DAY],
+  ['/og.jpg', DAY],
+  ['/favicon.ico', DAY],
+];
 
 // Cloudflare ignores a _headers line longer than this.
 const MAX_LINE = 2000;
@@ -85,7 +116,16 @@ export default function securityHeaders() {
           '  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()',
           '  X-Frame-Options: DENY',
           '  Cross-Origin-Opener-Policy: same-origin',
+          // .dev is on browsers' HSTS preload list already; this says so to
+          // everything else that checks (scanners, older clients)
+          '  Strict-Transport-Security: max-age=63072000; includeSubDomains',
           '',
+          ...CACHE.flatMap(([path, value, detach]) => [
+            path,
+            ...(detach ? ['  ! Cache-Control'] : []),
+            `  Cache-Control: ${value}`,
+            '',
+          ]),
         ];
         const long = headers.find((l) => l.length > MAX_LINE);
         if (long) throw new Error(`security-headers: a line is ${long.length} characters; Cloudflare drops lines over ${MAX_LINE}`);
