@@ -10,6 +10,7 @@ import Hero from './Hero.astro';
 import ThemeShowcase from './ThemeShowcase.astro';
 import Base from '../layouts/Base.astro';
 import { version } from '../data/build';
+import { shotSrcset } from '../data/shots';
 import { THEMES, label, variant } from '../data/themes';
 
 const DESCRIPTION =
@@ -72,7 +73,10 @@ const MODES = [
         </div>
         <figure class="desk">
           <img
+            data-zoom
             src={DESKTOP}
+            srcset={DESKTOP && shotSrcset(DESKTOP)}
+            sizes="(max-width: 56rem) 100vw, 44rem"
             alt={`The Pulsar desktop in the ${label(HOLO)} theme: GNOME with the top bar, a terminal and the wallpaper.`}
             width="1600"
             height="1000"

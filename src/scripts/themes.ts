@@ -6,6 +6,7 @@
 // document. Everything that picks dispatches it and everything that shows
 // listens, so the picker, the tiles and the hero cannot drift. The choice is
 // remembered per visitor (sitetheme.ts); a reset is Pulsar again.
+import { shotSrcset } from '../data/shots';
 import { applySiteTheme, storedTheme } from './sitetheme';
 
 type Variant = { accent: string; desktop?: string; wall?: string };
@@ -43,6 +44,9 @@ function preview(detail: ThemeDetail) {
     if (!src || img.getAttribute('src') === src) return;
     img.dataset.loading = '';
     img.onload = () => delete img.dataset.loading;
+    // the 2x copy exists for desktop shots only; a wallpaper stand-in has none
+    if (v.desktop) img.srcset = shotSrcset(v.desktop);
+    else img.removeAttribute('srcset');
     img.src = src;
     img.alt = alt;
   });

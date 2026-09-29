@@ -208,3 +208,12 @@ arc-page-header {
   max-width: 48px;
   margin: calc(-1 * var(--space-sm)) 0 var(--space-lg);
 }
+
+/* A screenshot that opens the zoom (src/scripts/zoom.ts). */
+img[data-zoom] {
+  cursor: zoom-in;
+}
+img[data-zoom]:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}

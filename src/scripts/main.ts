@@ -10,6 +10,7 @@ import { initHeroThemes } from './herothemes';
 import { initThemes } from './themes';
 import { initWallpaper } from './wallpaper';
 import { initWidont } from './widont';
+import { initZoom } from './zoom';
 
 initWidont();
 initTheme();
@@ -18,6 +19,7 @@ initSky();
 initThemes();
 initWallpaper();
 initHeroThemes();
+initZoom();
 
 // Last, and not awaited: the only thing here that touches the network. It
 // resolves after the page is already usable, and its failure mode is silence.

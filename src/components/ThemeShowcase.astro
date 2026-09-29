@@ -7,6 +7,7 @@
 // Works without JavaScript: the first theme is shown, every tile is still a
 // wallpaper and a name, and the command is in the code block. The script only
 // adds the switching (src/scripts/themes.ts).
+import { shotSrcset } from '../data/shots';
 import { THEMES, label, setCommand, tileAttrs, variant } from '../data/themes';
 
 const first = THEMES[0];
@@ -23,7 +24,10 @@ const first = THEMES[0];
     <div class="shot">
       <img
         data-preview
+        data-zoom
         src={variant(first, 'dark').desktop}
+        srcset={variant(first, 'dark').desktop && shotSrcset(variant(first, 'dark').desktop!)}
+        sizes="(max-width: 80rem) 100vw, 80rem"
         alt={`The Pulsar desktop in the ${label(first)} theme`}
         width="1600"
         height="1000"
