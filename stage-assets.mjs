@@ -17,9 +17,11 @@
 //
 // Runs from `npm run stage`, which `npm run dev` and `npm run build` both
 // depend on. Node only -- Cloudflare's builder has node and nothing else.
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { compress as woff2 } from 'wawoff2';
 
 const SITE = dirname(fileURLToPath(import.meta.url));
 // the OS repo's files, as its last published nightly shipped them
@@ -47,11 +49,6 @@ const FILES = [
   ['assets/brand/png/favicon-16.png', 'favicon-16.png'],
   ['assets/brand/png/favicon-32.png', 'favicon-32.png'],
   ['assets/brand/png/favicon-48.png', 'favicon-48.png'],
-
-  // the two faces the page sets itself in
-  ['assets/fonts/Host_Grotesk/static/HostGrotesk-Regular.ttf', 'HostGrotesk-Regular.ttf'],
-  ['assets/fonts/Host_Grotesk/static/HostGrotesk-Bold.ttf', 'HostGrotesk-Bold.ttf'],
-  ['assets/fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf', 'JetBrainsMono-Regular.ttf'],
 
   // both licenses travel with their fonts -- the OFL requires it, and the two
   // files have the same name at the source, so they are renamed apart here
@@ -143,4 +140,58 @@ await cp(join(SITE, 'assets-static', 'themes'), join(OUT, 'themes'), { recursive
   throw new Error(`cannot stage assets-static/themes: ${cause.message}`, { cause });
 });
 
-console.log(`staged ${FILES.length + 1} assets and the theme showcase into public/assets`);
+// The two faces the page sets itself in, as WOFF2: the OS ships TrueType,
+// which is ~2.7x the bytes over the wire, and every page preloads all three.
+// (src/og/render.ts reads the TrueType files straight from upstream/: Satori
+// cannot read WOFF2.)
+const FONTS = [
+  ['assets/fonts/Host_Grotesk/static/HostGrotesk-Regular.ttf', 'HostGrotesk-Regular.woff2'],
+  ['assets/fonts/Host_Grotesk/static/HostGrotesk-Bold.ttf', 'HostGrotesk-Bold.woff2'],
+  ['assets/fonts/JetBrains_Mono/static/JetBrainsMono-Regular.ttf', 'JetBrainsMono-Regular.woff2'],
+];
+for (const [from, name] of FONTS) {
+  await writeFile(join(OUT, name), await woff2(await readFile(join(REPO, from))));
+}
+
+// /favicon.ico: browsers and crawlers ask for it whatever the <link>s say, and
+// a 404 there is a 404 page. An ICO may hold PNGs as they are, so this is the
+// three drawn sizes in one file, no re-encoding.
+const ICONS = [16, 32, 48];
+const pngs = await Promise.all(ICONS.map((n) => readFile(join(OUT, `favicon-${n}.png`))));
+const head = Buffer.alloc(6 + 16 * pngs.length);
+head.writeUInt16LE(0, 0);
+head.writeUInt16LE(1, 2); // icon
+head.writeUInt16LE(pngs.length, 4);
+let offset = head.length;
+pngs.forEach((png, i) => {
+  const at = 6 + 16 * i;
+  head.writeUInt8(ICONS[i], at); // width (256 would be 0)
+  head.writeUInt8(ICONS[i], at + 1); // height
+  head.writeUInt16LE(1, at + 4); // planes
+  head.writeUInt16LE(32, at + 6); // bits per pixel
+  head.writeUInt32LE(png.length, at + 8);
+  head.writeUInt32LE(offset, at + 12);
+  offset += png.length;
+});
+await writeFile(join(SITE, 'public', 'favicon.ico'), Buffer.concat([head, ...pngs]));
+
+// A version for every theme picture, from its bytes. The showcase's 34
+// wallpapers and desktops (both sizes) are most of the site's weight, and are
+// replaced in place when a theme changes; src/data/themes.ts adds ?v=<this>
+// to each URL, so the headers can let browsers keep them for a year
+// (integrations/security-headers.mjs) and a changed picture is a new URL.
+async function files(dir) {
+  const out = [];
+  for (const e of await readdir(dir, { withFileTypes: true })) {
+    const p = join(dir, e.name);
+    out.push(...(e.isDirectory() ? await files(p) : [p]));
+  }
+  return out;
+}
+const versions = {};
+for (const f of (await files(join(OUT, 'themes'))).sort()) {
+  versions[`/${relative(join(SITE, 'public'), f)}`] = createHash('sha256').update(await readFile(f)).digest('hex').slice(0, 10);
+}
+await writeFile(join(SITE, 'src', 'data', 'asset-versions.json'), JSON.stringify(versions, null, 1) + '\n');
+
+console.log(`staged ${FILES.length + FONTS.length + 1} assets, favicon.ico and the theme showcase (${Object.keys(versions).length} versioned) into public/assets`);

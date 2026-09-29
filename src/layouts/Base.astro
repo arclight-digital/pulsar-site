@@ -209,13 +209,13 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
         </>
       )
     }
-    <link rel="preload" as="font" type="font/ttf" href="/assets/HostGrotesk-Regular.ttf" crossorigin />
-    <link rel="preload" as="font" type="font/ttf" href="/assets/HostGrotesk-Bold.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/HostGrotesk-Regular.woff2" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/HostGrotesk-Bold.woff2" crossorigin />
     {/* The mono face too: every page opens on a command or a code block, and
         found late (through a stylesheet, then a shadow root) it held first
         paint back -- FCP 2.8-2.9 s without this preload, 2.3 s with it, on
         Lighthouse's mobile profile. */}
-    <link rel="preload" as="font" type="font/ttf" href="/assets/JetBrainsMono-Regular.ttf" crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href="/assets/JetBrainsMono-Regular.woff2" crossorigin />
 
     <script is:inline type="application/ld+json" set:html={ldJson} />
 

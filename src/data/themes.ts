@@ -11,6 +11,7 @@
 // either is a full switch. A single-variant theme shows the variant it has
 // whichever mode the page is in.
 import raw from './themes.json';
+import { hasVersion, versioned } from './versioned';
 
 export type Variant = {
   swatch: string[];
@@ -33,7 +34,19 @@ export type Theme = {
   variants: { dark?: Variant; light?: Variant };
 };
 
-export const THEMES = raw as Theme[];
+// Every picture URL carries its content version (src/data/versioned.ts). A
+// picture themes.json names but the build does not have fails the build: it
+// would be a broken tile, and an unversioned URL under a year-long cache.
+const pictures = (v: Variant): Variant => {
+  for (const url of [v.wall, v.desktop]) {
+    if (url && !hasVersion(url) && import.meta.env.SSR) throw new Error(`themes: no staged file for ${url}`);
+  }
+  return { ...v, wall: v.wall && versioned(v.wall), desktop: v.desktop && versioned(v.desktop) };
+};
+export const THEMES = (raw as Theme[]).map((t) => ({
+  ...t,
+  variants: Object.fromEntries(Object.entries(t.variants).map(([m, v]) => [m, pictures(v)])),
+}));
 
 // Display names that differ from the definition's, for the pairs whose
 // variants carry their own names upstream.

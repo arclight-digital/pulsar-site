@@ -8,6 +8,8 @@ node_modules/
 # Nothing here is a source file -- edit assets-static/, or the OS repo's
 # assets/ (upstream/ is its copy, refreshed by the nightly).
 public/assets/
+public/favicon.ico
+src/data/asset-versions.json
 
 # Editor state.
 .idea/
