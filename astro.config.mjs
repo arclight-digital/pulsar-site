@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import sitemap from '@astrojs/sitemap';
+import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import arcDsd from './integrations/arc-dsd.mjs';
 import securityHeaders from './integrations/security-headers.mjs';
 import { SITE } from './src/data/site.ts';
@@ -67,7 +67,7 @@ export default defineConfig({
       serialize: (item) => {
         const path = new URL(item.url).pathname;
         const nightly = path === '/' || path === '/docs/changelog';
-        item.changefreq = nightly ? 'daily' : 'weekly';
+        item.changefreq = nightly ? ChangeFreqEnum.DAILY : ChangeFreqEnum.WEEKLY;
         if (nightly && NIGHTLY) item.lastmod = NIGHTLY;
         item.priority = path === '/' ? 1 : path === '/docs/install' ? 0.9 : 0.7;
         return item;

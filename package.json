@@ -16,16 +16,16 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@resvg/resvg-js": "^2.6.2",
-    "astro": "^7.2.0",
-    "satori": "^0.29.0",
-    "sharp": "^0.35.3",
+    "astro": "^7.3.5",
+    "satori": "^0.33.5",
+    "sharp": "^0.35.5",
     "typescript": "^6.0.3"
   },
   "allowScripts": {
     "esbuild@0.28.1": true
   },
   "dependencies": {
-    "@arclux/arc-ui": "^4.7.0",
+    "@arclux/arc-ui": "^4.7.1",
     "@arclux/arc-ui-icons": "^4.2.0",
     "@astrojs/sitemap": "^3.7.4",
     "@lit-labs/ssr": "^4.1.0",
