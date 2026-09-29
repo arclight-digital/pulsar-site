@@ -76,6 +76,12 @@ const TOC = [
     The NVIDIA driver is signed with Pulsar’s key, so Secure&nbsp;Boot stays on. Enroll the key
     once, through MokManager on the next boot. The standard image doesn’t need this.
   </p>
+  <p>
+    Two ways to get there. Enroll it right away with the steps below, and the NVIDIA driver loads
+    from the next boot. Or just log in: until the key is enrolled the desktop runs on the
+    open-source driver, and a moment after you log in GNOME Software offers to enroll the key
+    for you. Follow its prompts, restart, answer MokManager as in step 2, and you’re on NVIDIA.
+  </p>
   <ol class="steps">
     <li>
       <h3>Import the certificate</h3>

@@ -11,18 +11,20 @@ const DOWNLOADS = [
   {
     key: 'standard',
     icon: 'laptop',
-    name: 'Pulsar',
-    who: 'For most computers: laptops and desktops with Intel or AMD graphics.',
+    name: 'Intel or AMD',
+    who: 'Most laptops and desktops.',
+    button: 'Download for Intel or AMD',
     file: ISOS.vanilla,
     note: null,
   },
   {
     key: 'nvidia',
     icon: 'graphics-card',
-    name: 'Pulsar for NVIDIA',
-    who: 'For NVIDIA GeForce RTX. The driver is built in, ready for games and local models.',
+    name: 'NVIDIA GeForce',
+    who: 'RTX cards, with the driver built in.',
+    button: 'Download for NVIDIA',
     file: ISOS.nvidia,
-    note: 'Secure Boot on? You enroll a key once after installing.',
+    note: 'With Secure Boot on, you’ll enroll one key after installing.',
   },
 ];
 
@@ -48,35 +50,33 @@ const VERIFY = [
 <section class="chapter install" id="install" aria-labelledby="install-h">
   <div class="stage" data-stage-wall>
     <div class="stage-head">
-      <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Get Pulsar</h2>
-      <p class="stage-sub">Free and open source. One download and a USB stick.</p>
+      <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Download Pulsar</h2>
+      <p class="stage-sub">
+        Pulsar is free, today and always, and every line of it is open source. Choose the download
+        that matches your graphics, write it to any USB stick of 8&nbsp;GB or more, and you’re one
+        restart away from your new desktop.
+      </p>
     </div>
-    <div class="downloads">
+    <div class="doors">
       {
         DOWNLOADS.map((d) => (
-          <div class="dl">
-            <span class="dl-icon" aria-hidden="true"><arc-icon name={d.icon} size="lg"></arc-icon></span>
-            <h3 class="dl-name">{d.name}</h3>
-            <p class="dl-who">{d.who}</p>
+          <div class="door">
+            <h3 class="door-name"><arc-icon name={d.icon} size="xl" aria-hidden="true"></arc-icon>{d.name}</h3>
+            <p class="door-who">{d.who}</p>
             {d.note && (
-              <p class="dl-note">
+              <p class="door-note">
                 {d.note} <a href="#mok">How</a>
               </p>
             )}
-            <div class="dl-act">
-              <arc-button href={`${ISO_BASE}/${d.file}`} variant={d.key === 'standard' ? 'primary' : 'secondary'} size="lg">
-                Download ISO
+            <div class="door-go">
+              <arc-button href={`${ISO_BASE}/${d.file}`} variant="primary" size="lg">
+                {d.button}
               </arc-button>
-              <span class="dl-meta">
+              <p class="door-file">
                 <span class="mono">{d.file}</span>
-                <span>x86_64 · about 5–6 GB · rebuilt weekly</span>
-              </span>
+                <span>5–6 GB · rebuilt weekly · verify with <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>, <a href={`${ISO_BASE}/${d.file}.sha256.sig`}>.sig</a>, <a href={`${ISO_BASE}/${d.file}.json`}>.json</a></span>
+              </p>
             </div>
-            <p class="dl-sums">
-              <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>
-              <a href={`${ISO_BASE}/${d.file}.sha256.sig`}>.sha256.sig</a>
-              <a href={`${ISO_BASE}/${d.file}.json`}>.json</a>
-            </p>
           </div>
         ))
       }
@@ -97,39 +97,108 @@ const VERIFY = [
     }
   </ol>
 
-  <a class="from" href="/docs/coming-from">
-    <arc-icon name="arrows-left-right" size="md" aria-hidden="true"></arc-icon>
-    <span>
-      <strong>Coming from Windows or a Mac?</strong>
-      <span class="from-d">Check your computer can run it, make the stick, and keep Windows alongside.</span>
-    </span>
-    <span class="from-go" aria-hidden="true">→</span>
-  </a>
-
-  <div class="folds">
-    <details class="fold" id="mok">
-      <summary>NVIDIA with Secure Boot: enroll the driver’s key, once</summary>
-      <div class="fold-body">
-        <p>
-          The driver is signed with Pulsar’s key so Secure Boot can stay on. Run this, choose a
-          one-time password, and restart. A blue screen asks for <arc-kbd>Enroll MOK</arc-kbd> and
-          that password, once.
-        </p>
-        <arc-code-block class="theme-fixed-dark" language="bash" filename="enroll the key" code={ENROL}></arc-code-block>
-        <p class="hint"><a href="/docs/install#secure-boot">Every screen, step by step →</a></p>
-      </div>
-    </details>
-    <details class="fold">
-      <summary>Check the download is really ours</summary>
-      <div class="fold-body">
-        <p>
-          Each ISO’s checksum is signed with Pulsar’s release key. This checks the signature, then
-          the ISO against the checksum.
-        </p>
-        <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
-      </div>
-    </details>
-  </div>
+  <section class="faq" aria-labelledby="faq-h">
+    <div class="faq-head">
+      <h3 id="faq-h">Questions</h3>
+      <p>Before you install, and the two things only some computers need.</p>
+      <a class="from" href="/docs/coming-from">
+        <arc-icon name="arrows-left-right" size="md" aria-hidden="true"></arc-icon>
+        <span>
+          <strong>Coming from Windows or a Mac?</strong>
+          <span class="from-d">Check your computer can run it, make the stick, and keep Windows alongside.</span>
+        </span>
+        <span class="from-go" aria-hidden="true">→</span>
+      </a>
+    </div>
+    <div class="folds">
+      <details class="fold">
+        <summary>Is it really free?</summary>
+        <div class="fold-body">
+          <p>
+            Yes, always. No account, no subscription, no trial, and nothing held back for a paid
+            version. Pulsar is open source, and every nightly build is public.
+          </p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>Can I keep Windows?</summary>
+        <div class="fold-body">
+          <p>
+            Yes. Shrink Windows to make room, install Pulsar beside it, and choose one each time you
+            turn the computer on.
+          </p>
+          <p class="hint"><a href="/docs/coming-from#dual-boot">Making room, step by step →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>How do updates work?</summary>
+        <div class="fold-body">
+          <p>
+            A new build is made every night, downloads in the background, and is used from your next
+            restart. Nothing restarts on its own, and the build you had stays in the boot menu.
+          </p>
+          <p class="hint"><a href="/docs/updates">How updates work →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>What if an update goes wrong?</summary>
+        <div class="fold-body">
+          <p>
+            Choose the previous build in the boot menu, or run <code>sudo pulsar rollback</code>. If a
+            new build fails its health checks while it starts, Pulsar goes back to the last good one
+            by itself. Your files and apps stay as they are either way.
+          </p>
+          <p class="hint"><a href="/docs/updates#rollback">Rolling back →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>Will my games run?</summary>
+        <div class="fold-body">
+          <p>
+            Most will. Steam and Heroic come with it and finish installing in the background after your
+            first login, with Proton, gamemode, and on the NVIDIA image the driver for Flatpak games
+            already set up.
+          </p>
+          <p>
+            One honest exception: some online games use anti-cheat that refuses to run on Linux at
+            all. That is the publisher’s choice, and no Linux system can get around it. Check the games
+            you play on <a href="https://areweanticheatyet.com">Are We Anti-Cheat Yet?</a> and
+            <a href="https://www.protondb.com">ProtonDB</a> before you switch.
+          </p>
+          <p class="hint"><a href="/docs/gaming">What’s set up for games →</a></p>
+        </div>
+      </details>
+      <details class="fold" id="mok">
+        <summary>I have NVIDIA and Secure Boot on. What do I do?</summary>
+        <div class="fold-body">
+          <p>
+            Enroll Pulsar’s driver key once, and Secure Boot stays on. Either way works:
+          </p>
+          <p>
+            <strong>Right away.</strong> Run this, choose a one-time password, and restart. A blue screen
+            asks you to <arc-kbd>Enroll MOK</arc-kbd> and for that password. The NVIDIA driver loads from
+            then on.
+          </p>
+          <arc-code-block class="theme-fixed-dark" language="bash" filename="enroll the key" code={ENROL}></arc-code-block>
+          <p>
+            <strong>Or just log in.</strong> The desktop starts on the open-source driver, and a moment later
+            GNOME Software offers to enroll the key. Follow its prompts, restart, and you’re on NVIDIA.
+          </p>
+          <p class="hint"><a href="/docs/install#secure-boot">Every screen, step by step →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>How do I check the download is really yours?</summary>
+        <div class="fold-body">
+          <p>
+            Each ISO’s checksum is signed with Pulsar’s release key. This checks the signature, then
+            the ISO against the checksum.
+          </p>
+          <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
+        </div>
+      </details>
+    </div>
+  </section>
 
   <div class="switch">
     <div class="switch-copy">
@@ -156,16 +225,17 @@ const VERIFY = [
   /* ---- the stage: the theme's wallpaper behind the two downloads ------ */
   /* The hero's live sky, as a still (--stage-wall: src/scripts/sky.ts
      snapshots the canvas whenever the picture changes -- the site theme's
-     recolor of the look on show), under a wash in the theme's colors: its
-     accent from the top corner, then its ground deepening toward the
-     downloads so every line of text keeps its contrast. Nebula's still until
-     then, and with no WebGL. */
+     recolor of the look on show), at full strength: it is the point of the
+     stage. Nebula's still until then, and with no WebGL.
+
+     The picture is dimmed a little (filter) and tinted toward the theme's
+     panel color (::after); the rest of the contrast is in the text colors. */
   .stage {
     position: relative;
     isolation: isolate;
     overflow: hidden;
     margin-bottom: var(--space-2xl);
-    padding: var(--space-3xl) var(--space-2xl) var(--space-2xl);
+    padding: var(--space-2xl);
     border-radius: var(--radius-xl);
     border: 1px solid var(--border-subtle);
     background: var(--bg-deep);
@@ -179,71 +249,51 @@ const VERIFY = [
   }
   .stage::before {
     z-index: -2;
+    /* the picture itself, a little softer: its brightest lines (Tide's
+       caustics, Nebula's filaments) stop fighting the text. Brightness only: contrast() would lift the black ground
+       to a gray the page does not have, and dull every hue with it. */
+    filter: brightness(var(--stage-dim, 0.85));
     background: var(--stage-wall, url('/assets/nebula-still-dark.jpg')) center / cover;
   }
   :global(:root[data-theme='light']) .stage::before {
     background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
+    /* on a light page, softened toward the paper instead (white stays
+       white: 0.91 x 1.1) */
+    filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
   }
   @media (prefers-color-scheme: light) {
     :global(:root[data-theme='auto']) .stage::before {
       background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
+      filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
     }
   }
-  /* On a dark page the sky runs brighter than the theme's ground (a pale
-     satin cloth, a lit nebula), so the picture itself is dimmed there before
-     the wash: the wash can stay light enough to show it, and the text keeps
-     WCAG contrast over every theme's preferred look (measured, both modes). */
-  :global(:root[data-theme='dark']) .stage::before {
-    filter: brightness(0.8);
-  }
-  @media (prefers-color-scheme: dark) {
-    :global(:root[data-theme='auto']) .stage::before,
-    :global(:root:not([data-theme])) .stage::before {
-      filter: brightness(0.8);
-    }
-  }
-  /* and the mirror on a light page: its darker folds lifted under dark text */
-  :global(:root[data-theme='light']) .stage::before {
-    filter: none;
-  }
-  @media (prefers-color-scheme: light) {
-    :global(:root[data-theme='auto']) .stage::before,
-    :global(:root:not([data-theme])) .stage::before {
-      filter: none;
-    }
-  }
+  /* A tint in the theme's panel color, laid flat over the picture: it pulls
+     the bright folds and the black ground toward the panel's tone (flatter,
+     and in the theme's color) while the picture still reads through. */
   .stage::after {
     z-index: -1;
-    background:
-      /* a soft pool of ground behind the heading and its line: the sky keeps
-         its detail elsewhere, and a muted theme (Solarized) still reads */
-      radial-gradient(55% 45% at 25% 22%, color-mix(in oklab, var(--bg-base) 68%, transparent), transparent 70%),
-      radial-gradient(120% 90% at 0% 0%, color-mix(in oklab, var(--accent-primary) 10%, transparent), transparent 65%),
-      linear-gradient(180deg, color-mix(in oklab, var(--bg-base) 83%, transparent), color-mix(in oklab, var(--bg-base) 90%, transparent) 35%, color-mix(in oklab, var(--bg-base) 93%, transparent));
+    background: var(--bg-elevated);
+    /* per theme: data/stage.ts */
+    opacity: var(--stage-tint, 0.4);
   }
-  /* Over the sky the stage keeps three tones -- primary for the headings,
-     then two steps toward the theme's secondary gray -- each lifted just
-     enough to hold 4.5:1 on the brightest themes' skies. */
-  .stage .dl-who,
-  .stage .dl-note {
-    color: color-mix(in oklab, var(--text-primary) 70%, var(--text-secondary));
-  }
-  .stage .dl-meta,
-  .stage .dl-meta .mono,
-  .stage .dl-sums a {
-    color: color-mix(in oklab, var(--text-primary) 45%, var(--text-secondary));
-  }
+  /* ---- what is on it: a heading row, then two doors ---------------------
+     The heading, with its line beneath it; below, the two downloads
+     split the panel in equal halves -- one per kind of graphics -- each
+     with its name, one line, a button that says which it is, and the file. */
   .stage-head {
-    margin-bottom: var(--space-2xl);
+    display: grid;
+    gap: var(--space-md);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid color-mix(in oklab, var(--text-primary) 18%, transparent);
   }
   .stage h2 {
     display: flex;
     align-items: center;
     gap: 0.3em;
-    font-size: clamp(2.4rem, 5.2vw, 4.25rem);
-    line-height: 1.02;
+    font-size: clamp(2.5rem, 5vw, 4.25rem);
+    line-height: 1;
     letter-spacing: -0.035em;
-    margin: 0 0 var(--space-sm);
+    margin: 0;
   }
   /* a tinted circle, as the agents' can / can't marks, sized to the heading */
   .stage h2 .mark {
@@ -256,34 +306,89 @@ const VERIFY = [
     color: var(--accent-primary);
     background: color-mix(in oklab, var(--accent-primary) 16%, transparent);
   }
+  .door-name arc-icon {
+    flex: none;
+    color: var(--accent-primary);
+  }
   .stage-sub {
     margin: 0;
+    max-width: 58ch;
     font-size: var(--text-lg);
-    /* primary, not secondary: over a theme's wallpaper the secondary gray
-       ran under 4.5:1 (Catppuccin light) */
     color: var(--text-primary);
   }
-  .downloads {
+  .doors {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    border-top: 1px solid color-mix(in oklab, var(--text-primary) 18%, transparent);
   }
-  .dl {
+  .door {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--space-sm);
-    padding: var(--space-xl) var(--space-xl) 0 0;
+    gap: var(--space-xs);
+    padding: var(--space-2xl) var(--space-2xl) 0 0;
+    min-width: 0;
   }
-  .dl + .dl {
-    padding-left: var(--space-xl);
+  .door + .door {
+    padding-left: var(--space-2xl);
+    padding-right: 0;
     border-left: 1px solid color-mix(in oklab, var(--text-primary) 18%, transparent);
   }
-  .dl-name {
+  /* the name leads with its hardware's icon, in the accent, sized to it */
+  .door-name {
+    display: flex;
+    align-items: center;
+    gap: 0.35em;
     font-size: clamp(1.75rem, 3.2vw, 2.5rem);
     line-height: 1.05;
     letter-spacing: -0.02em;
     margin: 0;
+  }
+  .door-who,
+  .door-note {
+    margin: 0;
+  }
+  .door-note {
+    font-size: var(--text-sm);
+  }
+  /* to each door's foot, so the two buttons line up */
+  .door-go {
+    margin-top: auto;
+    padding-top: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+  .door-go arc-button {
+    display: inline-block;
+  }
+  .door-file {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    font-size: var(--text-xs);
+    line-height: 1.6;
+  }
+  .door-file .mono {
+    overflow-wrap: anywhere;
+  }
+  .door-file a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+  .door-file a:hover {
+    color: var(--accent-primary);
+  }
+  /* three tones over the picture: primary for the headings, then two steps
+     toward the theme's secondary gray */
+  .stage .door-who,
+  .stage .door-note {
+    color: color-mix(in oklab, var(--text-primary) 70%, var(--text-secondary));
+  }
+  .stage .door-file {
+    color: color-mix(in oklab, var(--text-primary) 45%, var(--text-secondary));
   }
 
   /* the path: three numbered steps -- big numerals, no line and no icon
@@ -322,72 +427,32 @@ const VERIFY = [
     margin: 0;
     color: var(--text-secondary);
   }
-  .dl-icon {
+  /* ---- questions: a section of its own, heading beside the list -------- */
+  .faq {
     display: grid;
-    place-items: center;
-    width: 3rem;
-    height: 3rem;
-    margin-bottom: var(--space-xs);
-    border-radius: var(--radius-md);
-    border: 1px solid color-mix(in oklab, var(--text-primary) 22%, transparent);
-    color: var(--text-primary);
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: var(--space-2xl);
+    align-items: start;
+    margin: var(--space-3xl) 0;
+    padding-top: var(--space-2xl);
+    border-top: 1px solid var(--border-default);
   }
-  .dl-who {
-    margin: 0;
-    max-width: 40ch;
+  .faq-head h3 {
+    font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 var(--space-sm);
+  }
+  .faq-head > p {
+    margin: 0 0 var(--space-lg);
     color: var(--text-secondary);
   }
-  .dl-note {
-    margin: 0;
-    font-size: var(--text-sm);
-    color: var(--text-muted);
-  }
-  .dl-act {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-md) var(--space-lg);
-    /* to the panel's foot, so both buttons line up whatever sits above */
-    margin-top: auto;
-    padding-top: var(--space-sm);
-  }
-  .dl-act arc-button {
-    display: inline-block;
-  }
-  .dl-meta {
-    display: grid;
-    gap: 2px;
-    font-size: var(--text-xs);
-    color: var(--text-muted);
-    min-width: 0;
-  }
-  .dl-meta .mono {
-    color: var(--text-secondary);
-    overflow-wrap: anywhere;
-  }
-  .dl-sums {
-    display: flex;
-    gap: var(--space-md);
-    margin: 0;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-  }
-  .dl-sums a {
-    color: var(--text-muted);
-    text-decoration: none;
-  }
-  .dl-sums a:hover {
-    color: var(--accent-primary);
-  }
-
-  /* ---- coming from another OS: one wide row that is a link ------------- */
   .from {
     display: grid;
     grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
     gap: var(--space-md);
-    margin: var(--space-2xl) 0 var(--space-lg);
-    padding: var(--space-lg) 0;
+    padding: var(--space-md) 0;
     border-block: 1px solid var(--border-subtle);
     color: var(--text-primary);
     text-decoration: none;
@@ -399,7 +464,6 @@ const VERIFY = [
     display: block;
     font-family: var(--font-display);
     font-weight: var(--font-display-weight);
-    font-size: var(--text-lg);
   }
   .from-d {
     color: var(--text-secondary);
@@ -414,9 +478,9 @@ const VERIFY = [
     transform: translateX(4px);
   }
 
-  /* ---- the two folds: plain ruled rows --------------------------------- */
+  /* ---- the questions: plain ruled rows --------------------------------- */
   .folds {
-    margin-bottom: var(--space-2xl);
+    border-top: 1px solid var(--border-subtle);
   }
   .fold {
     border-bottom: 1px solid var(--border-subtle);
@@ -428,7 +492,8 @@ const VERIFY = [
     padding: var(--space-md) 0;
     cursor: pointer;
     list-style: none;
-    color: var(--text-secondary);
+    font-size: var(--text-lg);
+    color: var(--text-primary);
   }
   .fold summary::-webkit-details-marker {
     display: none;
@@ -443,7 +508,7 @@ const VERIFY = [
     content: '−';
   }
   .fold summary:hover {
-    color: var(--text-primary);
+    color: var(--accent-primary);
   }
   .fold-body {
     max-width: 62ch;
@@ -525,20 +590,27 @@ const VERIFY = [
 
   @media (max-width: 56rem) {
     .stage {
-      padding: var(--space-2xl) var(--space-lg) var(--space-xl);
+      padding: var(--space-xl) var(--space-lg);
     }
-    .downloads,
+    .stage-head,
+    .doors,
     .switch,
+    .faq,
     .path {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-lg);
     }
-    .dl {
-      padding-right: 0;
+    .doors {
+      gap: 0;
     }
-    .dl + .dl {
-      padding-left: 0;
+    .door,
+    .door + .door {
+      padding: var(--space-xl) 0 0;
       border-left: 0;
+    }
+    .door + .door {
+      margin-top: var(--space-xl);
+      border-top: 1px solid color-mix(in oklab, var(--text-primary) 18%, transparent);
     }
   }
 </style>

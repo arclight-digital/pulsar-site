@@ -273,29 +273,39 @@ export function initSky(): void {
   };
 
   // ---- the install section's stage wears this sky too ----------------------
-  // A still of the live canvas (preserveDrawingBuffer keeps the last frame),
-  // taken a moment after the picture settles. Its CSS falls back to Nebula's
-  // still while there is none: no WebGL, no JS.
+  // A still of the live canvas (preserveDrawingBuffer keeps the last frame).
+  // Taken twice per change: on the next frame, so the stage follows a theme or
+  // look at once, and again once the picture has settled (Pulsar's light/dark
+  // eases inside the shader over ~0.9 s, and the first still would catch it
+  // halfway). Its CSS falls back to Nebula's still while there is none: no
+  // WebGL, no JS.
   let stageURL = '';
   let stageTimer = 0;
+  let stageFrame = 0;
   const stages = () => document.querySelectorAll<HTMLElement>('[data-stage-wall]');
+  const takeStage = (): void => {
+    if (lost || !stages().length) return;
+    if (!running) draw(lastSeconds);
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        for (const el of stages()) el.style.setProperty('--stage-wall', `url("${url}")`);
+        if (stageURL) URL.revokeObjectURL(stageURL);
+        stageURL = url;
+      },
+      'image/jpeg',
+      0.86,
+    );
+  };
   const snapshotStage = (): void => {
+    cancelAnimationFrame(stageFrame);
     clearTimeout(stageTimer);
+    // two frames: the one that draws the new picture, then the one after it
+    stageFrame = requestAnimationFrame(() => (stageFrame = requestAnimationFrame(takeStage)));
     stageTimer = window.setTimeout(() => {
       thumbs();
-      if (lost || !stages().length) return;
-      if (!running) draw(lastSeconds);
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) return;
-          const url = URL.createObjectURL(blob);
-          for (const el of stages()) el.style.setProperty('--stage-wall', `url("${url}")`);
-          if (stageURL) URL.revokeObjectURL(stageURL);
-          stageURL = url;
-        },
-        'image/jpeg',
-        0.86,
-      );
+      takeStage();
     }, 900);
   };
 

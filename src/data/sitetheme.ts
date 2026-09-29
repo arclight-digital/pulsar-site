@@ -12,6 +12,7 @@
 // Selectors are prefixed `html:root` so they outrank both tokens.css and
 // ARC's [data-theme] rules whatever order the stylesheets land in -- the
 // pre-paint script inserts this before the stylesheets load.
+import { stageVars } from './stage';
 import type { Theme, Variant } from './themes';
 
 type RGB = [number, number, number];
@@ -145,8 +146,9 @@ function fixedDark(v: Variant): string {
 export function cssFor(t: Theme): string {
   const d = t.variants.dark;
   const l = t.variants.light;
-  const dark = tokens((d ?? l)!, !d);
-  const light = tokens((l ?? d)!, !!l);
+  // plus the Get Pulsar stage's dim and tint for this theme (data/stage.ts)
+  const dark = [tokens((d ?? l)!, !d), ...stageVars(t.slug, d ? 'dark' : 'light')].join('; ');
+  const light = [tokens((l ?? d)!, !!l), ...stageVars(t.slug, l ? 'light' : 'dark')].join('; ');
   const rules = [
     `html:root[data-theme='dark'] { ${dark} }`,
     `html:root[data-theme='light'] { ${light} }`,
