@@ -119,13 +119,14 @@ const MODES = [
           </figcaption>
           <ul>
             {
-              MODES.map((m) => {
+              MODES.map((m, i) => {
                 const k = m.res[0] / SCREEN;
                 return (
-                  <li class={m.native ? 'native' : undefined} style={`--k:${k};--slot:${Math.max(1, k)}`}>
+                  <li class={m.native ? 'native' : k < 1 ? 'small' : 'big'} style={`--k:${k};--slot:${Math.max(1, k)};--i:${i}`}>
                     <div class="slot" aria-hidden="true">
                       <span class="render" />
                       <span class="screen" />
+                      {!m.native && <arc-icon class="fit" name={k < 1 ? 'arrows-out' : 'arrows-in'} size="md"></arc-icon>}
                     </div>
                     <div class="m-x">
                       <p class="m-what">{m.what}</p>
@@ -170,6 +171,13 @@ const MODES = [
     </arc-container>
   </main>
 </Base>
+
+<script>
+  // the gamescale diagram moves only while it is on screen
+  const modes = document.querySelector('.modes');
+  if (modes)
+    new IntersectionObserver(([e]) => modes.classList.toggle('is-live', e.isIntersecting), { threshold: 0.2 }).observe(modes);
+</script>
 
 <style>
   /* ---- intro: a statement and a short list beside the thing itself ---- */
@@ -329,12 +337,105 @@ const MODES = [
     background: color-mix(in oklab, var(--text-primary) 16%, transparent);
     border: 1px solid color-mix(in oklab, var(--text-primary) 30%, transparent);
   }
+  /* The rows act out their words, on a slow loop while the diagram is on
+     screen (.is-live, below): each render eases from its own size to the
+     screen's and back -- the small one stretched up and softening, the big
+     one shrunk down into it. gamescale's never moves: it already is the
+     screen, and pulses. Still with reduced motion. */
+  /* One thing moves at a time, in a 9s round: the small render stretches
+     out and back, then the big one shrinks in and back, then gamescale's
+     answers with one success pulse (its fill brightens and glows, and a
+     ring of the accent leaves its edge), then a beat of stillness. */
+  .modes.is-live .small .render {
+    animation: pulsar-stretch 9s var(--ease-out-expo) infinite;
+  }
+  .modes.is-live .big .render {
+    animation: pulsar-shrink 9s var(--ease-out-expo) infinite;
+  }
+  .modes.is-live .native .render {
+    animation: pulsar-ok 9s ease-in-out infinite;
+  }
+  .native .render::after {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border: 1.5px solid var(--accent-primary);
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .modes.is-live .native .render::after {
+    animation: pulsar-ping 9s var(--ease-out-expo) infinite;
+  }
+  @keyframes pulsar-stretch {
+    0%, 4%, 30%, 100% { transform: translate(-50%, -50%) scale(1); filter: none; }
+    12%, 22% { transform: translate(-50%, -50%) scale(calc(1 / var(--k))); filter: blur(1.5px); }
+  }
+  @keyframes pulsar-shrink {
+    0%, 34%, 60%, 100% { transform: translate(-50%, -50%) scale(1); }
+    42%, 52% { transform: translate(-50%, -50%) scale(calc(1 / var(--k))); }
+  }
+  @keyframes pulsar-ok {
+    0%, 64%, 86%, 100% {
+      background: color-mix(in oklab, var(--accent-primary) 35%, transparent);
+      box-shadow: 0 0 0 0 transparent;
+    }
+    72% {
+      background: color-mix(in oklab, var(--accent-primary) 55%, transparent);
+      box-shadow: 0 0 22px -4px color-mix(in oklab, var(--accent-primary) 60%, transparent);
+    }
+  }
+  @keyframes pulsar-ping {
+    0%, 66% { transform: scale(1); opacity: 0; }
+    67% { transform: scale(1); opacity: 0.8; }
+    84%, 100% { transform: scale(1.22); opacity: 0; }
+  }
+  /* the move named while it happens: corners out for the stretch, in for
+     the shrink */
+  .fit {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--text-primary);
+    opacity: 0;
+    pointer-events: none;
+  }
+  .modes.is-live .small .fit {
+    animation: pulsar-arrows-1 9s ease-out infinite;
+  }
+  .modes.is-live .big .fit {
+    animation: pulsar-arrows-2 9s ease-out infinite;
+  }
+  @keyframes pulsar-arrows-1 {
+    0%, 3%, 28%, 100% { opacity: 0; }
+    8%, 22% { opacity: 0.85; }
+  }
+  @keyframes pulsar-arrows-2 {
+    0%, 33%, 58%, 100% { opacity: 0; }
+    38%, 52% { opacity: 0.85; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .modes.is-live .render,
+    .modes.is-live .native .render::after,
+    .modes.is-live .fit {
+      animation: none;
+    }
+    /* still: the arrows stay, as the diagram's only sign of the move */
+    .fit {
+      opacity: 0.85;
+    }
+  }
+  /* the answer: filled and outlined in the accent, its figure too */
   .native .render {
     background: color-mix(in oklab, var(--accent-primary) 35%, transparent);
-    border-color: var(--accent-primary);
+    border: 1.5px solid var(--accent-primary);
   }
   .native .screen {
     border-color: transparent;
+  }
+  .native .m-res {
+    color: var(--accent-primary);
   }
   .m-x p {
     margin: 0;
