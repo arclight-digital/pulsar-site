@@ -31,8 +31,8 @@ const READY = [
 // The nightly loop, left to right. The last station is the safety net.
 const LOOP = [
   { i: 'moon', t: 'Built nightly', d: 'From current Fedora packages.' },
-  { i: 'bell', t: 'You get a notification', d: 'Update when it suits you.' },
-  { i: 'arrow-clockwise', t: 'Applied on reboot', d: 'Downloaded next to the running system.' },
+  { i: 'download-simple', t: 'Downloaded for you', d: 'In the background, on mains power.' },
+  { i: 'arrow-clockwise', t: 'Ready at your next restart', d: 'A notification tells you, with a Restart button.' },
   { i: 'shield-check', t: 'Automatic rollback', d: 'If the new version fails to boot.' },
 ];
 
@@ -63,8 +63,8 @@ const MODES = [
             Your desktop, <span class="lift">ready to use.</span>
           </h2>
           <p class="big">
-            It looks good the moment you log in, your apps and games are already there, and a fresh
-            version is built for it every night.
+            It looks good the moment you log in, your apps and games are already there, and it keeps
+            itself up to date.
           </p>
           <ul class="ready">
             {READY.map((r) => <li>{r}</li>)}
@@ -139,9 +139,9 @@ const MODES = [
       <section class="chapter" id="rot" aria-labelledby="rot-h">
         <h2 id="rot-h">Updates with an undo</h2>
         <p class="lede">
-          A fresh version is built every night from the latest Fedora. When you update, it downloads
-          next to the one you’re using and takes over at your next restart. If it won’t start, you’re
-          back on the old one.
+          A fresh version is built every night from the latest Fedora. Pulsar downloads it in the
+          background while you’re plugged in, and it takes over the next time you restart. If it
+          won’t start, you’re back on the old one.
         </p>
         <ol class="loop" aria-label="What happens between one build and the next">
           {
