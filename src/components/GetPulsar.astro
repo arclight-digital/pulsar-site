@@ -12,7 +12,7 @@ const DOWNLOADS = [
     key: 'standard',
     icon: 'laptop',
     name: 'Intel or AMD',
-    who: 'Most laptops and desktops. Not sure what’s inside yours? Start here.',
+    who: 'Most laptops and desktops.\nNot sure what’s inside yours? Start here.',
     button: 'Download for Intel or AMD',
     file: ISOS.vanilla,
     note: null,
@@ -62,7 +62,7 @@ const VERIFY = [
         DOWNLOADS.map((d) => (
           <div class="door">
             <h3 class="door-name"><arc-icon name={d.icon} size="xl" aria-hidden="true"></arc-icon>{d.name}</h3>
-            <p class="door-who">{d.who}</p>
+            <p class="door-who">{d.who.split('\n').map((line, i) => (<>{i > 0 && <br />}{line}</>))}</p>
             {d.note && (
               <p class="door-note">
                 {d.note} <a href="#mok">How</a>
