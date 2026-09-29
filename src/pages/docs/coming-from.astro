@@ -337,9 +337,10 @@ const TOC = [
 
   <h2 id="updates">Updates</h2>
   <p>
-    The system updates as one whole image, built and tested before it ships. A notification tells
-    you when there is a new one, once per build: <strong>Pulsar 44.x is available</strong>, with the
-    command to run. Nothing downloads or restarts behind your back, and there is no
+    The system updates as one whole image, built and tested before it ships. It downloads in the
+    background while you are on mains power, and a notification tells you when it is ready, once
+    per build: <strong>Pulsar 44.x is ready</strong>, with a Restart button. It takes over when you
+    restart, whenever that is. Nothing restarts behind your back, and there is no
     “Updating, don’t turn off your computer” screen.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE_CMDS}></arc-code-block>

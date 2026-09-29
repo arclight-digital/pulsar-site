@@ -162,14 +162,13 @@ const TOC = [
 
   <h2 id="updates">Updates</h2>
   <p>
-    You are told, and nothing installs itself. Within the first hour after you log in, and about
-    every six hours after that, Pulsar checks whether a newer build is published and sends one
-    desktop notification per build.
+    New builds download in the background, on mains power and an unmetered connection, and wait
+    for your next restart. A notification says when one is ready, with a Restart button; nothing
+    restarts on its own.
   </p>
   <p>
-    <code>sudo pulsar update</code> fetches it, and it takes effect on your next restart. The build
-    you came from stays in the boot menu, and <code>sudo pulsar rollback</code> makes it the
-    default again. GNOME Software’s automatic updates and bootc’s update timer are both off on
+    <code>sudo pulsar update</code> does the same download on demand. The build you came from stays
+    in the boot menu, and <code>sudo pulsar rollback</code> makes it the default again. GNOME Software’s automatic updates and bootc’s update timer are both off on
     purpose: the first cannot read an image with layered packages, and the second reboots on
     its&nbsp;own.
   </p>

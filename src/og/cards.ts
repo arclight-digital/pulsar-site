@@ -146,7 +146,7 @@ export const CARDS: Card[] = [
     slug: 'updates',
     path: '/docs/updates',
     headline: 'Updates and rollback',
-    sub: 'Nightly images, applied on reboot, with automatic rollback.',
+    sub: 'Nightly images, downloaded in the background, applied on reboot.',
     alt: 'The Pulsar logo, the heading "Updates and rollback", and the command sudo pulsar rollback.',
     visual: { kind: 'terminal', line: { cmd: 'sudo pulsar rollback' } },
   },

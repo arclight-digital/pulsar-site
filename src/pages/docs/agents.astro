@@ -231,6 +231,17 @@ const TOC = [
     handing them over, and refuses force-pushes, deletions and tags.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sandbox" code={SANDBOX}></arc-code-block>
+  <p>
+    Inside, the agent can commit but cannot change what git runs on your side: the repository’s
+    config and hooks, its submodules’ config and hooks, and any hooks folder or included config the
+    project points at are read-only, and <code>.git</code> cannot be moved aside. Two things git
+    would follow can only be checked afterwards, a new <code>commondir</code> or a new{' '}
+    <code>.git</code> anywhere in the tree, so when the session ends they are renamed to{' '}
+    <code>&lt;name&gt;.from-sandbox</code> with a note. Until then an editor that runs git in the
+    background could reach one: close the editor on the project while an agent you don’t trust
+    works in it. The sandbox refuses a linked worktree or a submodule checkout, whose git directory
+    is outside the project.
+  </p>
   <p>You keep typing the agent’s name as usual. It says so as it starts:</p>
   <arc-code-block class="theme-fixed-dark" filename="claude" code={SANDBOX_START}></arc-code-block>
   <p>

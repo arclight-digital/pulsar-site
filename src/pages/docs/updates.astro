@@ -1,14 +1,15 @@
 ---
 // Updates and undo, in the order you meet them: the notification, the update,
 // the restart, and the three ways back (rollback, pin, checkpoint). Commands,
-// flags and messages are cli/pulsar's; the timer and the GNOME Software
-// policy are system_files/usr/lib/systemd/user/pulsar-update-check.* and
+// flags and messages are cli/pulsar's; the timers and the GNOME Software
+// policy are system_files/usr/lib/systemd/user/pulsar-update-check.*,
+// system_files/usr/lib/systemd/system/pulsar-update-{auto,stage}.* and
 // zz0-pulsar.gschema.override. The status transcripts are real runs.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'How Pulsar updates: a notification per build, sudo pulsar update, and a restart. Then the ways back: rollback, pinning, and checkpoints for /etc and your settings.';
+  'How Pulsar updates: new builds download in the background and wait for your next restart, or one click on the notification does it. Then the ways back: rollback, pinning, and checkpoints for /etc and your settings.';
 
 const CHECK = [
   '$ pulsar update --check',
@@ -26,6 +27,8 @@ const UPDATE = [
   'sudo pulsar update            # fetch and stage; applies at the next restart',
   'sudo pulsar update --apply    # the same, then restart into it',
 ].join('\n');
+
+const AUTO_OFF = 'sudo systemctl disable --now pulsar-update-auto.timer   # stop downloading in the background';
 
 const STATUS = [
   '$ pulsar status',
@@ -89,6 +92,7 @@ const JSONLD = [
 const TOC = [
   { id: 'notice', label: 'How you hear about one', level: 2 },
   { id: 'update', label: 'Taking an update', level: 2 },
+  { id: 'background', label: 'In the background', level: 3 },
   { id: 'rollback', label: 'Going back', level: 2 },
   { id: 'greenboot', label: 'When a boot fails', level: 3 },
   { id: 'pin', label: 'Pinning', level: 2 },
@@ -107,27 +111,36 @@ const TOC = [
 >
   <h1>Updates and rollback</h1>
   <p class="intro">
-    A new image is built every night. You are told when one is out, you take it when you like, and
-    the one you were on stays in the boot menu. Nothing installs or restarts on its own.
+    A new image is built every night. Pulsar downloads it in the background and it takes over the
+    next time you restart; the one you were on stays in the boot menu. Nothing restarts on its own.
   </p>
 
   <h2 id="notice">How you hear about one</h2>
   <p>
     Ten to forty minutes after you log in, and about every six hours after that, your session asks
     the registry whether a newer build is published. (The delay is randomized, so every Pulsar
-    machine on Earth does not ask in the same second.) If one is, you get one notification for it:{' '}
-    <strong>Pulsar &lt;version&gt; is available</strong>, with the command to run. One per build,
-    not one per check, so skipping a night costs you exactly one notification.
+    machine on Earth does not ask in the same second.) Usually the build has already been
+    downloaded in the background by then, and you get one notification:{' '}
+    <strong>Pulsar &lt;version&gt; is ready</strong>, with a <strong>Restart</strong> button that
+    opens GNOME’s own restart dialog. You confirm there, or restart later; nothing changes until
+    you do.
+  </p>
+  <p>
+    If a build is still not downloaded a day after it was published (a laptop that lives on
+    battery, a metered connection), you get <strong>Pulsar &lt;version&gt; is available</strong>{' '}
+    instead, with an <strong>Update</strong> button that downloads it now. With background
+    downloads turned off, that notice comes straight away. Each notice comes once per build, not
+    once per check.
   </p>
   <p>You can ask the same question yourself. No root needed:</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar update --check" code={CHECK}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="the four answers" code={CHECK_ANSWERS}></arc-code-block>
   <p>
     The exit status is the answer, so a script can use it; <code>--json</code> gives{' '}
-    <code>{'{status, booted, latest, image}'}</code>. GNOME Software does not download updates here,
-    and bootc’s automatic update timer is off. The first cannot read an image with layered packages
-    and once froze a desktop for a minute and a half trying; the second restarts the machine on its
-    own. Neither is a thing you want surprising you mid-game.
+    <code>{'{status, booted, latest, image, staged}'}</code>. GNOME Software does not download
+    updates here, and bootc’s automatic update timer is off. The first cannot read an image with
+    layered packages and once froze a desktop for a minute and a half trying; the second restarts
+    the machine on its own. Neither is a thing you want surprising you mid-game.
   </p>
 
   <h2 id="update">Taking an update</h2>
@@ -137,6 +150,21 @@ const TOC = [
     default at the next boot, and the running system is untouched until then. Restart when it suits
     you. On the NVIDIA image, staging an update also fetches the next driver’s Flatpak GL extension
     in the background, so Steam has it the moment you boot.
+  </p>
+  <h3 id="background">In the background</h3>
+  <p>
+    Twenty minutes after the machine starts, and about every twelve hours it is awake after that,
+    <code>pulsar-update-auto.timer</code> runs <code>pulsar update --background</code>: the same
+    download and staging as above, at the lowest priority, so it does not compete with what you are
+    doing. It skips the run, and says why in its log, when you are on battery, when the connection
+    is metered, or when the newest build is already staged. It never restarts anything and never
+    uses <code>--apply</code>.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="turn it off" code={AUTO_OFF}></arc-code-block>
+  <p>
+    The notification’s <strong>Update</strong> button starts the same download on request. An
+    administrator at the machine is not asked for a password for that one action; it can only
+    fetch and stage the published image, never apply it.
   </p>
   <p>
     If you have layered packages with <code>rpm-ostree install</code>, it says so and updates

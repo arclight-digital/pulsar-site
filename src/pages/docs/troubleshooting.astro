@@ -212,9 +212,11 @@ const TOC = [
   </p>
   <p>
     <strong>What it redacts:</strong> your hostname, username and home path (as <code>~</code>), MAC
-    and IPv4 addresses, and values after words like <code>token=</code> or{' '}
-    <code>password:</code>. That pass is best effort, because journal messages are free text. Read
-    the report before you post it.
+    and IPv4 addresses, email addresses, values after words like <code>token=</code>,{' '}
+    <code>password:</code> or <code>Authorization: Bearer</code>, and tokens recognizable by their
+    prefix: GitHub (<code>ghp_</code>, <code>github_pat_</code>), GitLab (<code>glpat-</code>),{' '}
+    <code>sk-</code> API keys, Slack, AWS access keys, and JWTs. That pass is best effort, because
+    journal messages are free text. Read the report before you post it.
   </p>
   <arc-alert variant="info" heading="Nothing in the journal?">
     Reading the system journal needs the wheel, adm or systemd-journal group. Without one the report

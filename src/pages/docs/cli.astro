@@ -33,7 +33,7 @@ const SETUP = [
 
 const JSON_EXAMPLES = [
   "pulsar doctor --json | jq -r '.checks[] | select(.status != \"ok\") | .summary'",
-  "pulsar update --check --json    # {status, booted, latest, image}",
+  "pulsar update --check --json    # {status, booted, latest, image, staged}",
   "pulsar manifest --json | jq 'del(.host)'    # the manifest baked into the image",
 ].join('\n');
 
