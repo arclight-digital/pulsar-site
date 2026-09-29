@@ -22,6 +22,32 @@ export const mode = (): 'dark' | 'light' => {
 
 let current: ThemeDetail | null = null;
 
+// A picture is fetched and decoded off screen before it replaces the one
+// showing: the old one stays until the new one can be drawn whole, so a swap
+// never flashes blank or paints half a frame. A later swap wins over an
+// earlier one still decoding (turn). The same load warms the cache when a
+// tile is only hovered or focused (prefetch), so the click is usually instant.
+let turn = 0;
+function load(src: string, srcset: string | undefined, sizes: string): Promise<void> {
+  const img = new Image();
+  if (srcset) {
+    img.sizes = sizes;
+    img.srcset = srcset;
+  }
+  img.src = src;
+  return img.decode().catch(() => undefined);
+}
+const pictureOf = (detail: ThemeDetail) => {
+  const v = detail[mode()] ?? detail.dark ?? detail.light;
+  const src = v.desktop ?? v.wall;
+  return { v, src, srcset: v.desktop ? shotSrcset(v.desktop) : undefined };
+};
+export function prefetch(detail: ThemeDetail) {
+  const { src, srcset } = pictureOf(detail);
+  const img = document.querySelector<HTMLImageElement>('[data-preview]');
+  if (src && img) void load(src, srcset, img.sizes);
+}
+
 function show(detail: ThemeDetail) {
   current = detail;
   applySiteTheme(detail.slug);
@@ -33,22 +59,21 @@ function show(detail: ThemeDetail) {
 // re-applying the theme -- which, for a single-mode theme, sets the mode, and
 // would feed the observer forever.
 function preview(detail: ThemeDetail) {
-  const v = detail[mode()] ?? detail.dark ?? detail.light;
-  // A theme with no desktop screenshot yet shows its wallpaper instead, so the
-  // preview never keeps showing the previous theme under the new one's name.
-  const src = v.desktop ?? v.wall;
+  const { v, src, srcset } = pictureOf(detail);
   const alt = v.desktop
     ? `The Pulsar desktop in the ${detail.name} theme`
     : `The ${detail.name} wallpaper`;
+  const mine = ++turn;
   document.querySelectorAll<HTMLImageElement>('[data-preview]').forEach((img) => {
     if (!src || img.getAttribute('src') === src) return;
-    img.dataset.loading = '';
-    img.onload = () => delete img.dataset.loading;
-    // the 2x copy exists for desktop shots only; a wallpaper stand-in has none
-    if (v.desktop) img.srcset = shotSrcset(v.desktop);
-    else img.removeAttribute('srcset');
-    img.src = src;
-    img.alt = alt;
+    void load(src, srcset, img.sizes).then(() => {
+      if (mine !== turn) return;
+      // the 2x copy exists for desktop shots only; a wallpaper stand-in has none
+      if (srcset) img.srcset = srcset;
+      else img.removeAttribute('srcset');
+      img.src = src;
+      img.alt = alt;
+    });
   });
   document.querySelectorAll('[data-preview-name]').forEach((el) => (el.textContent = detail.name));
   const cmd = `pulsar theme set ${detail.slug}`;
@@ -143,6 +168,16 @@ function tellOnce(slug: string) {
 
 export function initThemes(): void {
   document.addEventListener('pulsar:theme', (e) => show((e as CustomEvent<ThemeDetail>).detail));
+  // intent: a tile under the pointer or the keyboard starts its picture
+  for (const ev of ['pointerover', 'focusin'] as const) {
+    document.addEventListener(ev, (e) => {
+      const tile = (e.target as HTMLElement | null)?.closest?.<HTMLElement>('[data-theme-tile]');
+      if (tile && tile.dataset.prefetched === undefined) {
+        tile.dataset.prefetched = '';
+        prefetch(detailOf(tile));
+      }
+    });
+  }
   document.addEventListener('click', (e) => {
     const target = e.target as HTMLElement;
     const tile = target.closest<HTMLElement>('[data-theme-tile]');

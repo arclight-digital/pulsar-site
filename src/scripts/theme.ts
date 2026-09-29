@@ -75,7 +75,22 @@ function reflect(): void {
     const onLight = theme === 'light' && !mark.closest('.theme-fixed-dark');
     const next = onLight ? mark.dataset.light : mark.dataset.dark;
     // reflect() also runs on every look switch; leave an unchanged mark alone.
-    if (next && mark.getAttribute('src') !== next) mark.src = next;
+    // Decoded first, so the mark never blinks out between the two cuts.
+    if (next) {
+      const pending = mark.dataset.want;
+      mark.dataset.want = next;
+      if (mark.getAttribute('src') !== next && pending !== next) {
+        const pre = new Image();
+        pre.src = next;
+        void pre
+          .decode()
+          .catch(() => undefined)
+          .then(() => {
+            // a later flip may have asked for the other cut meanwhile
+            if (mark.dataset.want === next) mark.src = next;
+          });
+      }
+    }
   }
 
   for (const button of document.querySelectorAll<HTMLElement>('[data-look]')) {
