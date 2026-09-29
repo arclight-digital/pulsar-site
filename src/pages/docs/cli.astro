@@ -66,17 +66,13 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>The pulsar command</h1>
-  <p class="intro">
-    One command for everything you do with an atomic system: make it look like yours, check it’s
-    healthy, see what changed, hand it to an agent, and undo it if you need to.
-  </p>
+  <p class="intro">Themes, health checks, changes, agents and rollback, in one command.</p>
 
   <h2 id="usage">Everything it does</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar --help" code={usage}></arc-code-block>
   <p>
-    Plain <code>pulsar</code> runs <code>doctor</code>. <code>pulsar help &lt;command&gt;</code>, or{' '}
-    <code>--help</code> after any command, gives that command’s own usage. Only the commands marked
-    root ask for it; everything that just reads works as you.
+    Plain <code>pulsar</code> runs <code>doctor</code>. <code>pulsar help &lt;command&gt;</code> or{' '}
+    <code>--help</code> shows a command’s usage. Only commands marked root need it.
   </p>
   <table>
     <thead><tr><th>Commands</th><th>Explained in</th></tr></thead>
@@ -89,63 +85,44 @@ const TOC = [
 
   <h2 id="json">For scripts</h2>
   <p>
-    <code>--json</code> works anywhere on the line. A command that has no JSON output says so and
-    exits with an error, instead of handing your script prose it will choke on. Exit codes carry
-    answers too: <code>doctor</code> exits 1 only on a failed check, and{' '}
-    <code>update --check</code> exits 10 when an update is out.
+    <code>--json</code> works anywhere on the line; commands without JSON output exit with an error.{' '}
+    <code>doctor</code> exits 1 only on a failed check; <code>update --check</code> exits 10 when an
+    update is available.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="json" code={JSON_EXAMPLES}></arc-code-block>
 
   <h2 id="setup">setup: what an image cannot bake</h2>
   <p>
-    Some state belongs to your machine or your account, not to the image: which apps you have, which
-    groups you are in, your containers. Each <code>setup</code> recipe does one of those, and says
-    so if you run it with or without <code>sudo</code> when it should not be.
+    Each <code>setup</code> recipe handles per-machine or per-account state (apps, groups,
+    containers) and tells you if it needs, or must not have, <code>sudo</code>.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
   <p class="hint">
-    When to use a toolbox, a distrobox, a quadlet or neither:{' '}
-    <a href="/docs/where-things-go">Where things go</a>. Why gamescale needs its step:{' '}
-    <a href="/docs/gamescale#flatpak">gamescale</a>.
+    <a href="/docs/where-things-go">Where things go</a> ·{' '}
+    <a href="/docs/gamescale#flatpak">gamescale setup</a>
   </p>
 
   <h2 id="doctor">Why doctor exists</h2>
   <p>
-    <code>systemctl is-active scx.service</code> reported active for minutes at a stretch while no
-    scheduler was attached and the machine ran stock EEVDF. Unit state is not system state. So{' '}
-    <code>doctor</code> reads <code>/sys/kernel/sched_ext/state</code> and the other places where
-    the truth actually lives, and <code>--json</code> makes it scriptable. Only a <em>fail</em> sets
-    a nonzero exit; a scheduler that did not attach merely warns, because the machine is entirely
-    usable without one.
-  </p>
-  <p>
-    Reads go through <code>rpm-ostree</code>, which works unprivileged; only the commands that
-    change the system ask for root. <code>bootc status</code> needs root even to read, and a health
-    check you need sudo for is one you will not run. <code>pulsar sbom</code> is generated, never
-    baked: a file inside the image cannot describe the image containing it, so it reads the live rpm
-    database, through the same script the nightly uses.
+    <code>doctor</code> reads actual system state (e.g. <code>/sys/kernel/sched_ext/state</code>),
+    not unit status, and needs no root: it reads through <code>rpm-ostree</code>, not{' '}
+    <code>bootc status</code>. <code>pulsar sbom</code> is generated from the live rpm database with
+    the nightly’s script.
   </p>
 
   <h2 id="update">update, not upgrade</h2>
   <p>
-    Use <code>pulsar update</code> rather than <code>bootc upgrade</code> directly if you have
-    layered anything with <code>rpm-ostree install</code>. bootc’s model is the container image
-    alone: it does not know about your layer and will not carry it forward.
-  </p>
-  <p>
-    <code>pulsar update</code> checks the booted deployment first and hands off to{' '}
-    <code>rpm-ostree upgrade</code> when there is something to preserve; the <code>updates</code>{' '}
-    line of <code>pulsar doctor</code> tells you which side of that line you are on.{' '}
-    <code>pulsar update --check</code> answers “is there a newer image” without root.{' '}
-    <a href="/docs/updates">The whole update story</a>.
+    <code>bootc upgrade</code> drops packages layered with <code>rpm-ostree install</code>.{' '}
+    <code>pulsar update</code> uses <code>rpm-ostree upgrade</code> when you have layers (see
+    doctor’s <code>updates</code> line). <code>pulsar update --check</code> needs no root.{' '}
+    <a href="/docs/updates">Updates</a>.
   </p>
 
   <h2 id="name">Another pulsar?</h2>
   <p>
-    The Pulsar code editor also ships a command called <code>pulsar</code>. As a Flatpak it
-    collides with nothing, but its RPM or AppImage can land earlier on your <code>PATH</code>, and
-    then <code>pulsar doctor</code> quietly opens an editor. <code>/usr/bin/pulsar</code> always
-    reaches this one, and doctor’s <code>cli</code> check tells you when something is shadowing it.
+    The Pulsar code editor’s RPM or AppImage can shadow this <code>pulsar</code> on{' '}
+    <code>PATH</code> (its Flatpak doesn’t). <code>/usr/bin/pulsar</code> always works; doctor’s{' '}
+    <code>cli</code> check flags shadowing.
   </p>
   <p class="hint">The source is <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>, one shell script.</p>
 </Docs>

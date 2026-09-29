@@ -65,53 +65,43 @@ const TOC = [
 >
   <h1>GPU containers</h1>
   <p class="intro">
-    Local models, CUDA, anything that wants the graphics card: it runs in a container, not on the
-    host. The NVIDIA image makes the GPU something a container can simply ask for.
+    CUDA and local models run in containers, not on the host. On the NVIDIA image a container can
+    request the GPU by name.
   </p>
 
   <h2 id="run">Give a container the GPU</h2>
-  <p>Ask for it by name. If this prints your card, everything below is already working:</p>
+  <p>If this prints your card, it works:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="smoke test" code={SMOKE}></arc-code-block>
-  <p>Then run the real thing. ollama, for example:</p>
+  <p>For example, ollama:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="ollama" code={OLLAMA}></arc-code-block>
   <p>
-    The image brings the driver and <code>libcuda</code>; the container brings the CUDA runtime.
-    Nothing CUDA is ever installed on the host. For something you want
-    running every day, write it as a <a href="/docs/where-things-go#services">quadlet</a>; the
-    device is one line:
+    The image provides the driver and <code>libcuda</code>; the container brings the CUDA runtime.
+    As a <a href="/docs/where-things-go#services">quadlet</a>:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="~/.config/containers/systemd/ollama.container" code={QUADLET}></arc-code-block>
-  <p class="hint">
-    NVIDIA image only. The standard image has no NVIDIA driver to hand out; a container there can
-    still get a GPU through <code>/dev/dri</code> for Vulkan.
-  </p>
+  <p class="hint">NVIDIA image only. On the standard image, pass <code>/dev/dri</code> for Vulkan.</p>
 
   <h2 id="how">What makes it work</h2>
   <p>
-    Podman speaks CDI, the Container Device Interface: a spec file that lists the device nodes and
-    driver libraries behind a name like <code>nvidia.com/gpu=all</code>. Two units keep it right:
+    Podman uses CDI specs, which map <code>nvidia.com/gpu=all</code> to device nodes and driver
+    libraries. Two units maintain it:
   </p>
   <ul>
     <li>
-      <strong><code>nvidia-cdi-refresh.service</code></strong>, from NVIDIA’s container toolkit,
-      writes the spec for the running driver to <code>/var/run/cdi/nvidia.yaml</code> on every boot.{' '}
-      <code>/var/run</code> is wiped at shutdown, so that spec can never outlive the driver it
-      describes.
+      <strong><code>nvidia-cdi-refresh.service</code></strong> writes the spec for the running
+      driver to <code>/var/run/cdi/nvidia.yaml</code> each boot (cleared at shutdown, so never
+      stale).
     </li>
     <li>
-      <strong><code>pulsar-gpu-containers.service</code></strong> turns on the SELinux boolean{' '}
-      <code>container_use_xserver_devices</code> each boot. Without it a container gets the device
-      nodes and the libraries, then dies in <code>nvidia-smi</code> with “Failed to initialize NVML:
-      Insufficient Permissions”, which reads like a driver bug and is not one. The boolean only lets a
-      container use a GPU it was given with <code>--device</code>; a container not given one has
-      nothing to open.
+      <strong><code>pulsar-gpu-containers.service</code></strong> enables the SELinux boolean{' '}
+      <code>container_use_xserver_devices</code> each boot. Without it, <code>nvidia-smi</code> fails
+      with “Failed to initialize NVML: Insufficient Permissions”. It only affects containers given
+      a GPU with <code>--device</code>.
     </li>
   </ul>
   <arc-alert variant="warning" heading="Don’t write your own spec to /etc/cdi">
-    Plenty of guides say to run <code>nvidia-ctk cdi generate</code> into <code>/etc/cdi</code>. On
-    Pulsar that file survives every driver update, names library versions that no longer exist, and
-    fails inside the container. The boot unit already does the job, in the place that cannot go
-    stale.
+    A spec from <code>nvidia-ctk cdi generate</code> in <code>/etc/cdi</code> survives driver
+    updates and goes stale. The boot unit already writes a fresh one.
   </arc-alert>
 
   <h2 id="check">When it does not</h2>
@@ -125,15 +115,14 @@ const TOC = [
     </tbody>
   </table>
   <p class="hint">
-    No NVIDIA module loaded at all is the <code>nvidia</code> check’s finding, not this one’s:{' '}
+    No NVIDIA module loaded at all: see the <code>nvidia</code> check in{' '}
     <a href="/docs/troubleshooting#fixes">Troubleshooting</a>.
   </p>
 
   <h2 id="models">A model for your agents</h2>
   <p>
-    <code>pulsar agent model on</code> runs llama.cpp’s own server image as a rootless quadlet, on
-    this GPU (CUDA on the NVIDIA image, Vulkan where there is <code>/dev/dri</code>, CPU otherwise),
-    listening on <code>127.0.0.1</code> only and behind a key. It is the easy path to a local model
-    for opencode and aider: <a href="/docs/agents#model">Coding agents</a>.
+    <code>pulsar agent model on</code> runs llama.cpp’s server as a rootless quadlet (CUDA, Vulkan
+    or CPU) on <code>127.0.0.1</code> behind a key, for opencode and aider.{' '}
+    <a href="/docs/agents#model">Coding agents</a>.
   </p>
 </Docs>

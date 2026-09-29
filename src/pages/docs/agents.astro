@@ -127,48 +127,36 @@ const TOC = [
 >
   <h1>Coding agents</h1>
   <p class="intro">
-    Pulsar ships no agent and favors none. Pick one and it arrives already knowing how this machine
-    works, with a report of the machine’s health a command away and, if you like, a sandbox that
-    shows it one project.
+    Pulsar ships no agent. Add one and it gets a briefing on this machine, health tools, and an
+    optional sandbox that shows it one project.
   </p>
 
   <h2 id="install">Install one</h2>
-  <p>
-    The welcome window offers them on your first login. Skipped it? The same list is one command away:
-  </p>
+  <p>The welcome window offers them at first login. Or:</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent list" code={LIST}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="add" code={ADD}></arc-code-block>
   <p>
-    <code>add</code> creates a toolbox called <code>agents</code> the first time, installs the agent
-    with its vendor’s own npm or uv method into <code>~/.local/share/pulsar/agents</code>, and puts
-    a command in <code>~/.local/bin</code> that runs it from any terminal. Nothing is layered onto
-    the host and nothing needs root.
-  </p>
-  <p>
-    Already installed an agent with its vendor’s installer? <code>add</code> leaves it exactly
-    where it is, installs nothing, and still does the rest below. <code>pulsar agent list</code>{' '}
-    marks it <code>native</code>.
+    <code>add</code> creates an <code>agents</code> toolbox, installs the agent with its vendor’s npm
+    or uv method into <code>~/.local/share/pulsar/agents</code>, and adds a command to{' '}
+    <code>~/.local/bin</code>. No root, nothing layered. An agent you installed yourself is left in
+    place (listed as <code>native</code>) and still gets the setup below.
   </p>
   <arc-alert variant="info" heading="The toolbox is for tidiness, not safety">
-    The <code>agents</code> box keeps Node, Python and the agent off the host, and{' '}
-    <code>toolbox rm -f agents</code> deletes all of it. It shares your home folder and your
-    session, though, so an agent in it can do anything you can. Isolation is{' '}
+    It keeps Node, Python and the agent off the host (<code>toolbox rm -f agents</code> removes
+    it all), but shares your home folder and session. For isolation, use{' '}
     <a href="#sandbox">the sandbox</a>.
   </arc-alert>
 
   <h2 id="briefing">What it knows about the machine</h2>
   <p>
-    The image carries one briefing for agents, <code>/usr/share/pulsar/AGENTS.md</code>: the
-    read-only <code>/usr</code>, toolboxes for dev tools, Flatpaks for apps, what rollback does and
-    does not undo, and a short list of things never to do (reboot the machine among them).{' '}
-    <code>pulsar agent guide</code> prints it, so “run <code>pulsar agent guide</code> first” works
-    as the opening line for any agent at all.
+    <code>/usr/share/pulsar/AGENTS.md</code> briefs agents on this system: read-only{' '}
+    <code>/usr</code>, toolboxes, Flatpaks, what rollback covers, and what never to do.{' '}
+    <code>pulsar agent guide</code> prints it; any agent can start there.
   </p>
   <p>
-    <code>add</code> also links it where your agent reads instructions by itself, if nothing is there
-    yet (for Claude Code, <code>~/.claude/rules/pulsar.md</code>), links the image’s skills into the
-    agent’s skills folder (one of them makes you a desktop theme), and, for the four that speak
-    MCP, registers <code>pulsar mcp</code>, which hands the agent this machine’s facts as tools:
+    <code>add</code> also links it into the agent’s own instructions if none exist (Claude Code:{' '}
+    <code>~/.claude/rules/pulsar.md</code>), links the image’s skills (including one that makes
+    themes), and for MCP agents registers <code>pulsar mcp</code>:
   </p>
   <table>
     <thead><tr><th>Tool</th><th>What it answers</th></tr></thead>
@@ -179,104 +167,98 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    None of it needs root, and none of the root commands are there. Update, rollback, checkpoint,
-    guard and pin stay commands you run, because an agent that could run them could undo the checks
-    meant to hold it. <code>pulsar agent</code> shows the whole arrangement at a glance:
+    No tool needs root, and no root command is exposed: update, rollback, checkpoint, guard and pin
+    stay yours. <code>pulsar agent</code> shows the setup:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent" code={STATUS}></arc-code-block>
 
   <h2 id="ask">Hand it a problem</h2>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="ask" code={ASK}></arc-code-block>
   <p>
-    <code>ask</code> writes a redacted <code>pulsar report</code> (with the crash, if you named one)
-    to a file only you can read, in <code>$XDG_RUNTIME_DIR</code>, gone when you log out. Then it
-    starts your agent with a prompt that points at the file, asks your question, and ends with “Do
-    not change the system without asking me first.” opencode gets the prompt typed in for you;
-    press Enter to send it. aider gets the report as a read-only file and the prompt printed for you
-    to paste.
+    <code>ask</code> writes a redacted <code>pulsar report</code> (plus the crash, if named) to a
+    private file in <code>$XDG_RUNTIME_DIR</code> (deleted at logout), then starts your agent with
+    a prompt pointing at it, your question, and “Do not change the system without asking me
+    first.” opencode: press Enter to send. aider: the report is a read-only file; paste the printed
+    prompt.
   </p>
   <p>
-    When a program crashes, the notification’s <strong>Ask</strong> button runs{' '}
-    <code>pulsar agent ask --crash</code> for you, in a new terminal. The report never includes the
-    core file, only the stack trace and the logs; see{' '}
-    <a href="/docs/troubleshooting#crashes">Troubleshooting</a>. From then on, what the agent reads
-    goes to its provider, the same as if you had pasted it. The click is the consent.
+    A crash notification’s <strong>Ask</strong> button runs <code>pulsar agent ask --crash</code>{' '}
+    in a new terminal. The report has the stack trace and logs, never the core file{' '}
+    (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). What the agent reads goes to its
+    provider; clicking is consent.
   </p>
 
   <h2 id="model">A model on your own GPU</h2>
-  <p>
-    opencode and aider will talk to any OpenAI-compatible server, so they can run with no account at
-    all:
-  </p>
+  <p>opencode and aider can use a local OpenAI-compatible server, no account needed:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="model" code={MODEL}></arc-code-block>
-  <p>
-    That runs llama.cpp’s own server image as a rootless user service: CUDA on the NVIDIA image,
-    Vulkan where there is a GPU at <code>/dev/dri</code>, CPU otherwise. llama.cpp downloads the model
-    from Hugging Face into <code>~/.local/share/pulsar/models</code> on the first start, which takes
-    a while. It answers at <code>http://127.0.0.1:8080/v1</code>, on this machine only, and every
-    request needs the key in <code>~/.config/pulsar/model-key</code>, so a web page in your browser
-    cannot borrow it. opencode gets a “Local (Pulsar)” provider next to its others; pick it with{' '}
-    <code>/models</code>. For aider, <code>pulsar agent model</code> prints the command line.
-  </p>
-  <p>
-    It stops when you log out unless you pass <code>--at-login</code>. A loaded model holds
-    gigabytes of video memory, and this is also the machine your games run on.
-  </p>
+  <ul>
+    <li>
+      Runs llama.cpp’s server image as a rootless user service: CUDA on the NVIDIA image, Vulkan
+      with a GPU at <code>/dev/dri</code>, else CPU.
+    </li>
+    <li>First start downloads the model into <code>~/.local/share/pulsar/models</code>.</li>
+    <li>
+      Serves <code>http://127.0.0.1:8080/v1</code> (local only); requests need the key in{' '}
+      <code>~/.config/pulsar/model-key</code>.
+    </li>
+    <li>
+      opencode: pick “Local (Pulsar)” with <code>/models</code>. aider:{' '}
+      <code>pulsar agent model</code> prints the command.
+    </li>
+    <li>
+      Stops at logout unless started with <code>--at-login</code> (a loaded model holds gigabytes of
+      video memory).
+    </li>
+  </ul>
 
   <h2 id="sandbox">The sandbox</h2>
   <p>
-    Switched on, an agent starts in a rootless container that sees the project you started it in,
-    and not the rest of your home folder: no SSH keys, no browser profiles, no other projects. It
-    still pushes your code, through a gate on the host that uses your credentials without ever
-    handing them over, and refuses force-pushes, deletions and tags.
+    The agent runs in a rootless container that sees only the project you started it in: no SSH
+    keys, browser profiles or other projects. Pushes go through a host-side gate that uses your
+    credentials without exposing them and refuses force-pushes, deletions and tags.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sandbox" code={SANDBOX}></arc-code-block>
-  <p>
-    Inside, the agent can commit but cannot change what git runs on your side: the repository’s
-    config and hooks, its submodules’ config and hooks, and any hooks folder or included config the
-    project points at are read-only, and <code>.git</code> cannot be moved aside. Two things git
-    would follow can only be checked afterwards, a new <code>commondir</code> or a new{' '}
-    <code>.git</code> anywhere in the tree, so when the session ends they are renamed to{' '}
-    <code>&lt;name&gt;.from-sandbox</code> with a note. Until then an editor that runs git in the
-    background could reach one: close the editor on the project while an agent you don’t trust
-    works in it. The sandbox refuses a linked worktree or a submodule checkout, whose git directory
-    is outside the project.
-  </p>
-  <p>You keep typing the agent’s name as usual. It says so as it starts:</p>
+  <ul>
+    <li>
+      The agent can commit, but git config and hooks (the repo’s, its submodules’, and any
+      in-project hooks path or include) are read-only, and <code>.git</code> can’t be moved.
+    </li>
+    <li>
+      A new <code>commondir</code> or <code>.git</code> in the tree is renamed to{' '}
+      <code>&lt;name&gt;.from-sandbox</code> when the session ends. Until then, an editor running
+      git in the background could follow it: close the editor on the project while an untrusted
+      agent works.
+    </li>
+    <li>Linked worktrees and submodule checkouts are refused.</li>
+  </ul>
+  <p>Type the agent’s name as usual:</p>
   <arc-code-block class="theme-fixed-dark" filename="claude" code={SANDBOX_START}></arc-code-block>
   <p>
-    Start it inside a project: the sandbox refuses to open on your whole home folder. Typing{' '}
-    <code>claude</code> (or <code>codex</code>, <code>gemini</code>, <code>opencode</code>,{' '}
-    <code>aider</code>) goes through the sandbox in interactive bash. A script, another shell, or{' '}
-    <code>command claude</code> starts the agent as installed; <code>pulsar agent run claude</code>{' '}
-    always goes through your settings.
+    Start it inside a project; it refuses your whole home folder. In interactive bash,{' '}
+    <code>claude</code>, <code>codex</code>, <code>gemini</code>, <code>opencode</code> and{' '}
+    <code>aider</code> go through the sandbox. Scripts, other shells and <code>command claude</code>{' '}
+    don’t; <code>pulsar agent run claude</code> always follows your settings.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={SANDBOX_MORE}></arc-code-block>
-  <p>
-    A repository can require the sandbox for everyone who works in it. The file can only tighten
-    things, never loosen them:
-  </p>
+  <p>A repository can require the sandbox (this file can only tighten settings):</p>
   <arc-code-block class="theme-fixed-dark" filename=".pulsar/agent.toml" code={REPO_TOML}></arc-code-block>
   <p class="hint">
-    Exactly what goes into the sandbox, what comes back out, and what it does not protect (the
-    network, for one): <a href="/docs/agents-safety#the-sandbox-and-a-push-that-never-holds-your-key">Agents and safety</a>.
+    What goes in, what comes out, and what it doesn’t protect (the network):{' '}
+    <a href="/docs/agents-safety#the-sandbox-and-a-push-that-never-holds-your-key">Agents and safety</a>.
   </p>
 
   <h2 id="guard">Guard, and checkpoints</h2>
   <p>
-    On stock Fedora, an administrator’s desktop session can layer packages, roll back, and install
-    or remove system Flatpaks without a password prompt, and so can anything that session starts.
-    See for yourself:
+    On stock Fedora, an admin’s session (and anything it starts) can layer packages, roll back, and
+    install or remove system Flatpaks without a password:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent guard" code={GUARD}></arc-code-block>
   <p>
-    <code>sudo pulsar agent guard on</code> makes all five ask for the admin password, for your
-    agent and for you. Updates stay ungated. <code>sudo pulsar agent guard off</code> puts Fedora’s
-    default back.
+    <code>sudo pulsar agent guard on</code> makes all five ask for the admin password. Updates stay
+    ungated. <code>sudo pulsar agent guard off</code> restores Fedora’s default.
   </p>
   <p>
-    And before a long session, take a checkpoint: <code>sudo pulsar checkpoint "before the agent"</code>.
-    Afterwards, <code>diff</code> shows every change to <code>/etc</code> and your settings, and{' '}
-    <code>restore</code> puts them back. <a href="/docs/updates#checkpoint">How checkpoints work</a>.
+    Before a long session: <code>sudo pulsar checkpoint "before the agent"</code>; afterwards{' '}
+    <code>diff</code> and <code>restore</code>. <a href="/docs/updates#checkpoint">Checkpoints</a>.
   </p>
 </Docs>

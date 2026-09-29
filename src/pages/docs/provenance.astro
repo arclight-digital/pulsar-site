@@ -45,8 +45,8 @@ const TOC = [
 >
   <h1>Every image has a paper trail</h1>
   <p class="intro">
-    The machine that runs Pulsar never compiles anything. A build machine that exists for one night
-    builds every image and attaches its full package list, and the keys that matter never touch it.
+    Each image is built on a single-night build machine, with its full package list attached. The
+    signing keys never touch it.
   </p>
 
   <h2 id="one-night">One night’s build</h2>
@@ -54,67 +54,50 @@ const TOC = [
 
   <h2 id="verify">Check it yourself</h2>
   <p>
-    Every published image carries its full package list as an SPDX SBOM, attached in the registry,
-    so you can read it from whatever machine you already trust: <code>oras discover</code> lists it.
-    The installer ISOs are signed with Pulsar’s cosign release key. The images themselves are not
-    signed yet; signing them with that same key is coming, and this page will say so when it lands.
+    Each image has an SPDX SBOM attached in the registry (<code>oras discover</code> lists it). The
+    ISOs are signed with Pulsar’s cosign release key; the images are not signed yet.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sbom" code={SBOM}></arc-code-block>
   <p>
-    Every nightly is diffed against the one before it, package by package, from those SBOMs. The
-    diff is rendered in the <a href="/docs/changelog">changelog</a>, served raw as{' '}
-    <a href="/changelog.json">changelog.json</a>, and readable on the machine as{' '}
-    <code>pulsar changelog</code>. Nothing in it is written by hand.
+    Each nightly is diffed against the previous one from the SBOMs: the{' '}
+    <a href="/docs/changelog">changelog</a>, <a href="/changelog.json">changelog.json</a>, and{' '}
+    <code>pulsar changelog</code>. None of it is hand-written.
   </p>
   <arc-description-list class="endpoints" layout="horizontal">
     <arc-description-item term="changelog.json"><a href="/changelog.json">the night’s diff, as the build wrote it</a></arc-description-item>
     <arc-description-item term="manifest.json"><a href="/manifest.json">the image’s baked manifest</a></arc-description-item>
     <arc-description-item term="cosign.pub"><a href={`${REPO}/blob/main/keys/cosign.pub`}>the release key that signs the ISOs</a></arc-description-item>
   </arc-description-list>
-  <p>On a Pulsar machine, the image says the same about itself, and exits 1 so no script mistakes it for a pass:</p>
+  <p>On a Pulsar machine (exits 1 until images are signed):</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar verify" code={VERIFY}></arc-code-block>
   <p class="hint">
-    How to check an ISO before you write it to a stick: <a href="/docs/install#iso">Install</a>. How
-    the NVIDIA module is signed without the build ever holding the key:{' '}
-    <a href="/docs/signing">Signing</a>.
+    <a href="/docs/install#iso">Verify an ISO</a> · <a href="/docs/signing">NVIDIA module signing</a>
   </p>
 
   <h2 id="keys">Two variants, one key</h2>
-  <p>
-    The NVIDIA variant builds <code>nvidia-open</code> against the image’s exact kernel and signs
-    it. Blackwell has no closed-driver option, which is fine: the open module is the better one now
-    anyway.
-  </p>
-  <p>
-    <code>Containerfile</code> declares no build secrets, so it is safe to build anywhere.{' '}
-    <code>Containerfile.nvidia</code> needs the Secure&nbsp;Boot signing key, which it never holds.
-    The key lives on the signing host; the build carries a bearer token, sends each module’s bytes,
-    and attaches the detached signature that comes back. Neither key nor token reaches an image
-    layer.
-  </p>
-  <p>
-    The public half ships in <strong>both</strong> images so the key can be enrolled before the
-    driver is in play. The NVIDIA build fails if the module’s signer doesn’t match that cert, so a
-    stale cert becomes a failed build instead of a black screen at boot.
-  </p>
-  <p>
-    <strong>Running this yourself?</strong> Fork it and use your own key. Enrolling this cert means
-    your machine permanently trusts modules its owner signs, which is not a relationship you want
-    with a stranger’s laptop. The standard image needs no keys at all.
-  </p>
+  <ul>
+    <li>The NVIDIA variant builds <code>nvidia-open</code> for the image’s exact kernel and signs it.</li>
+    <li>
+      <code>Containerfile</code> needs no secrets. <code>Containerfile.nvidia</code> sends each
+      module to the signing host with a bearer token and attaches the returned signature; neither
+      key nor token reaches an image layer.
+    </li>
+    <li>
+      Both images ship the public cert, so it can be enrolled before switching to NVIDIA. The build
+      fails if the module’s signer doesn’t match it.
+    </li>
+    <li>
+      Building your own? Fork and use your own key: enrolling this cert means trusting modules
+      Pulsar signs. The standard image needs no keys.
+    </li>
+  </ul>
 
   <h2 id="by-hand">Builds started by hand</h2>
   <p>
-    <strong>A build somebody starts by hand defines nothing.</strong> The scheduled nightly is the
-    published one. A hand-started build is tagged <code>-dev</code> out of its own series:{' '}
-    <code>:latest</code> does not move onto it, the SBOM baseline the next night diffs against is
-    left alone, and no site commit lands. A <code>-dev</code> tag in the registry is a debugging
-    image that was never released, and a machine booted on one says so in its boot menu.
+    Only the scheduled nightly is published. Hand-started builds are tagged <code>-dev</code>: they
+    don’t move <code>:latest</code>, the SBOM baseline or the site, and the boot menu labels them.
   </p>
-  <p class="hint">
-    One person’s laptop OS, over-engineered on purpose, MIT-licensed.{' '}
-    <a href={REPO}>The whole thing is public.</a>
-  </p>
+  <p class="hint">MIT-licensed. <a href={REPO}>Source</a>.</p>
 </Docs>
 
 <style>

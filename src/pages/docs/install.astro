@@ -45,52 +45,41 @@ const TOC = [
 >
   <h1>Install</h1>
   <p class="intro">
-    A new machine takes one download and a USB stick. A machine already on Fedora Silverblue,
-    Kinoite or another atomic Fedora takes one command. Either way, nothing compiles on your
-    computer.
+    A new machine: one download and a USB stick. A machine on Silverblue, Kinoite or another atomic
+    Fedora: one command.
   </p>
 
   <h2 id="iso">A fresh install</h2>
   <Iso />
   <p class="hint">
-    Making the stick on Windows or a Mac, and keeping Windows alongside:{' '}
-    <a href="/docs/coming-from">From Windows or macOS</a>.
+    From Windows or a Mac, and keeping Windows: <a href="/docs/coming-from">From Windows or macOS</a>.
   </p>
   <p>Boot from the stick and start the installer.</p>
   <ul>
     <li>
-      <strong>It asks which disk, and how to partition it.</strong> Nothing is chosen for you, and
-      nothing is erased until you say so. Whatever you do tell it to erase is gone, so back it up
-      first.
+      <strong>You choose the disk and partitioning.</strong> Nothing is erased until you confirm;
+      back up first.
     </li>
     <li>
-      <strong>Your account and Wi-Fi</strong> come from the installer’s accounts step or, on the
-      first boot, from GNOME’s own setup.
+      <strong>Account and Wi-Fi:</strong> the installer’s accounts step, or GNOME’s setup on first
+      boot.
     </li>
+    <li>It waits on its last screen. Remove the stick and restart.</li>
   </ul>
-  <p>
-    When it finishes it stays on its last screen until you restart, so you can read it. Take the
-    stick out and restart into your new desktop.
-  </p>
   <arc-alert variant="warning" heading="Use the current ISO, not an old download">
-    The installers published in early August 2026 asked nothing: they erased every disk they could
-    see (under Ventoy, the USB stick too) and restarted. The <code>-latest</code> links above always point at
-    this week’s build, which asks before it touches anything.
+    ISOs from early August 2026 erased every disk they could see (under Ventoy, the stick too)
+    without asking. The <code>-latest</code> links above are always the current, safe build.
   </arc-alert>
 
   <h2 id="secure-boot">NVIDIA: enroll the key, once</h2>
   <p>
-    The NVIDIA image’s driver is signed with Pulsar’s key, so Secure&nbsp;Boot can stay on. Your
-    firmware has to be told to trust that key once, through a blue screen called MokManager on the
-    next&nbsp;boot. The standard image needs none of this.
+    The NVIDIA driver is signed with Pulsar’s key, so Secure&nbsp;Boot stays on. Enroll the key
+    once, through MokManager on the next boot. The standard image doesn’t need this.
   </p>
   <ol class="steps">
     <li>
       <h3>Import the certificate</h3>
-      <p>
-        <code>mokutil</code> asks for a password you retype at the firmware screen on the next boot.
-        You use it once, then never again.
-      </p>
+      <p><code>mokutil</code> asks for a one-time password you retype at the next boot.</p>
       <arc-code-block class="theme-fixed-dark" language="bash" filename="enroll" code={ENROL}></arc-code-block>
     </li>
     <li>
@@ -104,11 +93,11 @@ const TOC = [
           </>
         ))}
       </p>
-      <p class="hint">Miss the prompt and nothing breaks; the enrollment just doesn’t happen. Run the import again.</p>
+      <p class="hint">Missed it? Nothing breaks; run the import again.</p>
     </li>
     <li>
       <h3>Switching, not installing? Take the NVIDIA image</h3>
-      <p>From the ISO you are already on it. From another image, move over once the key is in:</p>
+      <p>Installed from the NVIDIA ISO? Skip this. Otherwise, once the key is in:</p>
       <arc-code-block class="theme-fixed-dark" language="bash" filename="switch" code={TAKE}></arc-code-block>
     </li>
     <li>
@@ -118,62 +107,44 @@ const TOC = [
   </ol>
 
   <arc-alert variant="warning" heading="Lost the key later?">
-    A BIOS update can clear the whole MOK list. On the NVIDIA image the recovery is GNOME
-    Software’s own Secure Boot prompt: it enrolls <code>/etc/pki/akmods/certs/public_key.der</code>,
-    and a boot-time unit keeps that file equal to <code>MOK.der</code>, so the prompt enrolls the
-    right key. If you would rather not trust someone else’s key at all, the standard image needs
-    none, and the repo is MIT-licensed to fork with your own.
+    A BIOS update can clear the MOK list. Accept GNOME Software’s Secure Boot prompt: it enrolls{' '}
+    <code>/etc/pki/akmods/certs/public_key.der</code>, which Pulsar keeps identical to{' '}
+    <code>MOK.der</code>. Or run the import above again.
   </arc-alert>
 
   <h2 id="switch">Switch from an atomic Fedora</h2>
   <p>
-    On Fedora Silverblue, Kinoite or another atomic Fedora 44 or newer, you can move to Pulsar in
-    place, with no USB stick. Your files and accounts stay as they are, and the image you came from
-    stays in the boot menu until the next update.
+    From Silverblue, Kinoite or another atomic Fedora 44+, switch in place. Files and accounts are
+    kept; the old image stays in the boot menu until the next update.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="standard" code={switchTo(IMAGES.vanilla)}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="nvidia" code={switchTo(IMAGES.nvidia)}></arc-code-block>
   <p class="hint">
-    For the NVIDIA image with Secure Boot on, go by way of the standard image: switch to it, then
-    <a href="#secure-boot">enroll the key</a> it ships (the file is not on Silverblue), then take
-    the NVIDIA image from there.
+    NVIDIA with Secure Boot on: switch to the standard image first,{' '}
+    <a href="#secure-boot">enroll the key</a> it ships, then switch to NVIDIA.
   </p>
 
   <h2 id="first-login">When you log in</h2>
   <p>
-    A new account comes up in Pulsar’s own theme, and a welcome window walks you through the rest:
-    pick a look, see what an atomic system means for you, and, if you want one, install a coding
-    agent. Close it whenever you like; <strong>Welcome to Pulsar</strong> in the app grid opens it
-    again. If you switched an account you had already made your own, Pulsar leaves its look exactly
-    as it was and tells you once that themes are there.
+    New accounts start in Pulsar’s theme with a welcome window: pick a look, learn the basics,
+    optionally add a coding agent. Reopen it from <strong>Welcome to Pulsar</strong> in the app
+    grid. A customized account you switched keeps its look.
   </p>
   <p>
-    The apps (Steam, Heroic, a video and a music player, the stock GNOME set and a few more) install
-    on the first boot that has a network, so give it a few minutes online. Later, if a new image
-    adds a default or you want back one you removed, <code>sudo pulsar setup apps</code> installs
-    whatever is missing.
+    Default apps (Steam, Heroic, video and music players, the GNOME set and more) install on the
+    first boot with a network. <code>sudo pulsar setup apps</code> reinstalls any that are missing.
   </p>
-  <p>If anything looks off, ask the machine before you guess:</p>
+  <p>If something looks wrong:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="health" code="pulsar doctor"></arc-code-block>
   <p class="hint">
-    What each line means: <a href="/docs/troubleshooting">Troubleshooting</a>. Where new software
-    should go: <a href="/docs/where-things-go">Where things go</a>.
+    <a href="/docs/troubleshooting">Troubleshooting</a> · <a href="/docs/where-things-go">Where things go</a>
   </p>
 
   <h2 id="updates">Updates</h2>
   <p>
-    New builds download in the background, on mains power and an unmetered connection, and wait
-    for your next restart. A notification says when one is ready, with a Restart button; nothing
-    restarts on its own.
-  </p>
-  <p>
-    <code>sudo pulsar update</code> does the same download on demand. The build you came from stays
-    in the boot menu, and <code>sudo pulsar rollback</code> makes it the default again. GNOME Software’s automatic updates and bootc’s update timer are both off on
-    purpose: the first cannot read an image with layered packages, and the second reboots on
-    its&nbsp;own.
-  </p>
-  <p class="hint">
-    Layered packages, pins, checkpoints, and what rollback does not cover:{' '}
+    New builds download in the background (mains power, unmetered connection) and apply at your
+    next restart; a notification offers a Restart button. <code>sudo pulsar update</code> downloads
+    on demand; <code>sudo pulsar rollback</code> returns to the previous build.{' '}
     <a href="/docs/updates">Updates and rollback</a>.
   </p>
 </Docs>

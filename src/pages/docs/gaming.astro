@@ -75,15 +75,12 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>Gaming</h1>
-  <p class="intro">
-    Log in, open Steam, play. The rest of this page is what had to be true for that sentence to
-    hold, and how to check it still does.
-  </p>
+  <p class="intro">What’s set up for games, and how to check it.</p>
 
   <h2 id="launchers">The launchers</h2>
   <p>
-    On the first boot with a network, Pulsar installs the launchers and tools from Flathub. They are
-    ordinary Flatpaks: update them in GNOME Software, remove any you don’t want, and it stays gone.
+    Installed from Flathub on the first boot with a network. Ordinary Flatpaks: removed ones stay
+    removed.
   </p>
   <table>
     <thead><tr><th>App</th><th>Flatpak ID</th></tr></thead>
@@ -94,43 +91,34 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    What an app cannot do from inside its sandbox lives in the image instead: gamescope, gamemode,
-    MangoHud and the udev rules for controllers and headsets (<code>steam-devices</code>).
+    In the image: gamescope, gamemode, MangoHud, and controller/headset udev rules
+    (<code>steam-devices</code>).
   </p>
 
   <h2 id="gamemode">gamemode</h2>
-  <p>
-    Pulsar’s <code>/etc/gamemode.ini</code> changes two things from the defaults, both because this
-    was built for a laptop with two GPUs:
-  </p>
+  <p><code>/etc/gamemode.ini</code> differs from the defaults in two ways:</p>
   <ul>
     <li>
-      <strong>No governor demotion.</strong> Left alone, gamemode compares the integrated GPU’s power
-      draw with the CPU’s and, above a ratio, drops the CPU to <code>powersave</code> mid-game. That
-      rule was written for machines where the integrated GPU <em>is</em> the game’s GPU. With a
-      discrete card doing the rendering, it measures the wrong thing and acts on it anyway. Pulsar
-      turns it off (<code>igpu_power_threshold=-1</code>).
+      <strong><code>igpu_power_threshold=-1</code>:</strong> stops gamemode dropping the CPU to{' '}
+      <code>powersave</code> mid-game on dual-GPU laptops (it misreads the integrated GPU’s power).
     </li>
     <li>
-      <strong>A priority boost.</strong> <code>renice=10</code> uses the nice grant the gamemode
-      package already ships. For that, your account has to be in the <code>gamemode</code> group:
-      the first boot enrolls every account that exists by then.
+      <strong><code>renice=10</code>:</strong> needs the <code>gamemode</code> group; the first
+      boot adds every existing account.
     </li>
   </ul>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="gamemode" code={GAMEMODE}></arc-code-block>
   <p>
-    Groups are fixed when you log in, so the session in which you were enrolled does not have it
-    yet. <code>pulsar doctor gamemode</code> tells those two states apart, which saves you wondering
-    why nothing changed.
+    Group changes apply at your next login; <code>pulsar doctor gamemode</code> tells you if you
+    need to log out.
   </p>
 
   <h2 id="proton">Proton and the kernel</h2>
   <p>
-    <code>ntsync</code> is loaded at boot and <code>/dev/ntsync</code> is handed to whoever is at
-    the seat, so Proton can use the kernel’s own Windows-style sync instead of emulating it. Without
-    it Proton falls back to esync or fsync.
+    <code>ntsync</code> loads at boot and <code>/dev/ntsync</code> is given to the seat user, so
+    Proton uses kernel sync instead of esync/fsync.
   </p>
-  <p>A few kernel settings, each for a reason you could name:</p>
+  <p>Kernel settings:</p>
   <table>
     <thead><tr><th>Setting</th><th>Why</th></tr></thead>
     <tbody>
@@ -140,52 +128,38 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    The scheduler is <code>scx_bpfland</code> where the kernel can load it: on a CPU with eight
-    performance and sixteen efficiency cores and no SMT, stock EEVDF places threads badly. Some
-    Fedora kernels cannot load any BPF scheduler; on those the machine runs stock EEVDF and{' '}
-    <code>pulsar doctor</code> says so rather than warning forever.
+    The scheduler is <code>scx_bpfland</code> where the kernel can load it (it places threads better
+    on hybrid P/E-core CPUs). Otherwise stock EEVDF runs and <code>pulsar doctor</code> says so.
   </p>
 
   <h2 id="nvidia">NVIDIA and Flatpak games</h2>
-  <p>
-    A Flatpak app does not see the host’s NVIDIA driver. It needs a matching GL extension from
-    Flathub, and it picks that up once, when it starts. Two things on the NVIDIA image keep that
-    from biting:
-  </p>
+  <p>Flatpak apps need a GL extension matching the NVIDIA driver, read at app start.</p>
   <ul>
     <li>
-      <code>pulsar-gl-nvidia.service</code> installs the extension for the running driver at boot,
-      and for the next driver as soon as an update is staged, so it is already there when you
-      restart into it.
+      <code>pulsar-gl-nvidia.service</code> installs it for the running driver at boot, and for the
+      next driver when an update is staged.
     </li>
     <li>
-      If Steam (or any Flatpak app) was started before its extension arrived, it runs its games on
-      the integrated GPU, which on many laptops means a black window. Pulsar notices and says so:{' '}
-      <strong>Restart Steam to use the NVIDIA GPU</strong>. Quit it fully, not just its window, and
-      open it again.
+      An app started before its extension arrived renders on the integrated GPU (often a black
+      window). Pulsar notifies: <strong>Restart Steam to use the NVIDIA GPU</strong>. Quit Steam
+      fully and reopen it.
     </li>
   </ul>
   <p>
-    MangoHud has the same kind of catch: the Flatpak layer only shows up in apps on the matching
-    runtime branch. When Steam moves to a new runtime and the layer does not, the overlay just
-    disappears, silently. <code>pulsar doctor mangohud</code> watches for exactly that.
+    The MangoHud Flatpak layer only works on the matching runtime branch; when Steam changes runtime
+    the overlay silently disappears. <code>pulsar doctor mangohud</code> checks this.
   </p>
 
   <h2 id="loading">Loading screens</h2>
   <p>
-    GNOME asks every window whether it is still alive, and after five seconds without an answer
-    offers to kill it. A game in the middle of a level load or a shader pass is working perfectly
-    and still trips that. Pulsar raises the wait to 20 seconds as a desktop default, and while a game
-    runs under gamemode it suspends the check entirely, then puts back whatever was there before.
-    It is deliberately not off for good: a desktop that cannot tell you an app has hung leaves you
-    only a terminal to kill it with.
+    GNOME’s “not responding” check waits 20 seconds instead of 5, and is suspended entirely while a
+    game runs under gamemode, so loading screens don’t trigger it.
   </p>
 
   <h2 id="check">Checking it</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
   <p class="hint">
-    Playing at your screen’s real resolution under fractional scaling is its own page:{' '}
-    <a href="/docs/gamescale">gamescale</a>. Everything doctor can report:{' '}
+    Native resolution under fractional scaling: <a href="/docs/gamescale">gamescale</a>. All checks:{' '}
     <a href="/docs/troubleshooting">Troubleshooting</a>.
   </p>
 </Docs>

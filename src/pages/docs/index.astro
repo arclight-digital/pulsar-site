@@ -16,16 +16,12 @@ const DOCS_NAV = ALL_NAV.map((g) => ({ ...g, links: g.links.filter((l) => !l.slu
   path="/docs"
 >
   <h1>Pulsar docs</h1>
-  <p class="intro">
-    How Pulsar works, and how to make it yours. These pages live in the same repository as the
-    image, and every command in them is one the image ships.
-  </p>
-  <p>
-    New here? <a href="/docs/install">Install</a>, then <a href="/docs/where-things-go">Where things go</a>:
-    the one habit an image-based system asks of you. Coming from Windows or a Mac? Start with{' '}
-    <a href="/docs/coming-from">From Windows or macOS</a>. Something broken? Run{' '}
-    <code>pulsar doctor</code> and read <a href="/docs/troubleshooting">Troubleshooting</a>.
-  </p>
+  <p class="intro">How Pulsar works and how to use it.</p>
+  <ul>
+    <li>New: <a href="/docs/install">Install</a>, then <a href="/docs/where-things-go">Where things go</a>.</li>
+    <li>From Windows or a Mac: <a href="/docs/coming-from">start here</a>.</li>
+    <li>Something broken: <code>pulsar doctor</code>, then <a href="/docs/troubleshooting">Troubleshooting</a>.</li>
+  </ul>
   {
     DOCS_NAV.map((g) => (
       <section class="block">

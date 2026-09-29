@@ -93,10 +93,7 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>Where things go</h1>
-  <p class="intro">
-    On most Linux systems, “install it” means one thing. On an image-based one it means four,
-    and picking the right one is most of what keeps the machine fast, updatable and yours.
-  </p>
+  <p class="intro">On an image-based system, “install” means one of four things. Pick by what it is.</p>
 
   <h2 id="filesystem">The filesystem</h2>
   <table>
@@ -120,93 +117,70 @@ const TOC = [
 
   <h2 id="apps">Apps: Flatpak</h2>
   <p>
-    Anything with a window is a Flatpak. Flathub is configured unfiltered, so the whole catalog
-    shows up in GNOME Software, and Fedora’s remote carries the stock GNOME apps. On the first boot
-    with a network, Pulsar installs its defaults: Steam, Heroic, Faugus, Bottles, ProtonPlus,
-    protontricks, OBS Studio, Discord, EasyEffects, virt-manager, Flatseal and the stock GNOME set.
-    Remove one and it stays removed.
+    Anything with a window. Flathub (unfiltered) and Fedora’s remote are configured. First boot
+    installs Steam, Heroic, Faugus, Bottles, ProtonPlus, protontricks, OBS Studio, Discord,
+    EasyEffects, virt-manager, Flatseal and the GNOME set; removed ones stay removed.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK}></arc-code-block>
   <p>
-    <code>--user</code> installs into your home folder, needs no password, and touches no one
-    else’s account. A system install (what GNOME Software does by default) is shared by every
-    account.
+    <code>--user</code>: your account only, no password. System installs (GNOME Software’s default)
+    are shared by all accounts.
   </p>
 
   <h2 id="dev">Dev tools: a toolbox</h2>
   <p>
-    Compilers, SDKs and language runtimes never go into the image. They go in a toolbox: a Fedora
-    container that shares your home folder, so your projects and dotfiles are the same files inside
-    and out. Inside, <code>sudo dnf install</code> works as usual, because it changes only the box.
+    Compilers, SDKs and runtimes go in a toolbox: a Fedora container sharing your home folder.{' '}
+    <code>sudo dnf install</code> works inside and changes only the box.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="toolbox" code={TOOLBOX}></arc-code-block>
-  <p>
-    Want a box with the usual kit already in it (git, gcc, cmake, gdb, make, ripgrep, jq, Python
-    headers)? Pulsar ships a recipe:
-  </p>
+  <p>A ready box (git, gcc, cmake, gdb, make, ripgrep, jq, Python headers):</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="devbox" code={DEVBOX}></arc-code-block>
   <p>
-    That one is a distrobox, so <code>toolbox list</code> will not show it. The recipe lives at{' '}
-    <code>/usr/share/pulsar/distrobox.ini</code>: copy it, edit it, keep your own.
+    It’s a distrobox (not in <code>toolbox list</code>); the recipe is{' '}
+    <code>/usr/share/pulsar/distrobox.ini</code>.
   </p>
-  <p>
-    For toolchains pinned per project, <code>mise</code> and <code>direnv</code> are on the host and
-    install into <code>$HOME</code>:
-  </p>
+  <p>Per-project toolchains: <code>mise</code> and <code>direnv</code> are on the host and install into <code>$HOME</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="mise" code={MISE}></arc-code-block>
   <p>
-    The exceptions sit on the host because they have to: <code>bpftrace</code>,{' '}
-    <code>bcc-tools</code>, <code>perf</code> and <code>sysstat</code>. A probe attaches to the
-    host’s kernel, and a container cannot do that for you.
+    On the host because they probe its kernel: <code>bpftrace</code>, <code>bcc-tools</code>,{' '}
+    <code>perf</code>, <code>sysstat</code>.
   </p>
 
   <h2 id="services">Services: quadlets</h2>
-  <p>
-    A long-running container is best written as a quadlet: a unit file that systemd turns into a
-    service, rootless, in your session, logged like everything else, and a file you can keep in
-    git. Pulsar ships a commented template:
-  </p>
+  <p>Long-running containers: write a quadlet, a unit file systemd runs as a rootless service. Template:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="quadlet" code={QUADLET}></arc-code-block>
-  <p>
-    The service is named after the file: <code>myapp.container</code> becomes{' '}
-    <code>myapp.service</code>. <code>podman-auto-update.timer</code> is on for every session, and
-    it updates only containers labeled <code>AutoUpdate=</code>, as the template is. On Fedora,
-    host paths mounted into a container need <code>:Z</code>, or SELinux denies them in a way that
-    looks like the app’s fault.
-  </p>
+  <ul>
+    <li><code>myapp.container</code> becomes <code>myapp.service</code>.</li>
+    <li><code>podman-auto-update.timer</code> updates containers labeled <code>AutoUpdate=</code> (the template is).</li>
+    <li>Mount host paths with <code>:Z</code>, or SELinux denies them.</li>
+  </ul>
   <p class="hint">Containers that need the GPU: <a href="/docs/gpu-containers">GPU containers</a>.</p>
 
   <h2 id="layering">Layering, the last resort</h2>
-  <p>
-    Some things cannot run in a container at all: a kernel module, a udev rule, a daemon that has to
-    own the host. For those, layer a package onto the image:
-  </p>
+  <p>Only for what can’t run in a container (kernel modules, udev rules, host daemons):</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="layer" code={LAYER}></arc-code-block>
   <p>
-    It builds a new deployment, takes effect at the next boot, and rides along on every update
-    after. The price is that every update then goes through <code>rpm-ostree</code> and takes
-    minutes instead of seconds. <code>pulsar update</code> handles that for you, and{' '}
-    <code>pulsar doctor</code> counts your layers on its <code>updates</code> line. Never layer a
-    dev tool; that is what the toolbox is for.
+    Applies at the next boot and persists through updates, which then take minutes instead of
+    seconds (<code>pulsar update</code> handles it; <code>pulsar doctor</code> counts layers). Never
+    layer dev tools.
   </p>
 
   <h2 id="dont">Tempting, and wrong</h2>
   <ul>
     <li>
       <strong><code>sudo make install</code>, a vendor’s <code>install.sh</code>, anything into{' '}
-      <code>/usr/local</code> or <code>/opt</code>.</strong> It works, which is the problem: it
-      shadows the image on your <code>PATH</code>, never shows up in <code>rpm-ostree status</code>,
-      and survives every update and rollback forever. Use a toolbox, <code>mise</code> or{' '}
-      <code>~/.local/bin</code>.
+      <code>/usr/local</code> or <code>/opt</code>.</strong> It shadows the image on{' '}
+      <code>PATH</code>, is invisible to <code>rpm-ostree status</code>, and survives every update
+      and rollback. Use a toolbox, <code>mise</code> or <code>~/.local/bin</code>.
     </li>
     <li>
       <strong><code>sudo pip install</code> or <code>sudo npm install -g</code> on the host.</strong>{' '}
-      It either fails on the read-only <code>/usr</code> or lands in <code>/usr/local</code>. Use a
-      venv in the project, or a toolbox.
+      Fails on read-only <code>/usr</code> or lands in <code>/usr/local</code>. Use a venv or a
+      toolbox.
     </li>
     <li>
-      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> A local edit
-      outlives every update and quietly shadows the real fix when it arrives. If you must, take a{' '}
+      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> The edit
+      outlives updates and hides the real fix. If you must, take a{' '}
       <a href="/docs/updates#checkpoint">checkpoint</a> first.
     </li>
   </ul>

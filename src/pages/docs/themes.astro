@@ -116,30 +116,28 @@ const TOC = [
 >
   <h1>Themes</h1>
   <p class="intro">
-    One theme recolors the whole desktop at once: the accent, your apps, the terminal, the text
-    editor, the top bar and the wallpaper. Sixteen ship with the image, and one command takes you
-    back to stock GNOME exactly.
+    A theme recolors the accent, apps, terminal, text editor, top bar and wallpaper at once. Sixteen
+    ship with the image; one command restores stock GNOME.
   </p>
 
   <h2 id="pick">Pick one</h2>
   <p>
-    Open <strong>Themes</strong> from the app grid (on a fresh account it is on{' '}
-    <arc-kbd>Super</arc-kbd>&nbsp;+&nbsp;<arc-kbd>T</arc-kbd> too, if that shortcut was free). Each
-    card is dressed in its own theme. Type to filter, <arc-kbd>Enter</arc-kbd> applies,{' '}
-    <arc-kbd>Esc</arc-kbd> closes. Or from a terminal:
+    Open <strong>Themes</strong> from the app grid (or <arc-kbd>Super</arc-kbd>&nbsp;+&nbsp;<arc-kbd>T</arc-kbd>{' '}
+    on a new account, if free). Type to filter, <arc-kbd>Enter</arc-kbd> applies,{' '}
+    <arc-kbd>Esc</arc-kbd> closes. Or:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar theme list" code={LIST}></arc-code-block>
   <p>
-    The <code>*</code> is the one you are on. In a terminal the hex codes are drawn as color swatches:
-    background, accent, then red, green, yellow, blue, magenta and cyan.
+    <code>*</code> marks the current theme. Swatches: background, accent, red, green, yellow, blue,
+    magenta, cyan.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar theme set" code={SET}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={MORE}></arc-code-block>
 
   <h2 id="switch">What a switch changes</h2>
   <p>
-    Each piece of the desktop is a <em>target</em>, and a switch writes them all in one go, or
-    none of them if anything fails. It never touches your fonts or icons.
+    A switch writes every <em>target</em> or, if anything fails, none. Fonts and icons are never
+    touched.
   </p>
   <table>
     <thead><tr><th>Target</th><th>What it recolors</th><th>You see it</th></tr></thead>
@@ -149,80 +147,69 @@ const TOC = [
       ))}
     </tbody>
   </table>
-  <p>
-    Two targets reach outside the desktop itself, so you can leave them out. Your choice sticks
-    through every later switch, the picker’s included, until you change it:
-  </p>
+  <p>Two targets reach outside the desktop and can be left out; the choice persists:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="opt out" code={OPTOUT}></arc-code-block>
 
   <h2 id="dark-light">Dark and light</h2>
-  <p>
-    Twelve themes have a dark and a light variant, and follow the Dark Style switch in Quick
-    Settings: flip it and the whole desktop flips with you. A setting you changed by hand since the
-    theme wrote it, like btop’s or your agent’s theme, is left as you set it.{' '}
-    <code>--variant dark</code> or <code>--variant light</code> pins one instead.
-  </p>
-  <p>
-    Four come in one variant only. Dracula, Phosphor and Amber are dark; Alucard is light. Picking one
-    of those sets Dark or Light Style for you, and it stays put when the switch flips. Phosphor and
-    Amber are CRT terminals: every ANSI color is pulled toward the phosphor but keeps its meaning,
-    so a red error never passes for a green success.
-  </p>
+  <ul>
+    <li>
+      Twelve themes have both variants and follow Dark Style in Quick Settings. Settings you changed
+      by hand (btop’s, your agent’s theme) are kept. <code>--variant dark|light</code> pins one.
+    </li>
+    <li>
+      Four are single-variant: Dracula, Phosphor and Amber (dark), Alucard (light). They set Dark or
+      Light Style and ignore the switch.
+    </li>
+    <li>
+      Phosphor and Amber tint every ANSI color toward the phosphor while keeping red distinct from
+      green.
+    </li>
+  </ul>
 
   <h2 id="open-apps">Apps that were already open</h2>
   <p>
-    A GTK app reads its colors once, when it starts. So after a switch, Pulsar lists the apps still
-    wearing the old palette and offers <strong>Restart</strong>, <strong>Later</strong> or{' '}
-    <strong>Don’t ask again</strong>: a dialog in the picker, a question in the terminal.
-  </p>
-  <p>
-    Restart asks each app to quit the way <arc-kbd>Ctrl</arc-kbd>&nbsp;+&nbsp;<arc-kbd>Q</arc-kbd>{' '}
-    does, so an app with unsaved work shows its own save dialog and stays open. Nothing is killed,
-    and only apps that actually quit are reopened.
+    GTK apps read colors at startup. After a switch, Pulsar lists apps with the old palette and
+    offers <strong>Restart</strong>, <strong>Later</strong> or <strong>Don’t ask again</strong>.
+    Restart quits each app like <arc-kbd>Ctrl</arc-kbd>&nbsp;+&nbsp;<arc-kbd>Q</arc-kbd> (unsaved
+    work gets its save dialog) and reopens only those that quit.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="restarts" code={RESTART}></arc-code-block>
 
   <h2 id="revert">Put it back</h2>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="revert" code={REVERT}></arc-code-block>
-  <p>
-    The first time a theme touches a file or a setting, the original is saved. Revert puts each one
-    back, down to the byte. Files you share with it (your own <code>gtk.css</code>,{' '}
-    <code>btop.conf</code>) lose only the theme’s lines and keep yours, including edits you made
-    after theming. A setting you changed yourself since the theme wrote it is yours, and stays.
-  </p>
-  <p>
-    Plain <code>revert</code> goes all the way to GNOME’s own defaults, not Fedora’s and not
-    Pulsar’s, and turns the theme’s Shell extension off. Extensions you enabled yourself stay
-    enabled. <code>--to image</code> stops at Pulsar’s defaults instead.
-  </p>
+  <ul>
+    <li>
+      Originals are saved on first change and restored byte for byte. Shared files (your{' '}
+      <code>gtk.css</code>, <code>btop.conf</code>) lose only the theme’s lines. Settings you changed
+      since are kept.
+    </li>
+    <li>
+      <code>revert</code> goes to GNOME’s defaults and turns off the theme’s Shell extension; your
+      other extensions stay. <code>--to image</code> goes to Pulsar’s defaults.
+    </li>
+  </ul>
 
   <h2 id="your-own">Make your own</h2>
   <p>
-    Any base16 or base24 scheme imports as a theme of your own, with a wallpaper generated from its
-    palette. The import warns when a slot is not the color its name promises (some popular
-    schemes have a “red” that is pale blue), and <code>--set</code> fixes it:
+    Import any base16 or base24 scheme (a wallpaper is generated from it). The import warns when a
+    slot isn’t the color its name says; fix it with <code>--set</code>:
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="import" code={IMPORT}></arc-code-block>
   <p>
-    Your themes live in <code>~/.local/share/pulsar/themes/</code>, next to the image’s in{' '}
-    <code>/usr/share/pulsar/themes/</code>. Each is one folder with a <code>theme.toml</code>; copy
-    one of the shipped ones under a new name to start from something complete.
+    Your themes: <code>~/.local/share/pulsar/themes/</code>; shipped ones:{' '}
+    <code>/usr/share/pulsar/themes/</code>. Each is a folder with a <code>theme.toml</code>; copy a
+    shipped one to start.
   </p>
   <p>
-    Or describe what you want to a coding agent. The image ships a skill that teaches it to build a
-    theme from a scheme, a photo or a mood, check its contrast, and apply it when you say so.{' '}
-    <code>pulsar agent add</code> links it in: <a href="/docs/agents">Coding agents</a>.
+    Or ask a coding agent: the image’s theme skill builds one from a scheme, photo or mood and
+    checks its contrast (<a href="/docs/agents">Coding agents</a>).
   </p>
 
   <h2 id="first-login">The first login</h2>
   <p>
-    A brand-new account starts in the Pulsar theme. An account that already had a look of its own
-    (its own accent, wallpaper, GTK or Shell theme, terminal palette) is left exactly as it was, and
-    told once that themes are there. Either way this happens once per account, and never again after
-    a revert.
+    New accounts start in the Pulsar theme. An already-customized account (accent, wallpaper, GTK
+    or Shell theme, terminal palette) is left as is and told once that themes exist. This runs once
+    per account, never after a revert.
   </p>
-  <p class="hint">
-    Every file a switch writes, how revert decides what is yours, and how the themes are checked
-    against each new GNOME: <a href="/docs/theming">How theming works</a>.
-  </p>
+  <p class="hint">Files written, revert rules, GNOME checks: <a href="/docs/theming">How theming works</a>.</p>
 </Docs>

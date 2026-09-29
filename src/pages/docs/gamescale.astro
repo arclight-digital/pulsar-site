@@ -44,43 +44,23 @@ const TOC = [
 
   <h2 id="in-the-image">What ships in the image</h2>
   <p>
-    <a href="https://github.com/arclight-digital/gamescale">gamescale</a> ships at a pinned,
-    hash-verified tag: the script at <code>/usr/bin/gamescale</code>, its top-bar indicator enabled
-    system-wide, and a reconcile unit that restores your scale if a game dies without cleaning up.
-  </p>
-  <p>
-    For <strong>native</strong> launchers and terminal use that is everything, and a machine that
-    never installs anything still recovers its scale after a crash.
+    <a href="https://github.com/arclight-digital/gamescale">gamescale</a> (pinned, hash-verified):{' '}
+    <code>/usr/bin/gamescale</code>, its top-bar indicator, and a unit that restores your scale if
+    a game crashes. That’s all native launchers and terminal use need.
   </p>
 
   <h2 id="flatpak">Flatpak launchers need one more step</h2>
-  <p>
-    For <strong>Flatpak</strong> launchers, Steam included, it is not enough, and no setting can
-    make it enough. Flatpak reserves <code>/usr</code> for its own runtime and refuses to share the
-    host’s:
-  </p>
+  <p>Flatpak launchers (Steam included) can’t see the host’s <code>/usr</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK_ERR}></arc-code-block>
-  <p>
-    The <code>/usr</code> a Flatpak sees is the runtime’s, so no grant can ever expose{' '}
-    <code>/usr/bin/gamescale</code> to Steam. A copy under <code>$HOME</code> is the only kind that
-    maps in, which means granting a launcher always means running the installer:
-  </p>
+  <p>So gamescale must be installed under <code>$HOME</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
   <p>
-    That runs the installer copy staged in the image: offline, pinned, matching the image exactly.
-    Upstream’s <code>curl | sh</code> works too; it just fetches whatever is current rather than what
-    the image pinned.
+    This runs the image’s pinned installer, offline. (Upstream’s <code>curl | sh</code> installs
+    the latest instead.)
   </p>
   <p>
-    <strong>The install shadows the image copy, and that is the intended outcome.</strong> User
-    paths win every collision: your shell finds <code>~/.local/bin</code> before{' '}
-    <code>/usr/bin</code>, GNOME prefers a user extension over a system one with the same uuid, and
-    systemd prefers a user unit over <code>/usr/lib/systemd/user</code>. One of each runs, never
-    both.
-  </p>
-  <p class="hint">
-    Chasing odd behavior? <code>gamescale --version</code> tells you which copy you are actually
-    running.
+    The user install replaces the image copy: <code>~/.local/bin</code>, the user extension and the
+    user unit take precedence. <code>gamescale --version</code> shows which copy runs.
   </p>
 </Docs>
 

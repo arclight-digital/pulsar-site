@@ -50,7 +50,7 @@ const HABITS: [string, string, string][] = [
   ['Taskbar', 'Dock', 'The dash, in the overview. Right-click an app there to pin it.'],
   ['Settings, Control Panel', 'System Settings', 'Settings, in the app grid, or Super and type what you want.'],
   ['Microsoft Store, a .exe', 'App Store, a .dmg', 'GNOME Software, or flatpak install. Both install Flatpaks.'],
-  ['Windows Update', 'Software Update', 'A notification when a new image is out, then one command. It never restarts on its own.'],
+  ['Windows Update', 'Software Update', 'Downloads in the background; a notification offers a restart. Never restarts on its own.'],
   ['File Explorer', 'Finder', 'Files. Your folders are under /home/you, called ~ for short.'],
   ['Task Manager', 'Activity Monitor', 'System Monitor, in the app grid.'],
   ['Terminal, PowerShell', 'Terminal', 'Ptyxis. Themed along with everything else.'],
@@ -123,9 +123,7 @@ const TOC = [
 >
   <h1>From Windows or macOS</h1>
   <p class="intro">
-    Most of what you know carries over: windows, a browser, a file manager, Steam. A few habits
-    change, mostly for the better, and a few things don’t come with you at all. This page covers all
-    three, starting with the computer you have now.
+    What carries over, what changes, and what doesn’t come with you.
   </p>
 
   <h2 id="can-it">Will it run on your computer?</h2>
@@ -139,146 +137,125 @@ const TOC = [
       <tr>
         <td>A Windows PC with an NVIDIA GeForce RTX card</td>
         <td>
-          <strong>Yes.</strong> The NVIDIA download. Its driver is <code>nvidia-open</code>, which
-          NVIDIA supports on RTX 20 and GTX 16 cards and newer. An older GeForce is better off on the
-          standard download.
+          <strong>Yes.</strong> The NVIDIA download (<code>nvidia-open</code>: RTX 20, GTX 16 and
+          newer). Older GeForce cards: use the standard download.
         </td>
       </tr>
       <tr>
         <td>A Mac with Apple silicon (M1 and later)</td>
         <td>
-          <strong>No.</strong> Pulsar is built for x86_64 PCs only, and an ARM Mac can’t start it.
+          <strong>No.</strong> Pulsar is x86_64 only.
         </td>
       </tr>
       <tr>
         <td>An Intel Mac, 2018 to 2020</td>
         <td>
-          <strong>Not a good fit.</strong> These have Apple’s T2 chip: the keyboard, trackpad and
-          audio need drivers Fedora’s kernel doesn’t include.
+          <strong>No.</strong> The T2 chip’s keyboard, trackpad and audio need drivers Fedora’s
+          kernel lacks.
         </td>
       </tr>
       <tr>
         <td>An older Intel Mac</td>
         <td>
-          <strong>Maybe.</strong> Untested by us. Many use Broadcom Wi-Fi, which needs a driver the
-          image doesn’t carry, so keep a wired connection handy.
+          <strong>Maybe.</strong> Untested. Broadcom Wi-Fi needs a driver the image lacks; keep a
+          wired connection handy.
         </td>
       </tr>
     </tbody>
   </table>
-  <p>
-    Not sure which graphics you have? On Windows, open Task Manager and look under{' '}
-    <strong>Performance</strong>: each GPU is listed by name.
-  </p>
+  <p>Which graphics? Windows: Task Manager → <strong>Performance</strong> lists each GPU.</p>
 
   <h2 id="backup">Before you start</h2>
   <p>
-    <strong>Back up everything you want to keep</strong>, to an external drive or a cloud you can
-    reach from a browser. The installer only erases what you tell it to, but you are about to tell it
-    things about disks, and nobody gets that right on autopilot.
+    <strong>Back up everything you want to keep</strong> to an external drive or a cloud. The
+    installer erases only what you tell it to.
   </p>
   <ul>
     <li>
-      <strong>BitLocker (Windows).</strong> Many laptops ship with it on. Before you change anything
-      in the firmware, save the recovery key from your Microsoft account or Control Panel. Turning
-      Secure Boot off, or changing the boot order, can make Windows ask for it at the next start.
-      Not sure it’s on? The first command below, in PowerShell as administrator, says{' '}
-      <code>Protection On</code> if it is.
+      <strong>BitLocker (Windows).</strong> Save the recovery key (Microsoft account or Control
+      Panel) before changing firmware settings: a boot-order or Secure Boot change can make Windows
+      ask for it. The first command below (PowerShell, admin) prints <code>Protection On</code> if
+      it’s enabled.
     </li>
     <li>
-      <strong>FileVault (Mac).</strong> Your files are only readable from macOS. Copy them off while
-      you still have it.
+      <strong>FileVault (Mac).</strong> Only macOS can read your files. Copy them off first.
     </li>
     <li>
-      <strong>Licenses and passwords.</strong> Sign out of anything that counts devices (Adobe,
-      Office, some games) while you can still open it. Export your browser’s passwords, or make sure
-      they sync.
+      <strong>Licenses and passwords.</strong> Deactivate anything that counts devices (Adobe,
+      Office, some games). Export or sync your browser’s passwords.
     </li>
   </ul>
   <arc-code-block class="theme-fixed-dark" filename="PowerShell (admin)" code={BITLOCKER}></arc-code-block>
 
   <h2 id="stick">Make the USB stick</h2>
   <p>
-    You need a USB stick of 8&nbsp;GB or more, which will be erased, and the right ISO from the{' '}
-    <a href="/#install">download section</a>.
+    A USB stick of 8&nbsp;GB or more (it will be erased) and the ISO from{' '}
+    <a href="/#install">Get Pulsar</a>.
   </p>
   <h3>From Windows or macOS: Fedora Media Writer</h3>
   <p>
-    Pulsar is Fedora underneath, so Fedora’s own tool writes it correctly. Get Fedora Media Writer
-    from fedoraproject.org for Windows or macOS, choose <strong>Select .iso file</strong>, pick the
-    Pulsar ISO you downloaded, pick the stick, and write.
+    Install Fedora Media Writer from fedoraproject.org, choose <strong>Select .iso file</strong>,
+    pick the Pulsar ISO and the stick, and write.
   </p>
   <h3>Rufus, balenaEtcher and friends</h3>
   <p>
-    They work. If Rufus asks between ISO mode and DD mode, pick <strong>DD</strong>: it copies the
-    image byte for byte, which is what a Fedora ISO expects. Ventoy works with this week’s ISO, but
-    see the <a href="/docs/install#iso">warning on the install page</a> about old downloads first.
+    They work. In Rufus, pick <strong>DD</strong> mode. Ventoy works with the current ISO; read the{' '}
+    <a href="/docs/install#iso">warning about old downloads</a> first.
   </p>
   <p class="hint">
-    Want to check the download is really ours before you write it? The signed checksums are beside
-    each ISO: <a href="/#install">Get Pulsar</a>.
+    To verify the download, see <a href="/docs/install#iso">Install</a>.
   </p>
 
   <h2 id="boot">Start from the stick</h2>
   <ul>
     <li>
-      <strong>A PC:</strong> plug the stick in, restart, and tap the boot menu key as it powers on.
-      It is usually <arc-kbd>F12</arc-kbd>, <arc-kbd>F11</arc-kbd>, <arc-kbd>F8</arc-kbd> or{' '}
-      <arc-kbd>Esc</arc-kbd>, and the maker’s logo screen often says which. Pick the USB entry.
+      <strong>A PC:</strong> restart with the stick in and tap the boot menu key (usually{' '}
+      <arc-kbd>F12</arc-kbd>, <arc-kbd>F11</arc-kbd>, <arc-kbd>F8</arc-kbd> or <arc-kbd>Esc</arc-kbd>).
+      Pick the USB entry.
     </li>
     <li>
-      <strong>An Intel Mac:</strong> hold <arc-kbd>Option</arc-kbd> while it starts, and pick the
-      entry named EFI Boot.
+      <strong>An Intel Mac:</strong> hold <arc-kbd>Option</arc-kbd> at startup and pick EFI Boot.
     </li>
   </ul>
   <p>
-    <strong>Leave Secure Boot on.</strong> The standard image boots with it as it is. The NVIDIA
-    image needs its key enrolled once, after the install, through a blue screen you answer with a
-    password you choose: <a href="/docs/install#secure-boot">every step, with the screens named</a>.
+    <strong>Leave Secure Boot on.</strong> The NVIDIA image needs its key enrolled once after
+    installing: <a href="/docs/install#secure-boot">steps</a>.
   </p>
   <p>
-    The installer asks which disk and how to lay it out, and changes nothing until you confirm. Its
-    disk step also offers to encrypt the disk, the way BitLocker or FileVault did; say yes on a
-    laptop. When it finishes, it waits on its last screen until you restart.
+    The installer asks which disk and layout and changes nothing until you confirm. On a laptop,
+    turn on disk encryption at the disk step.
   </p>
   <arc-alert variant="info" heading="Clock in the wrong time zone?">
-    The installer sets UTC without asking. Open Settings, then <strong>System → Date &amp;
-    Time</strong>, and turn on automatic time zone, or pick yours.
+    The installer sets UTC. Settings → <strong>System → Date &amp; Time</strong>: turn on automatic
+    time zone, or pick yours.
   </arc-alert>
 
   <h2 id="dual-boot">Keeping Windows</h2>
-  <p>
-    You can keep Windows on the same disk and choose at power-on. It is the cautious way to try
-    Pulsar, and it is a bit more work up front:
-  </p>
+  <p>Keep Windows on the same disk and choose at power-on:</p>
   <ol>
     <li>
-      <strong>Make room from Windows.</strong> In Disk Management, right-click the C: partition and
-      choose <strong>Shrink Volume</strong>. Give Pulsar 100&nbsp;GB or more if you will play games.
-      Leave the space unallocated.
+      <strong>Make room.</strong> Disk Management → right-click C: → <strong>Shrink Volume</strong>.
+      100&nbsp;GB or more for games. Leave it unallocated.
     </li>
     <li>
       <strong>Turn off Fast Startup</strong> (Control Panel → Power Options → Choose what the power
-      buttons do). With it on, Windows never fully shuts down, and its drive stays locked
-      half-open where Pulsar can’t safely touch it.
+      buttons do), or the Windows drive stays locked.
     </li>
     <li>
       <strong>Have the BitLocker key</strong> from <a href="#backup">Before you start</a>.
     </li>
     <li>
-      <strong>In the installer, pick that free space</strong> and leave the Windows partitions
-      alone. Do not tell it to reclaim or erase anything you haven’t read.
+      <strong>In the installer, pick the free space.</strong> Leave the Windows partitions alone.
     </li>
   </ol>
   <p>
-    Afterward, if Windows isn’t in Pulsar’s boot menu, your PC’s own boot menu (the same key you
-    used to start the stick) always lists <strong>Windows Boot Manager</strong>. Files can open the
-    Windows drive to copy things across, as long as Windows was shut down properly.
+    If Windows isn’t in Pulsar’s boot menu, the PC’s boot menu lists{' '}
+    <strong>Windows Boot Manager</strong>. Files can open the Windows drive if Windows was shut
+    down fully.
   </p>
   <p>
-    One known annoyance: Windows keeps the hardware clock in local time, Linux in UTC, so each moves
-    the other’s clock by your time zone offset. If that bites, this tells Pulsar to do it
-    Windows’ way:
+    Clock off by your time zone after switching? Windows keeps the hardware clock in local time.
+    Make Pulsar do the same:
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="clock" code={CLOCK}></arc-code-block>
 
@@ -292,33 +269,29 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    Windows have minimize, maximize and close buttons at the top right, as on Windows. Coming from a
-    Mac and want them on the left? GNOME Tweaks is installed: <strong>Windows → Titlebar Buttons →
-    Placement</strong>. Tap-to-click is on for touchpads, and two-finger scrolling is on too.
+    Window buttons are at the top right. To move them left: GNOME Tweaks →{' '}
+    <strong>Windows → Titlebar Buttons → Placement</strong>. Tap-to-click and two-finger scrolling
+    are on.
   </p>
   <p>
-    There is no <code>C:\</code>. Your files live in your home folder, and the system lives in a
-    read-only image beside it. That split is why an update can’t touch your documents and why a bad
-    update can be undone. What it means in practice: <a href="/docs/where-things-go">Where things go</a>.
+    There is no <code>C:\</code>. Your files are in your home folder; the system is a read-only
+    image, so updates can’t touch your documents and can be undone.{' '}
+    <a href="/docs/where-things-go">Where things go</a>.
   </p>
 
   <h2 id="apps">Installing apps</h2>
   <p>
-    You don’t download installers from websites here. Apps are <strong>Flatpaks</strong>, from
-    Flathub, and GNOME Software is the store: search, click Install, done. An app lives in its own
-    sandbox, and nothing it installs can damage the system. The terminal does the same thing, if you prefer:
+    Apps are <strong>Flatpaks</strong> from Flathub. Install them in GNOME Software, or in the
+    terminal:
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={APPS}></arc-code-block>
   <p>
-    Firefox is built in. On the first boot with a network, Pulsar installs a starting set: a text
-    editor, a calculator, image, PDF, video and music viewers, Steam, Heroic, Discord, OBS Studio
-    and more. Remove any of them and they stay removed.
+    Firefox is built in. The first boot with a network installs a starting set (text editor,
+    calculator, image, PDF, video and music viewers, Steam, Heroic, Discord, OBS Studio and more).
+    Removed apps stay removed.
   </p>
   <h3>The usual suspects</h3>
-  <p>
-    All on Flathub today: search the name in Software. Where the original doesn’t exist for Linux,
-    the closest thing does.
-  </p>
+  <p>All on Flathub; search the name in Software.</p>
   <table>
     <thead><tr><th>You used</th><th>Here</th></tr></thead>
     <tbody>
@@ -329,35 +302,29 @@ const TOC = [
   </table>
   <h3>That one Windows program</h3>
   <p>
-    Bottles is installed and runs many Windows programs through Wine, each in its own sealed-off
-    bottle. Small utilities and older software often work fine. Big suites with activation or
-    anti-piracy (Microsoft Office, Adobe Creative Cloud) mostly don’t; use their web versions, or
-    the alternatives above. A Mac-only app has no route here at all.
+    Bottles (installed) runs many Windows programs through Wine. Utilities and older software often
+    work; suites with activation (Microsoft Office, Adobe Creative Cloud) mostly don’t, so use their
+    web versions. Mac-only apps can’t run.
   </p>
 
   <h2 id="updates">Updates</h2>
   <p>
-    The system updates as one whole image, built and tested before it ships. It downloads in the
-    background while you are on mains power, and a notification tells you when it is ready, once
-    per build: <strong>Pulsar 44.x is ready</strong>, with a Restart button. It takes over when you
-    restart, whenever that is. Nothing restarts behind your back, and there is no
-    “Updating, don’t turn off your computer” screen.
+    The system updates as one image. It downloads in the background on mains power, and a
+    notification (<strong>Pulsar 44.x is ready</strong>, with a Restart button) says when it’s
+    ready. It takes over at your next restart; nothing restarts on its own.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE_CMDS}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="where you stand" code={UPDATES}></arc-code-block>
   <p>
-    That second line in <code>pulsar status</code> is the build before. If an update misbehaves,
-    restart and pick it in the boot menu. No reinstall, no restore point to have remembered to make.
-    Rollback covers the system, not your files, so keep backing those up.
-  </p>
-  <p class="hint">
-    The details, including what rollback doesn’t undo: <a href="/docs/updates">Updates and rollback</a>.
+    The second line in <code>pulsar status</code> is the previous build: if an update misbehaves,
+    pick it in the boot menu. Rollback covers the system, not your files.{' '}
+    <a href="/docs/updates">Updates and rollback</a>.
   </p>
 
   <h2 id="keys">Keyboard shortcuts</h2>
   <p>
-    The <arc-kbd>Super</arc-kbd> key is the Windows key, or <arc-kbd>Cmd</arc-kbd> on a Mac
-    keyboard. Tap it on its own and start typing to find any app, file or setting.
+    <arc-kbd>Super</arc-kbd> is the Windows key (<arc-kbd>Cmd</arc-kbd> on a Mac keyboard). Tap it
+    and type to find any app, file or setting.
   </p>
   <table>
     <thead><tr><th>Keys</th><th>Does</th></tr></thead>
@@ -374,50 +341,39 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    <strong>From a Mac, the big one:</strong> copy and paste are <arc-kbd>Ctrl+C</arc-kbd> and{' '}
-    <arc-kbd>Ctrl+V</arc-kbd>, not Cmd. In the terminal they are{' '}
-    <arc-kbd>Ctrl+Shift+C</arc-kbd> and <arc-kbd>Ctrl+Shift+V</arc-kbd>, because plain{' '}
-    <arc-kbd>Ctrl+C</arc-kbd> stops the running command there, as it has since before either of
-    your old systems existed.
+    <strong>From a Mac:</strong> copy and paste are <arc-kbd>Ctrl+C</arc-kbd> and{' '}
+    <arc-kbd>Ctrl+V</arc-kbd>. In the terminal, <arc-kbd>Ctrl+Shift+C</arc-kbd> and{' '}
+    <arc-kbd>Ctrl+Shift+V</arc-kbd> (<arc-kbd>Ctrl+C</arc-kbd> stops the running command).
   </p>
 
   <h2 id="games">Games</h2>
   <p>
-    Steam is installed. Most Windows games in your library run through Proton, Valve’s compatibility
-    layer: install and play, the same as on Windows. Heroic covers Epic, GOG and Amazon. The tuning
-    that makes them run well is already done; <a href="/docs/gaming">Gaming</a> says what and why.
+    Steam is installed; most Windows games run through Proton. Heroic covers Epic, GOG and Amazon.{' '}
+    <a href="/docs/gaming">Gaming</a>.
   </p>
   <p>
-    <strong>The honest part is anti-cheat.</strong> Games whose anti-cheat refuses Linux won’t run,
-    and no setting changes that. Today that includes Valorant and League of Legends, Fortnite, and
-    recent Call of Duty. Others with Easy Anti-Cheat or BattlEye work when the developer has switched
-    on Proton support, and some haven’t. Check your must-play games on ProtonDB before you wipe
-    anything, or keep Windows alongside for them.
+    <strong>Anti-cheat:</strong> games whose anti-cheat blocks Linux won’t run (currently Valorant,
+    League of Legends, Fortnite, recent Call of Duty). Easy Anti-Cheat and BattlEye games work only
+    if the developer enabled Proton support. Check ProtonDB before wiping anything, or keep Windows.
   </p>
 
   <h2 id="limits">What doesn’t come along</h2>
   <ul>
     <li><strong>Microsoft Office and Adobe apps</strong> as desktop programs. Their web versions work in the browser.</li>
     <li><strong>Games with Linux-hostile anti-cheat</strong>, above.</li>
-    <li><strong>Apple’s services.</strong> iCloud Drive, iMessage and AirDrop have no Linux clients. iCloud’s website still works for mail, photos and files.</li>
-    <li><strong>Some hardware tools.</strong> RGB, fan and peripheral apps that exist only for Windows. The hardware usually works; the vendor’s app doesn’t.</li>
+    <li><strong>Apple’s services.</strong> No Linux clients for iCloud Drive, iMessage or AirDrop. iCloud’s website works.</li>
+    <li><strong>Windows-only hardware tools</strong> (RGB, fan, peripheral apps). The hardware usually works.</li>
     <li><strong>Apple silicon Macs</strong>, at all.</li>
   </ul>
-  <p>Everything else, it’s worth a search in GNOME Software before assuming.</p>
+  <p>For anything else, search GNOME Software first.</p>
 
   <h2 id="stuck">When you’re stuck</h2>
-  <p>
-    Pulsar can tell you what it thinks is wrong. Open the terminal (Super, then type{' '}
-    <em>terminal</em>) and run:
-  </p>
+  <p>Open the terminal (Super, type <em>terminal</em>) and run:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="health" code="pulsar doctor"></arc-code-block>
   <p>
-    Each line is a check with <code>ok</code>, <code>warn</code> or <code>FAIL</code>, and most
-    warnings say what to do next. When you need to ask someone, <code>pulsar report --text</code>{' '}
-    gathers the useful facts with your name and addresses taken out.
-  </p>
-  <p class="hint">
-    What each check means and the fixes people need most: <a href="/docs/troubleshooting">Troubleshooting</a>.
+    Each check prints <code>ok</code>, <code>warn</code> or <code>FAIL</code>; warnings say what to do.
+    To ask for help, share <code>pulsar report --text</code> (personal details removed).{' '}
+    <a href="/docs/troubleshooting">Troubleshooting</a>.
   </p>
 </Docs>
 

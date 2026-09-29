@@ -152,22 +152,18 @@ const TOC = [
 >
   <h1>Troubleshooting</h1>
   <p class="intro">
-    Something is off. Before you guess, ask the machine: <code>pulsar doctor</code> reads the places
-    the truth actually lives, and <code>pulsar report</code> packs it up for someone else. Neither
-    needs root.
+    <code>pulsar doctor</code> checks the machine; <code>pulsar report</code> packages the results
+    for someone else. Neither needs root.
   </p>
 
   <h2 id="doctor">Start with doctor</h2>
   <p>
-    <code>pulsar doctor</code> is also what plain <code>pulsar</code> runs. Each line is one check:{' '}
-    <code>ok</code>, <code>warn</code> or <code>FAIL</code>, with a second line of detail when there is
-    something to add. Here is a real run on the NVIDIA image:
+    Plain <code>pulsar</code> runs it too. Each check prints <code>ok</code>, <code>warn</code> or{' '}
+    <code>FAIL</code>, with detail where useful. On the NVIDIA image:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
   <p>
-    Only a <code>FAIL</code> sets exit status 1. A warning is something worth knowing on a machine
-    that works: a scheduler that did not attach costs some performance, not your afternoon. A check
-    that does not apply stays quiet, which is why the vanilla image never mentions NVIDIA.
+    Only <code>FAIL</code> exits 1. Warnings don’t mean broken. Checks that don’t apply are silent.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="one check at a time" code={ONE}></arc-code-block>
 
@@ -182,7 +178,7 @@ const TOC = [
   </table>
 
   <h3 id="fixes">Common findings</h3>
-  <p>Most warnings say what to do on their second line. The ones people meet most:</p>
+  <p>Most common:</p>
   <table>
     <thead><tr><th>Check</th><th>It says</th><th>Do this</th></tr></thead>
     <tbody>
@@ -192,72 +188,65 @@ const TOC = [
     </tbody>
   </table>
   <p class="hint">
-    NVIDIA key enrollment, step by step: <a href="/docs/install#secure-boot">Install</a>. Rolling
-    back a bad update: <a href="/docs/updates#rollback">Updates and rollback</a>.
+    <a href="/docs/install#secure-boot">NVIDIA key enrollment</a> ·{' '}
+    <a href="/docs/updates#rollback">Rolling back</a>
   </p>
 
   <h2 id="report">Asking for help</h2>
   <p>
-    <code>pulsar report</code> is the one thing to paste into an issue, a forum post or an agent. It
-    gathers doctor, your deployments, the image manifest and the hardware, failed units, this boot’s
-    warnings from Pulsar’s own units and the failed ones, the graphics devices and the driver bound
-    to each, and your Flatpak remotes and apps. JSON by default; <code>--text</code> is for people.
+    Paste <code>pulsar report</code> into an issue, forum post or agent. It includes doctor,
+    deployments, the image manifest, hardware, failed units, this boot’s warnings from Pulsar’s and
+    failed units, GPUs and their drivers, and Flatpak remotes and apps. JSON by default;{' '}
+    <code>--text</code> for people.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="report" code={REPORT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="pulsar report --text" code={REPORT_OUT}></arc-code-block>
   <p>
-    <strong>What it leaves out:</strong> the full journal, anything from an earlier boot, environment
-    variables, tokens, the machine ID, file contents from <code>$HOME</code> or <code>/etc</code>, and
-    Flatpak app data.
+    <strong>Left out:</strong> the full journal, earlier boots, environment variables, the machine
+    ID, file contents from <code>$HOME</code> or <code>/etc</code>, Flatpak app data.
   </p>
   <p>
-    <strong>What it redacts:</strong> your hostname, username and home path (as <code>~</code>), MAC
-    and IPv4 addresses, email addresses, values after words like <code>token=</code>,{' '}
-    <code>password:</code> or <code>Authorization: Bearer</code>, and tokens recognizable by their
-    prefix: GitHub (<code>ghp_</code>, <code>github_pat_</code>), GitLab (<code>glpat-</code>),{' '}
-    <code>sk-</code> API keys, Slack, AWS access keys, and JWTs. That pass is best effort, because
-    journal messages are free text. Read the report before you post it.
+    <strong>Redacted (best effort; read it before posting):</strong> hostname, username, home path
+    (as <code>~</code>), MAC and IPv4 addresses, email addresses, values after{' '}
+    <code>token=</code>, <code>password:</code> or <code>Authorization: Bearer</code>, and prefixed
+    tokens: GitHub (<code>ghp_</code>, <code>github_pat_</code>), GitLab (<code>glpat-</code>),{' '}
+    <code>sk-</code> keys, Slack, AWS access keys, JWTs.
   </p>
   <arc-alert variant="info" heading="Nothing in the journal?">
-    Reading the system journal needs the wheel, adm or systemd-journal group. Without one the report
-    says so in a <code>note</code>, rather than passing off an empty list as a quiet boot.
+    Reading the system journal needs the wheel, adm or systemd-journal group; otherwise the report
+    says so in a <code>note</code>.
   </arc-alert>
 
   <h2 id="crashes">Crashes</h2>
   <p>
-    Fedora’s systemd-coredump already records every crash, with a stack trace of the thread that
-    died. Pulsar adds two things: someone telling you, and a way to hand it on.
-  </p>
-  <p>
-    If you have a default coding agent (the only one installed, or the one you picked with{' '}
-    <code>pulsar agent default</code>), a crash of one of your programs puts up a notification, once
-    per program per boot, with an <strong>Ask</strong> button. Nothing goes anywhere unless you
-    click it. Without one, nothing pops up; <code>pulsar doctor</code> still lists the crash.
+    systemd-coredump records every crash. With a default coding agent (the only one installed, or
+    set with <code>pulsar agent default</code>), a crash shows a notification (once per program per
+    boot) with an <strong>Ask</strong> button; nothing is sent unless you click. Without one,{' '}
+    <code>pulsar doctor</code> still lists crashes.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="crashes" code={CRASH}></arc-code-block>
   <p>
-    A crash report is the usual report plus that crash: the program, the signal, its package and
-    unit, the command line, the crashing thread’s stack trace, and that process’s log lines.{' '}
-    <strong>Never the core file</strong>, which holds the program’s memory. A command line can carry a
-    secret the redaction does not recognize, so <code>--text</code> first is a good habit.
-  </p>
-  <p class="hint">
-    What happens when you click Ask, and what your agent is sent: <a href="/docs/agents#ask">Coding agents</a>.
+    A crash report adds the program, signal, package, unit, command line, the crashing thread’s
+    stack trace, and its log lines. <strong>Never the core file.</strong> Command lines can hold
+    unrecognized secrets: check <code>--text</code> first.{' '}
+    <a href="/docs/agents#ask">What Ask sends</a>.
   </p>
 
   <h2 id="logs">The logs</h2>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="logs" code={LOGS}></arc-code-block>
-  <p>
-    Pulsar’s own system units are <code>pulsar-flatpaks</code> (the first-boot apps),{' '}
-    <code>pulsar-gamemode-group</code>, <code>scx</code> and <code>greenboot-healthcheck</code>, plus{' '}
-    <code>pulsar-gl-nvidia</code>, <code>pulsar-akmods-cert</code>, <code>nvidia-cdi-refresh</code>{' '}
-    and <code>pulsar-gpu-containers</code> on the NVIDIA image. Your session runs{' '}
-    <code>pulsar-update-check.timer</code>, <code>pulsar-gl-check.path</code>,{' '}
-    <code>pulsar-crash-watch.path</code>, <code>pulsar-theme-init</code> and{' '}
-    <code>gamescale-reconcile</code>; read those with <code>journalctl --user -u &lt;unit&gt;</code>.
-  </p>
-  <p class="hint">
-    Every check is a function in <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>, with a
-    comment saying which failure taught it to look where it looks.
-  </p>
+  <ul>
+    <li>
+      System units: <code>pulsar-flatpaks</code> (first-boot apps), <code>pulsar-gamemode-group</code>,{' '}
+      <code>pulsar-update-auto.timer</code>, <code>pulsar-update-stage</code>, <code>scx</code>,{' '}
+      <code>greenboot-healthcheck</code>; on NVIDIA also <code>pulsar-gl-nvidia</code>,{' '}
+      <code>pulsar-akmods-cert</code>, <code>nvidia-cdi-refresh</code>,{' '}
+      <code>pulsar-gpu-containers</code>.
+    </li>
+    <li>
+      Session units (<code>journalctl --user -u &lt;unit&gt;</code>): <code>pulsar-update-check.timer</code>,{' '}
+      <code>pulsar-gl-check.path</code>, <code>pulsar-crash-watch.path</code>,{' '}
+      <code>pulsar-theme-init</code>, <code>gamescale-reconcile</code>.
+    </li>
+  </ul>
+  <p class="hint">Checks are functions in <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>.</p>
 </Docs>
