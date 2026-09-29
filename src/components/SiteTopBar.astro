@@ -292,7 +292,14 @@ const groups = await searchIndex();
     .actions arc-button {
       display: none;
     }
+    /* the emptied actions box would still take the bar's gap on both
+       sides, pushing search a double gap away from the menu button */
+    .bar::part(actions) {
+      display: none;
+    }
     .find {
+      width: 2.25rem;
+      height: 2.25rem;
       border-color: transparent;
       background: transparent;
       backdrop-filter: none;
