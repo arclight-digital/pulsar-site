@@ -39,7 +39,7 @@ export type Theme = {
 // would be a broken tile, and an unversioned URL under a year-long cache.
 const pictures = (v: Variant): Variant => {
   for (const url of [v.wall, v.desktop]) {
-    if (url && !hasVersion(url) && import.meta.env.SSR) throw new Error(`themes: no staged file for ${url}`);
+    if (url && !hasVersion(url) && import.meta.env.SSR) throw new Error(`themes: no staged file for ${url} -- run npm run stage (npm run dev stages only when it starts)`);
   }
   return { ...v, wall: v.wall && versioned(v.wall), desktop: v.desktop && versioned(v.desktop) };
 };
