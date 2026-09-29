@@ -133,7 +133,11 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="standard" code={switchTo(IMAGES.vanilla)}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="nvidia" code={switchTo(IMAGES.nvidia)}></arc-code-block>
-  <p class="hint">For the NVIDIA image, <a href="#secure-boot">enroll the key</a> first.</p>
+  <p class="hint">
+    For the NVIDIA image with Secure Boot on, go by way of the standard image: switch to it, then
+    <a href="#secure-boot">enroll the key</a> it ships (the file is not on Silverblue), then take
+    the NVIDIA image from there.
+  </p>
 
   <h2 id="first-login">When you log in</h2>
   <p>
