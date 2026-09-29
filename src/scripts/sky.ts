@@ -273,40 +273,50 @@ export function initSky(): void {
   };
 
   // ---- the install section's stage wears this sky too ----------------------
-  // A still of the live canvas (preserveDrawingBuffer keeps the last frame).
-  // Taken twice per change: on the next frame, so the stage follows a theme or
-  // look at once, and again once the picture has settled (Pulsar's light/dark
-  // eases inside the shader over ~0.9 s, and the first still would catch it
-  // halfway). Its CSS falls back to Nebula's still while there is none: no
-  // WebGL, no JS.
+  // A still of the live canvas (preserveDrawingBuffer keeps the last frame),
+  // taken once per change: on the next frame when the picture itself changed
+  // (another look or theme: the canvas already holds the new one), or once it
+  // has settled when Pulsar eases between light and dark inside the shader.
+  // One shot, not two: the sky moves, so a second still of the same picture
+  // was a visible jump. Each still is decoded before it replaces the last, so
+  // the stage never shows a blank frame between them. Its CSS falls back to
+  // Nebula's still while there is none: no WebGL, no JS.
   let stageURL = '';
   let stageTimer = 0;
   let stageFrame = 0;
+  let stageTurn = 0;
   const stages = () => document.querySelectorAll<HTMLElement>('[data-stage-wall]');
   const takeStage = (): void => {
+    thumbs();
     if (lost || !stages().length) return;
     if (!running) draw(lastSeconds);
+    const turn = ++stageTurn;
     canvas.toBlob(
       (blob) => {
-        if (!blob) return;
+        if (!blob || turn !== stageTurn) return;
         const url = URL.createObjectURL(blob);
-        for (const el of stages()) el.style.setProperty('--stage-wall', `url("${url}")`);
-        if (stageURL) URL.revokeObjectURL(stageURL);
-        stageURL = url;
+        const img = new Image();
+        img.src = url;
+        img
+          .decode()
+          .catch(() => undefined)
+          .then(() => {
+            // a newer still started meanwhile: this one is already stale
+            if (turn !== stageTurn) return URL.revokeObjectURL(url);
+            for (const el of stages()) el.style.setProperty('--stage-wall', `url("${url}")`);
+            if (stageURL) URL.revokeObjectURL(stageURL);
+            stageURL = url;
+          });
       },
       'image/jpeg',
       0.86,
     );
   };
-  const snapshotStage = (): void => {
+  const snapshotStage = (now = false): void => {
     cancelAnimationFrame(stageFrame);
     clearTimeout(stageTimer);
-    // two frames: the one that draws the new picture, then the one after it
-    stageFrame = requestAnimationFrame(() => (stageFrame = requestAnimationFrame(takeStage)));
-    stageTimer = window.setTimeout(() => {
-      thumbs();
-      takeStage();
-    }, 900);
+    if (now) stageFrame = requestAnimationFrame(() => (stageFrame = requestAnimationFrame(takeStage)));
+    else stageTimer = window.setTimeout(takeStage, 900);
   };
 
   // Freeze the outgoing frame on the overlay canvas and let it dissolve over
@@ -330,12 +340,14 @@ export function initSky(): void {
   // retake the stage's still
   const follow = (): void => {
     const next = target();
-    if (next.key !== spec.key) {
+    const changed = next.key !== spec.key;
+    if (changed) {
       dissolve();
       spec = next;
       if (!running && !lost) draw(lastSeconds);
     }
-    snapshotStage();
+    // a new picture is already on the canvas; Pulsar's own ease is not yet
+    snapshotStage(changed);
   };
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -349,7 +361,7 @@ export function initSky(): void {
     lookShown = currentLook();
     spec = target();
     draw(0);
-    snapshotStage();
+    snapshotStage(true);
   };
 
   // ---- the animated loop, and when it may run ------------------------------
