@@ -2,7 +2,7 @@
 // dimmed (dark: brightness; light: brightness after a 0.82 contrast) and how
 // strongly the theme's panel color is laid over it. Pulsar's own and any
 // theme not listed use the stage's defaults (GetPulsar.astro: dark 0.85 /
-// light 1.1, tint 0.4). The rest are set from a WCAG sweep of every theme
+// light 1.1, tint 0.48). The rest are set from a WCAG sweep of every theme
 // and mode: the stage's text holds 4.5:1 (3:1 for the headings) against the
 // picture behind every line, measured on the rendered page.
 export type Stage = { dim?: number; tint?: number };

@@ -136,7 +136,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
           <button type="button" class="lk" data-look={index} aria-pressed={index === 0 ? 'true' : 'false'}>
             {/* filled by scripts/sky.ts: this look, rendered in the theme's colors */}
             <span class="lk-pv">
-              <img data-look-thumb={index} alt="" width="256" height="160" hidden />
+              <canvas data-look-thumb={index} width="256" height="160" aria-hidden="true" hidden></canvas>
               <span class="th-check lk-check">
                 <svg viewBox="0 0 16 16" width="10" height="10">
                   <path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
@@ -494,11 +494,14 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.22);
     overflow: hidden;
   }
-  .lk-pv img {
+  /* pinned to the card, not sized from it: a canvas at height 100% of an
+     aspect-ratio box kept its own 160px in Firefox and showed its corner */
+  .lk-pv canvas {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: cover;
   }
   .lk[aria-pressed='true'] .lk-check {
     opacity: 1;

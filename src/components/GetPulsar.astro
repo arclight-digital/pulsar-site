@@ -48,7 +48,8 @@ const VERIFY = [
 ---
 
 <section class="chapter install" id="install" aria-labelledby="install-h">
-  <div class="stage" data-stage-wall>
+  <div class="stage">
+    <canvas class="stage-sky" data-stage-sky aria-hidden="true" hidden></canvas>
     <div class="stage-head">
       <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Download Pulsar</h2>
       <p class="stage-sub">
@@ -223,10 +224,10 @@ const VERIFY = [
 
 <style>
   /* ---- the stage: the theme's wallpaper behind the two downloads ------ */
-  /* The hero's live sky, as a still (--stage-wall: src/scripts/sky.ts
-     snapshots the canvas whenever the picture changes -- the site theme's
-     recolor of the look on show), at full strength: it is the point of the
-     stage. Nebula's still until then, and with no WebGL.
+  /* The hero's live sky, drawn into the stage's own canvas whenever the
+     picture changes (src/scripts/sky.ts) -- the site theme's recolor of the
+     look on show: it is the point of the stage. Nebula's still until then,
+     and with no WebGL.
 
      The picture is dimmed a little (filter) and tinted toward the theme's
      panel color (::after); the rest of the contrast is in the text colors. */
@@ -247,23 +248,43 @@ const VERIFY = [
     inset: 0;
     pointer-events: none;
   }
+  /* the live sky, drawn straight in by scripts/sky.ts on each change; the
+     still under it (::before) until then, and without WebGL */
+  .stage-sky {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    filter: brightness(var(--stage-dim, 0.85));
+  }
+  :global(:root[data-theme='light']) .stage-sky {
+    filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .stage-sky {
+      filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
+    }
+  }
   .stage::before {
     z-index: -2;
     /* the picture itself, a little softer: its brightest lines (Tide's
        caustics, Nebula's filaments) stop fighting the text. Brightness only: contrast() would lift the black ground
        to a gray the page does not have, and dull every hue with it. */
     filter: brightness(var(--stage-dim, 0.85));
-    background: var(--stage-wall, url('/assets/nebula-still-dark.jpg')) center / cover;
+    background: url('/assets/nebula-still-dark.jpg') center / cover;
   }
   :global(:root[data-theme='light']) .stage::before {
-    background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
+    background: url('/assets/nebula-still-light.jpg') center / cover;
     /* on a light page, softened toward the paper instead (white stays
        white: 0.91 x 1.1) */
     filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
   }
   @media (prefers-color-scheme: light) {
     :global(:root[data-theme='auto']) .stage::before {
-      background: var(--stage-wall, url('/assets/nebula-still-light.jpg')) center / cover;
+      background: url('/assets/nebula-still-light.jpg') center / cover;
       filter: contrast(0.82) brightness(var(--stage-dim, 1.1));
     }
   }
@@ -274,7 +295,7 @@ const VERIFY = [
     z-index: -1;
     background: var(--bg-elevated);
     /* per theme: data/stage.ts */
-    opacity: var(--stage-tint, 0.4);
+    opacity: var(--stage-tint, 0.48);
   }
   /* ---- what is on it: a heading row, then two doors ---------------------
      The heading, with its line beneath it; below, the two downloads

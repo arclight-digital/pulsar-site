@@ -227,96 +227,88 @@ export function initSky(): void {
   };
 
   // ---- the picker's look previews -------------------------------------------
-  // Each of the four looks, rendered once per theme or mode (not per frame)
-  // into an offscreen target, read back and handed to its card's <img>.
+  // Each look, rendered once per theme or mode (not per frame) into an
+  // offscreen target, read back and handed to its card's <img>. Only while
+  // the picker is open (nobody sees them otherwise), and one look per frame:
+  // each is a GPU readback, and eight in one go stalled the page right after
+  // a theme change.
   let thumbsFor = '';
-  const thumbURLs: string[] = [];
+  let thumbsJob = 0;
+  const pickerOpen = (): boolean =>
+    !!document.querySelector<HTMLElement & { open?: boolean }>('[data-picker]')?.open;
   const thumbs = (): void => {
-    const imgs = document.querySelectorAll<HTMLImageElement>('[data-look-thumb]');
+    const cards = document.querySelectorAll<HTMLCanvasElement>('canvas[data-look-thumb]');
     const mode = effectiveTheme();
     const key = `${siteTheme}/${mode}`;
-    if (lost || !sky.thumb || !imgs.length || key === thumbsFor) return;
+    if (lost || !sky.thumb || !cards.length || key === thumbsFor) return;
     thumbsFor = key;
+    const job = ++thumbsJob;
     const pixels = new Uint8Array(THUMB_W * THUMB_H * 4);
-    const out = document.createElement('canvas');
-    out.width = THUMB_W;
-    out.height = THUMB_H;
-    const ctx = out.getContext('2d');
-    if (!ctx) return;
-    gl.bindFramebuffer(gl.FRAMEBUFFER, sky.thumb);
-    gl.viewport(0, 0, THUMB_W, THUMB_H);
-    for (let look = 0; look < LOOK_NAMES.length; look++) {
+    const image = new ImageData(THUMB_W, THUMB_H);
+    const row = THUMB_W * 4;
+    // straight into each card's canvas: no JPEG, no blob, no decode -- the
+    // old image path took one to two seconds for the eight
+    const one = (look: number): void => {
+      gl.bindFramebuffer(gl.FRAMEBUFFER, sky.thumb);
+      gl.viewport(0, 0, THUMB_W, THUMB_H);
       paint(resolve(siteTheme, mode, look), THUMB_W, THUMB_H, lastSeconds, mode === 'light' ? 1 : 0, look);
       gl.readPixels(0, 0, THUMB_W, THUMB_H, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
       // GL's rows run bottom-up
-      const image = ctx.createImageData(THUMB_W, THUMB_H);
-      const row = THUMB_W * 4;
       for (let y = 0; y < THUMB_H; y++) image.data.set(pixels.subarray((THUMB_H - 1 - y) * row, (THUMB_H - y) * row), y * row);
-      ctx.putImageData(image, 0, 0);
-      const at = look;
-      out.toBlob(
-        (blob) => {
-          if (!blob) return;
-          if (thumbURLs[at]) URL.revokeObjectURL(thumbURLs[at]);
-          thumbURLs[at] = URL.createObjectURL(blob);
-          for (const img of document.querySelectorAll<HTMLImageElement>(`[data-look-thumb="${at}"]`)) {
-            img.src = thumbURLs[at];
-            img.hidden = false;
-          }
-        },
-        'image/jpeg',
-        0.9,
-      );
-    }
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.viewport(0, 0, canvas.width, canvas.height);
+      for (const c of document.querySelectorAll<HTMLCanvasElement>(`canvas[data-look-thumb="${look}"]`)) {
+        c.getContext('2d')?.putImageData(image, 0, 0);
+        c.hidden = false;
+      }
+    };
+    // four a frame: the whole set in two frames, never a long stall
+    const batch = (from: number): void => {
+      if (job !== thumbsJob || lost) return;
+      for (let look = from; look < Math.min(from + 4, LOOK_NAMES.length); look++) one(look);
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      if (from + 4 < LOOK_NAMES.length) requestAnimationFrame(() => batch(from + 4));
+    };
+    batch(0);
   };
 
   // ---- the install section's stage wears this sky too ----------------------
-  // A still of the live canvas (preserveDrawingBuffer keeps the last frame),
-  // taken once per change: on the next frame when the picture itself changed
-  // (another look or theme: the canvas already holds the new one), or once it
-  // has settled when Pulsar eases between light and dark inside the shader.
-  // One shot, not two: the sky moves, so a second still of the same picture
-  // was a visible jump. Each still is decoded before it replaces the last, so
-  // the stage never shows a blank frame between them. Its CSS falls back to
-  // Nebula's still while there is none: no WebGL, no JS.
-  let stageURL = '';
-  let stageTimer = 0;
+  // Drawn straight into the stage's own canvas (preserveDrawingBuffer keeps
+  // the last frame): a GPU copy, no image to encode or decode, so the stage
+  // follows a change on the next frame: at once when the picture itself
+  // changed (another look or theme), and frame by frame while Pulsar eases
+  // between light and dark inside the shader. At most 1280 wide: the stage
+  // never shows more.
   let stageFrame = 0;
-  let stageTurn = 0;
-  const stages = () => document.querySelectorAll<HTMLElement>('[data-stage-wall]');
+  const stages = () => document.querySelectorAll<HTMLCanvasElement>('canvas[data-stage-sky]');
   const takeStage = (): void => {
-    thumbs();
+    if (pickerOpen()) thumbs();
     if (lost || !stages().length) return;
     if (!running) draw(lastSeconds);
-    const turn = ++stageTurn;
-    canvas.toBlob(
-      (blob) => {
-        if (!blob || turn !== stageTurn) return;
-        const url = URL.createObjectURL(blob);
-        const img = new Image();
-        img.src = url;
-        img
-          .decode()
-          .catch(() => undefined)
-          .then(() => {
-            // a newer still started meanwhile: this one is already stale
-            if (turn !== stageTurn) return URL.revokeObjectURL(url);
-            for (const el of stages()) el.style.setProperty('--stage-wall', `url("${url}")`);
-            if (stageURL) URL.revokeObjectURL(stageURL);
-            stageURL = url;
-          });
-      },
-      'image/jpeg',
-      0.86,
-    );
+    const w = Math.min(1280, canvas.width);
+    const h = Math.round((canvas.height * w) / canvas.width);
+    for (const c of stages()) {
+      if (c.width !== w || c.height !== h) {
+        c.width = w;
+        c.height = h;
+      }
+      c.getContext('2d')?.drawImage(canvas, 0, 0, w, h);
+      c.hidden = false;
+    }
   };
   const snapshotStage = (now = false): void => {
     cancelAnimationFrame(stageFrame);
-    clearTimeout(stageTimer);
-    if (now) stageFrame = requestAnimationFrame(() => (stageFrame = requestAnimationFrame(takeStage)));
-    else stageTimer = window.setTimeout(takeStage, 900);
+    if (now) {
+      stageFrame = requestAnimationFrame(() => (stageFrame = requestAnimationFrame(takeStage)));
+      return;
+    }
+    // Pulsar's own light/dark eases in the shader: the stage follows it frame
+    // by frame (each copy is a GPU blit) until the ease is done
+    const until = performance.now() + 950;
+    const follow = (): void => {
+      takeStage();
+      if (performance.now() < until) stageFrame = requestAnimationFrame(follow);
+    };
+    stageFrame = requestAnimationFrame(follow);
   };
 
   // Freeze the outgoing frame on the overlay canvas and let it dissolve over
@@ -338,6 +330,7 @@ export function initSky(): void {
   };
   // a new picture: dissolve to it, redraw if the loop is not running, and
   // retake the stage's still
+  let stageMode = effectiveTheme();
   const follow = (): void => {
     const next = target();
     const changed = next.key !== spec.key;
@@ -346,8 +339,18 @@ export function initSky(): void {
       spec = next;
       if (!running && !lost) draw(lastSeconds);
     }
-    // a new picture is already on the canvas; Pulsar's own ease is not yet
-    snapshotStage(changed);
+    const mode = effectiveTheme();
+    const flipped = mode !== stageMode;
+    stageMode = mode;
+    // the picker's previews, at once if it is showing them
+    if (pickerOpen()) requestAnimationFrame(thumbs);
+    // A new picture is already on the canvas: one copy. Pulsar's own
+    // light/dark ease is not yet: follow it. Neither (a second follow() for
+    // the same change -- a theme pick runs one for the theme and one for its
+    // look): nothing. That case once cancelled the copy and ran the per-frame
+    // follow for a second, a full-canvas readback every frame in Firefox.
+    if (changed) snapshotStage(true);
+    else if (flipped && spec.kind === 'pulsar') snapshotStage(false);
   };
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
