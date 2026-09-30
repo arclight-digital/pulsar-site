@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import sitemap, { ChangeFreqEnum } from '@astrojs/sitemap';
 import arcDsd from './integrations/arc-dsd.mjs';
+import noNotes from './integrations/no-notes.mjs';
 import securityHeaders from './integrations/security-headers.mjs';
 import { SITE } from './src/data/site.ts';
 import changelog from './src/data/changelog.json' with { type: 'json' };
@@ -54,6 +55,8 @@ export default defineConfig({
     arcDsd(),
     // after arc-dsd: it hashes the inline scripts in the HTML arc-dsd wrote
     securityHeaders(),
+    // after arc-dsd too: no page ships a note in an HTML comment
+    noNotes(),
     sitemap({
       // /preview/* are the hero options, rendered for choosing between and
       // marked noindex; they are not pages anyone should land on. Neither is
