@@ -4,7 +4,7 @@
 import { getCollection } from 'astro:content';
 import ByArclight from './ByArclight.astro';
 import Mark from './Mark.astro';
-import { REPO, SUPPORT_URL } from '../data/site';
+import { REPO, SUPPORT_URL, TAGLINE } from '../data/site';
 
 const SITE = [
   { label: 'Install', href: '/docs/install' },
@@ -34,10 +34,8 @@ const MACHINE = [
       {/* Static, and the small drawing: the brand package's placement for a
           44px footer mark. The pulse belongs to the top bar and the hero. */}
       <Mark kind="small" size={44} class="foot-mark" />
-      <div>
-        <p class="word">PULSAR</p>
-        <p class="brandline">Stylish · atomic · modern</p>
-      </div>
+      <p class="word">PULSAR</p>
+      <p class="tagline">{TAGLINE}</p>
     </div>
 
     <div>
@@ -96,15 +94,21 @@ const MACHINE = [
     height: 2px;
     background: linear-gradient(90deg, var(--cyan), var(--peri), var(--violet));
   }
+  /* The lockup, then the tagline under the wordmark: a two-column grid puts
+     the wordmark on the mark's middle and starts the tagline at the P. */
   .brand {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto;
+    justify-content: start;
     align-items: center;
-    gap: var(--space-md);
+    column-gap: var(--space-md);
+    row-gap: var(--space-xs);
   }
   .brand :global(.foot-mark) {
     display: block;
   }
   .word {
+    color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: var(--font-display-weight);
     font-size: var(--text-lg);
@@ -112,14 +116,13 @@ const MACHINE = [
     line-height: var(--glyph-lh);
     margin: 0;
   }
-  .brandline {
-    margin: var(--space-xs) 0 0;
+  .tagline {
+    grid-column: 2;
+    margin: 0;
     color: var(--text-secondary);
-    font-size: var(--label-size);
-    letter-spacing: var(--label-spacing);
-    text-transform: uppercase;
-    font-family: var(--font-label);
-    font-weight: var(--label-weight);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    line-height: 1.4;
   }
   .col-title {
     margin: 0 0 var(--space-sm);

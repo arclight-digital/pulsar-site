@@ -11,10 +11,10 @@ import ThemeShowcase from './ThemeShowcase.astro';
 import Base from '../layouts/Base.astro';
 import { release, version } from '../data/build';
 import { shotSrcset } from '../data/shots';
+import { SUBLINE, TAGLINE } from '../data/site';
 import { THEMES, label, variant } from '../data/themes';
 
-const DESCRIPTION =
-  'Stylish, atomic, modern Linux, rebuilt every night on Fedora: twenty desktop themes, games that just run, and a coding agent if you want one.';
+const DESCRIPTION = `${SUBLINE} Twenty desktop themes and games that just run, rebuilt every night from Fedora.`;
 
 // The desktop, as the theme harness photographed it: Pulsar Holo, the house's
 // other theme, since the themes section below opens on Pulsar's own.
@@ -49,8 +49,8 @@ const MODES = [
 ---
 
 <Base
-  title="Pulsar — stylish, atomic, modern Linux, built on Fedora"
-  ogTitle="Pulsar — your lighthouse in the sky"
+  title={`Pulsar — ${TAGLINE.replace(/\.$/, '').toLowerCase()}`}
+  ogTitle={`Pulsar — ${TAGLINE.replace(/\.$/, '').toLowerCase()}`}
   description={DESCRIPTION}
   path="/"
   immersive

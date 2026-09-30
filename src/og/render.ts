@@ -70,6 +70,8 @@ const FONTS = [
 // the logo, not a second drawing of it. 1600x452, cropped to the art plus 3%.
 const LOCKUP = dataUri('image/png', asset(REPO, 'assets', 'brand', 'png', 'pulsar-lockup-horizontal.png'));
 const LOCKUP_RATIO = 1600 / 452;
+/** Where the P of the wordmark starts in the authored lockup: x 483 of 1600. */
+const LOCKUP_P = 483 / 1600;
 const GAMESCALE = dataUri('image/svg+xml', asset(SITE, 'assets-static', 'gamescale.svg'));
 
 /** The smallest type any card may set: 11px on a 500px-wide feed preview,
@@ -120,6 +122,12 @@ function ground(...children: Child[]): Node {
 }
 
 const lockup = (height: number) => img(LOCKUP, Math.round(height * LOCKUP_RATIO), height);
+
+/** The home card's text under the lockup. Satori reads no CSS, so these
+    mirror the site's dark tokens (src/styles/tokens.css), text-secondary and
+    text-muted, flattened onto the ink ground. */
+const SECONDARY = '#B4B7C2';
+const TERTIARY = '#9EA1AC';
 
 
 // ---- the inner card --------------------------------------------------------
@@ -332,12 +340,18 @@ async function home(card: Card): Promise<Node> {
   if (v.kind !== 'desktops' || v.themes.length !== 1) {
     throw new Error('og: the home card shows exactly one desktop screenshot');
   }
+  if (!card.sub) throw new Error('og: the home card carries the subline');
   const TW = W - 2 * PAD;
   const TH = Math.round((TW * 1000) / 1600); // the screenshots are 16:10
   const shot = await desktopShot(v.themes[0].slug, v.themes[0].variant, TW);
-  const TOP = 168;
+  const LH = 60; // the lockup's height
+  const TOP = 236;
+  // the tagline and the subline start at the P, not at the mark
+  const indent = Math.round(LH * LOCKUP_RATIO * LOCKUP_P);
 
-  return ground(
+  return h(
+    'div',
+    { width: W, height: H, display: 'flex', position: 'relative', backgroundColor: INK, fontFamily: 'Host Grotesk' },
     h(
       'div',
       { position: 'absolute', top: TOP, left: PAD, display: 'flex', borderRadius: 12, overflow: 'hidden', border: HAIRLINE },
@@ -354,16 +368,17 @@ async function home(card: Card): Promise<Node> {
         padding: `0 ${PAD}px`,
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between',
       },
-      lockup(60),
       h(
         'div',
-        { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' },
-        h('div', { display: 'flex', fontSize: 30, color: STAR }, card.headline),
-        h('div', { display: 'flex', fontFamily: 'JetBrains Mono', fontSize: 26, color: MUTED, marginTop: 8 }, SITE_HOST),
+        { display: 'flex', flexDirection: 'column' },
+        lockup(LH),
+        h('div', { display: 'flex', fontSize: 30, color: SECONDARY, marginTop: 10, marginLeft: indent }, card.headline),
+        h('div', { display: 'flex', fontSize: 26, color: TERTIARY, marginTop: 6, marginLeft: indent }, card.sub),
       ),
     ),
+    // the address on the lockup's line, clear of the subline's width
+    h('div', { position: 'absolute', top: 58, right: PAD, display: 'flex', fontFamily: 'JetBrains Mono', fontSize: 26, color: MUTED }, SITE_HOST),
   );
 }
 

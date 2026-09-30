@@ -57,3 +57,11 @@ export const COSIGN_PUB = `${ISO_BASE}/cosign.pub`;
 // shows the line without a link rather than guess at a URL someone else may
 // own.
 export const SUPPORT_URL: string | null = null;
+
+// The brand's two lines, one source for every surface that shows them: the
+// hero, the footer and the link-preview cards. The tagline sits under the
+// lockup everywhere; the subline says what Pulsar is, so it rides along only
+// where someone may be meeting Pulsar for the first time (the hero, the
+// cards).
+export const TAGLINE = 'Your lighthouse in the sky.';
+export const SUBLINE = 'Linux that’s beautiful out of the box and rolls back when something breaks.';

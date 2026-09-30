@@ -17,6 +17,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Mark from './Mark.astro';
 import Sky from './Sky.astro';
+import { SUBLINE, TAGLINE } from '../data/site';
 
 // Where the flywheel pivots: the mark's CORE, read from the shipped SVG at
 // build time rather than typed in as a percentage. Each logo drop moves the
@@ -52,8 +53,8 @@ const markOrigin = coreOrigin(readFileSync(MARK_SVG, 'utf8'));
         <span class="word word-shadow" aria-hidden="true">PULSAR</span>
       </span>
     </h1>
-    <p class="tagline">Your lighthouse in the sky.</p>
-    <p class="sub">Stylish, atomic, modern Linux, rebuilt every night.</p>
+    <p class="tagline">{TAGLINE}</p>
+    <p class="sub">{SUBLINE}</p>
     <div class="go">
       <arc-button href="#install" variant="primary" size="lg">Get started</arc-button>
     </div>

@@ -15,7 +15,7 @@
 // shows (a real command, a real screenshot, the real build), never an
 // illustration of a claim.
 import { changelog, version } from '../data/build';
-import { IMAGES } from '../data/site';
+import { IMAGES, SUBLINE, TAGLINE } from '../data/site';
 
 /** A card's command: after a prompt, with an optional comment beside it. */
 export type Line = { cmd: string; note?: string };
@@ -59,8 +59,11 @@ export const CARDS: Card[] = [
   {
     slug: 'home',
     path: '/',
-    headline: 'Stylish, atomic, modern Linux, rebuilt every night.',
-    alt: 'The Pulsar logo above a screenshot of the Pulsar desktop in its own dark theme: GNOME with a code editor, btop and a GTK demo app open.',
+    // the lockup's tagline, and the hero's subline so a link preview says
+    // what Pulsar is
+    headline: TAGLINE,
+    sub: SUBLINE,
+    alt: `The Pulsar logo, "${TAGLINE}", "${SUBLINE}", and a screenshot of the Pulsar desktop in its own dark theme: GNOME with a code editor, btop and a GTK demo app open.`,
     visual: { kind: 'desktops', themes: [{ slug: 'pulsar', variant: 'dark' }] },
   },
   {

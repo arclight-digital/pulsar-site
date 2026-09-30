@@ -12,7 +12,7 @@ import SiteFooter from '../components/SiteFooter.astro';
 import ThemePicker from '../components/ThemePicker.astro';
 import SiteTopBar from '../components/SiteTopBar.astro';
 import { manifest, version } from '../data/build';
-import { APP_ID, ISO_BASE, ISOS, ORG_ID, REPO } from '../data/site';
+import { APP_ID, ISO_BASE, ISOS, ORG_ID, REPO, SUBLINE } from '../data/site';
 import { cardFor, cardUrl } from '../og/cards';
 
 interface Props {
@@ -86,8 +86,7 @@ const app = {
   processorRequirements: 'x86_64',
   softwareVersion: version,
   ...(manifest.built ? { dateModified: manifest.built } : {}),
-  description:
-    'Stylish, atomic, modern Linux, rebuilt every night. Twenty desktop themes, games that just run, a coding agent if you want one, and automatic rollback.',
+  description: `${SUBLINE} Twenty desktop themes and games that just run, rebuilt every night from Fedora.`,
   featureList: [
     'Twenty desktop themes, switched in one command',
     'Immutable, image-based base with rollback one reboot away',
