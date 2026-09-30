@@ -1,10 +1,10 @@
 ---
 import Pipeline from '../../components/Pipeline.astro';
 import Docs from '../../layouts/Docs.astro';
-import { APP_ID, IMAGES, ORG_ID, REPO } from '../../data/site';
+import { APP_ID, COSIGN_PUB, IMAGES, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
-  'Every Pulsar image ships its full package list as an SPDX SBOM and is diffed package by package each night. The NVIDIA module and ISOs are signed; images aren’t yet.';
+  'Every Pulsar image ships its full package list as an SPDX SBOM and is diffed package by package each night. Images, ISOs and the NVIDIA module are signed, and every signature is logged in Rekor.';
 
 const JSONLD = [
   {
@@ -18,15 +18,9 @@ const JSONLD = [
   },
 ];
 const SBOM = `oras discover ${IMAGES.vanilla}:latest`;
-// a real run on 44.20260928.0; the text is cmd_verify's in cli/pulsar
-const VERIFY = [
-  '$ pulsar verify',
-  'this image is not signed yet, so there is nothing to verify it against.',
-  "signing moves to Pulsar's own cosign release key, the one that already signs",
-  'the installer ISOs: https://github.com/arclight-digital/pulsar/blob/main/keys/cosign.pub',
-  'until then: `pulsar sbom` lists what is in it, and `pulsar status` shows the',
-  "digest you are running, to compare with the registry's.",
-].join('\n');
+// The signature is attached in the registry with its Rekor entry, so cosign
+// checks the log offline: no --insecure-ignore-tlog.
+const VERIFY = `cosign verify --key ${COSIGN_PUB} \\\n  ${IMAGES.vanilla}:latest`;
 const TOC = [
   { id: 'one-night', label: 'One night’s build', level: 2 },
   { id: 'verify', label: 'Check it yourself', level: 2 },
@@ -54,8 +48,9 @@ const TOC = [
 
   <h2 id="verify">Check it yourself</h2>
   <p>
-    Each image has an SPDX SBOM attached in the registry (<code>oras discover</code> lists it). The
-    ISOs are signed with Pulsar’s cosign release key; the images are not signed yet.
+    Each image has an SPDX SBOM attached in the registry (<code>oras discover</code> lists it).
+    Images and ISOs are signed with Pulsar’s cosign release key, and every signature is logged in
+    Rekor, Sigstore’s public transparency log.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sbom" code={SBOM}></arc-code-block>
   <p>
@@ -66,10 +61,10 @@ const TOC = [
   <arc-description-list class="endpoints" layout="horizontal">
     <arc-description-item term="changelog.json"><a href="/changelog.json">the night’s diff, as the build wrote it</a></arc-description-item>
     <arc-description-item term="manifest.json"><a href="/manifest.json">the image’s baked manifest</a></arc-description-item>
-    <arc-description-item term="cosign.pub"><a href={`${REPO}/blob/main/keys/cosign.pub`}>the release key that signs the ISOs</a></arc-description-item>
+    <arc-description-item term="cosign.pub"><a href={`${REPO}/blob/main/keys/cosign.pub`}>the release key that signs images and ISOs</a></arc-description-item>
   </arc-description-list>
-  <p>On a Pulsar machine (exits 1 until images are signed):</p>
-  <arc-code-block class="theme-fixed-dark" filename="pulsar verify" code={VERIFY}></arc-code-block>
+  <p>Check an image’s signature and its log entry:</p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
   <p class="hint">
     <a href="/docs/install#iso">Verify an ISO</a> · <a href="/docs/signing">NVIDIA module signing</a>
   </p>
