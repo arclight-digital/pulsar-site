@@ -51,9 +51,9 @@ const TOC = [
   { id: 'usage', label: 'Everything it does', level: 2 },
   { id: 'json', label: 'For scripts', level: 2 },
   { id: 'setup', label: 'setup', level: 2 },
-  { id: 'doctor', label: 'Why doctor exists', level: 2 },
+  { id: 'doctor', label: 'How doctor checks', level: 2 },
   { id: 'update', label: 'update, not upgrade', level: 2 },
-  { id: 'name', label: 'Another pulsar?', level: 2 },
+  { id: 'name', label: 'If a different pulsar runs', level: 2 },
 ];
 ---
 
@@ -91,7 +91,7 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="json" code={JSON_EXAMPLES}></arc-code-block>
 
-  <h2 id="setup">setup: what an image cannot bake</h2>
+  <h2 id="setup">setup: what the image can’t include</h2>
   <p>
     Each <code>setup</code> recipe handles per-machine or per-account state (apps, groups,
     containers) and tells you if it needs, or must not have, <code>sudo</code>.
@@ -102,7 +102,7 @@ const TOC = [
     <a href="/docs/gamescale#flatpak">gamescale setup</a>
   </p>
 
-  <h2 id="doctor">Why doctor exists</h2>
+  <h2 id="doctor">How doctor checks</h2>
   <p>
     <code>doctor</code> reads actual system state (e.g. <code>/sys/kernel/sched_ext/state</code>),
     not unit status, and needs no root: it reads through <code>rpm-ostree</code>, not{' '}
@@ -118,7 +118,7 @@ const TOC = [
     <a href="/docs/updates">Updates</a>.
   </p>
 
-  <h2 id="name">Another pulsar?</h2>
+  <h2 id="name">If a different pulsar runs</h2>
   <p>
     The Pulsar code editor’s RPM or AppImage can shadow this <code>pulsar</code> on{' '}
     <code>PATH</code> (its Flatpak doesn’t). <code>/usr/bin/pulsar</code> always works; doctor’s{' '}
