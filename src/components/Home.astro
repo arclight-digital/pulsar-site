@@ -159,11 +159,24 @@ const MODES = [
             ))
           }
         </ol>
-        <p class="hint buildline">
-          {release && <><a href="/docs/releases" class="mono">Pulsar {release}</a>, </>}last night’s build <a href="/docs/changelog" class="mono" id="build-version" data-build-version>{version}</a>
-          <span id="build-note" hidden></span>
-          · <a href="/docs/updates">How updates work</a>
-        </p>
+        {/* two facts and where to read more: a label and its value each,
+            no underlines until hover. The beacon's note, when it has one,
+            is its own line under them. */}
+        <div class="buildline">
+          <p class="facts">
+            {release && (
+              <a class="fact" href="/docs/releases">
+                <span class="k">Release</span> <span class="v mono">{release}</span>
+              </a>
+            )}
+            <a class="fact" href="/docs/changelog">
+              <span class="k">Last night’s build</span>
+              <span class="v mono" id="build-version" data-build-version>{version}</span>
+            </a>
+            <a class="go" href="/docs/updates">How updates work <span aria-hidden="true">→</span></a>
+          </p>
+          <p class="hint build-note" id="build-note" hidden></p>
+        </div>
         <p class="hint skip-note" data-skip-note hidden></p>
       </section>
 
@@ -507,10 +520,46 @@ const MODES = [
     color: var(--text-secondary);
   }
   .buildline {
-    margin: 0;
+    margin-top: var(--space-lg);
   }
-  .buildline a {
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: var(--space-xl);
+    row-gap: var(--space-xs);
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+  .fact,
+  .go {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    text-decoration: none;
+  }
+  .fact .k {
+    color: var(--text-muted);
+  }
+  .fact .v {
+    color: var(--text-primary);
+  }
+  .go {
     color: var(--text-secondary);
+  }
+  .fact:hover .v,
+  .go:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .fact:focus-visible,
+  .go:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+  .build-note {
+    margin: var(--space-sm) 0 0;
   }
   .skip-note {
     margin: var(--space-sm) 0 0;
