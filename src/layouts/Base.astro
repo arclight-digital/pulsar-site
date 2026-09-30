@@ -253,7 +253,7 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
     <SiteTopBar path={path} immersive={immersive} />
     <slot />
     <SiteFooter />
-    <ThemePicker />
+    <ThemePicker wallpaper={path === '/'} />
     {/* bottom-left: the theme picker owns bottom-right */}
     <arc-scroll-to-top threshold="900" position="bottom-left"></arc-scroll-to-top>
 

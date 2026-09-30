@@ -141,21 +141,8 @@ function build(gl: WebGLRenderingContext): Sky {
 export function initSky(): void {
   const canvas = document.querySelector<HTMLCanvasElement>('#sky');
   const fade = document.querySelector<HTMLCanvasElement>('#skyfade');
-  if (canvas && fade) {
-    run(canvas, fade, false);
-    return;
-  }
-  // No hero on this page, and still a picker whose previews need drawing:
-  // a sky off the page, started the first time the picker opens, so a page
-  // nobody opens the picker on never compiles a shader.
-  document.querySelector('[data-picker]')?.addEventListener(
-    'arc-open',
-    () => run(document.createElement('canvas'), document.createElement('canvas'), true),
-    { once: true },
-  );
-}
+  if (!canvas || !fade) return;
 
-function run(canvas: HTMLCanvasElement, fade: HTMLCanvasElement, offPage: boolean): void {
   // preserveDrawingBuffer so a look switch can snapshot the outgoing frame
   const gl = canvas.getContext('webgl', { antialias: false, preserveDrawingBuffer: true });
   if (!gl) return; // the CSS ground is the fallback; the picker still themes the page
@@ -187,7 +174,6 @@ function run(canvas: HTMLCanvasElement, fade: HTMLCanvasElement, offPage: boolea
   });
 
   const resize = (): void => {
-    if (offPage) return; // draws only the previews, into their own target
     const dpr = Math.min(devicePixelRatio || 1, 2);
     canvas.width = Math.round(canvas.clientWidth * dpr);
     canvas.height = Math.round(canvas.clientHeight * dpr);
@@ -386,7 +372,7 @@ function run(canvas: HTMLCanvasElement, fade: HTMLCanvasElement, offPage: boolea
   // past, the sky was still drawing a full-screen shader sixty times a second
   // for nobody. Paused time is taken out of the clock, so the sky picks up
   // where it stopped instead of jumping ahead.
-  let onScreen = !offPage;
+  let onScreen = true;
   let lost = false;
   let running = false;
   let frame = 0;
@@ -416,11 +402,10 @@ function run(canvas: HTMLCanvasElement, fade: HTMLCanvasElement, offPage: boolea
       pausedAt = performance.now();
     }
   };
-  if (!offPage)
-    new IntersectionObserver((entries) => {
-      onScreen = entries.some((e) => e.isIntersecting);
-      sync();
-    }).observe(canvas);
+  new IntersectionObserver((entries) => {
+    onScreen = entries.some((e) => e.isIntersecting);
+    sync();
+  }).observe(canvas);
   document.addEventListener('visibilitychange', sync);
 
   // ---- a lost GPU context ---------------------------------------------------

@@ -14,6 +14,7 @@
 //   Wallpaper  the home page's live sky in any of its looks, each in
 //              the theme's colors as the OS recolors it (scripts/sky.ts).
 //              Picking a theme switches to the look its own wallpaper uses.
+//              Only on the home page, the one page with a sky to change.
 //
 // arc-sheet is modal: the page behind is inert (so focus stays in the
 // sheet), Escape closes it, and focus returns to the trigger. Its scrim is
@@ -22,6 +23,12 @@
 import { THEMES, label, tileAttrs, variant, type Theme } from '../data/themes';
 
 import { LOOK_LABELS as LOOKS } from '../data/looks';
+
+interface Props {
+  /** the Wallpaper section: only where the page has the live sky */
+  wallpaper?: boolean;
+}
+const { wallpaper = false } = Astro.props;
 
 // Two groups, in the image's own order: the themes that follow light/dark,
 // then the ones with a single look, which set the page's mode themselves.
@@ -125,6 +132,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     </div>
   </section>
 
+  {wallpaper && (
   <section class="grp" aria-labelledby="pk-wall">
     <div class="grp-top">
       <h2 class="grp-h" id="pk-wall">Wallpaper</h2>
@@ -149,6 +157,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
       }
     </div>
   </section>
+  )}
 
   <div slot="footer" class="foot">
     <span class="foot-note">Saved in this browser</span>
