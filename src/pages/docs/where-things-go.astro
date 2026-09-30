@@ -47,9 +47,9 @@ const LAYER = [
 
 const PATHS: [string, string][] = [
   ['/usr', 'The OS image. Read-only, even for root. Every update replaces it whole.'],
-  ['/etc', 'Writable and local to this machine. Each deployment keeps its own copy, and updates merge your edits forward.'],
+  ['/etc', 'Writable and local to this machine. Each deployment keeps its own copy. Updates merge your edits forward.'],
   ['/var', 'Writable, persistent, shared by every deployment. /home is /var/home.'],
-  ['/usr/local, /opt', 'Links into /var. Not part of the image, and no update or rollback ever cleans them.'],
+  ['/usr/local, /opt', 'Links into /var. Not part of the image. No update or rollback ever cleans them.'],
   ['$HOME', 'Yours. Nothing on the system rolls it back.'],
 ];
 
@@ -74,13 +74,13 @@ const JSONLD = [
   },
 ];
 const TOC = [
-  { id: 'filesystem', label: 'The filesystem', level: 2 },
   { id: 'choose', label: 'Where does it go?', level: 2 },
   { id: 'apps', label: 'Apps: Flatpak', level: 2 },
   { id: 'dev', label: 'Dev tools: a toolbox', level: 2 },
   { id: 'services', label: 'Services: quadlets', level: 2 },
   { id: 'layering', label: 'Layering, the last resort', level: 2 },
   { id: 'dont', label: 'What not to do', level: 2 },
+  { id: 'filesystem', label: 'The filesystem', level: 2 },
 ];
 ---
 
@@ -93,17 +93,10 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>Where things go</h1>
-  <p class="intro">On an image-based system, “install” means one of four things. Pick by what it is.</p>
-
-  <h2 id="filesystem">The filesystem</h2>
-  <table>
-    <thead><tr><th>Path</th><th>What it is</th></tr></thead>
-    <tbody>
-      {PATHS.map(([p, what]) => (
-        <tr><td><code>{p}</code></td><td>{what}</td></tr>
-      ))}
-    </tbody>
-  </table>
+  <p class="intro">
+    The system is one image that updates as a whole. Software goes in one of four places, by what
+    it is.
+  </p>
 
   <h2 id="choose">Where does it go?</h2>
   <table>
@@ -117,71 +110,88 @@ const TOC = [
 
   <h2 id="apps">Apps: Flatpak</h2>
   <p>
-    Anything with a window. Flathub (unfiltered) and Fedora’s remote are configured. First boot
-    installs Steam, Heroic, Faugus, Bottles, ProtonPlus, protontricks, OBS Studio, Discord,
-    EasyEffects, virt-manager, Flatseal and the GNOME set; removed ones stay removed.
+    Desktop apps come as Flatpaks. GNOME Software can reach all of Flathub, unfiltered, plus
+    Fedora’s own collection. First boot installs Steam, Heroic, Faugus, Bottles, ProtonPlus,
+    protontricks, OBS Studio, Discord, EasyEffects, virt-manager, Flatseal and the GNOME set. An app
+    you remove stays removed.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK}></arc-code-block>
   <p>
-    <code>--user</code>: your account only, no password. System installs (GNOME Software’s default)
-    are shared by all accounts.
+    <code>--user</code> installs for your account only and needs no password. A system install
+    (GNOME Software’s default) is shared by all accounts.
   </p>
 
   <h2 id="dev">Dev tools: a toolbox</h2>
   <p>
-    Compilers, SDKs and runtimes go in a toolbox: a Fedora container sharing your home folder.{' '}
-    <code>sudo dnf install</code> works inside and changes only the box.
+    Compilers, SDKs and runtimes go in a toolbox, a Fedora container that shares your home folder.
+    <code>sudo dnf install</code> inside it changes only the box.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="toolbox" code={TOOLBOX}></arc-code-block>
-  <p>A ready box (git, gcc, cmake, gdb, make, ripgrep, jq, Python headers):</p>
+  <p>A ready box with git, gcc, cmake, gdb, make, ripgrep, jq and Python headers:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="devbox" code={DEVBOX}></arc-code-block>
   <p>
-    It’s a distrobox (not in <code>toolbox list</code>); the recipe is{' '}
+    It is a distrobox, so <code>toolbox list</code> doesn’t show it. The recipe is{' '}
     <code>/usr/share/pulsar/distrobox.ini</code>.
   </p>
-  <p>Per-project toolchains: <code>mise</code> and <code>direnv</code> are on the host and install into <code>$HOME</code>:</p>
+  <p>
+    For per-project toolchains, <code>mise</code> and <code>direnv</code> are on the host and install
+    into <code>$HOME</code>:
+  </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="mise" code={MISE}></arc-code-block>
   <p>
-    On the host because they probe its kernel: <code>bpftrace</code>, <code>bcc-tools</code>,{' '}
-    <code>perf</code>, <code>sysstat</code>.
+    <code>bpftrace</code>, <code>bcc-tools</code>, <code>perf</code> and <code>sysstat</code> are on
+    the host because they probe its kernel.
   </p>
 
   <h2 id="services">Services: quadlets</h2>
-  <p>Long-running containers: write a quadlet, a unit file systemd runs as a rootless service. Template:</p>
+  <p>
+    A long-running container is a quadlet, a unit file systemd runs as a rootless service. The
+    template:
+  </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="quadlet" code={QUADLET}></arc-code-block>
   <ul>
     <li><code>myapp.container</code> becomes <code>myapp.service</code>.</li>
-    <li><code>podman-auto-update.timer</code> updates containers labeled <code>AutoUpdate=</code> (the template is).</li>
-    <li>Mount host paths with <code>:Z</code>, or SELinux denies them.</li>
+    <li><code>podman-auto-update.timer</code> updates containers labeled <code>AutoUpdate=</code>. The template is labeled.</li>
+    <li>Mount host paths with <code>:Z</code>. Without it, SELinux denies them.</li>
   </ul>
   <p class="hint">Containers that need the GPU: <a href="/docs/gpu-containers">GPU containers</a>.</p>
 
   <h2 id="layering">Layering, the last resort</h2>
-  <p>Only for what can’t run in a container (kernel modules, udev rules, host daemons):</p>
+  <p>Layer a package onto the host only when it can’t run in a container, such as a kernel module, udev rule or host daemon:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="layer" code={LAYER}></arc-code-block>
   <p>
-    Applies at the next boot and persists through updates, which then take minutes instead of
-    seconds (<code>pulsar update</code> handles it; <code>pulsar doctor</code> counts layers). Never
-    layer dev tools.
+    A layered package applies at the next boot and stays through updates. Those then take
+    minutes instead of seconds. <code>pulsar update</code> handles it, and{' '}
+    <code>pulsar doctor</code> counts your layers. Never layer dev tools.
   </p>
 
   <h2 id="dont">What not to do</h2>
   <ul>
     <li>
-      <strong><code>sudo make install</code>, a vendor’s <code>install.sh</code>, anything into{' '}
-      <code>/usr/local</code> or <code>/opt</code>.</strong> It shadows the image on{' '}
-      <code>PATH</code>, is invisible to <code>rpm-ostree status</code>, and survives every update
-      and rollback. Use a toolbox, <code>mise</code> or <code>~/.local/bin</code>.
+      <strong>Installing anything into <code>/usr/local</code> or <code>/opt</code></strong>{' '}
+      (<code>sudo make install</code>, a vendor’s <code>install.sh</code>). It shadows the image on{' '}
+      <code>PATH</code> and survives every update and rollback. <code>rpm-ostree status</code>{' '}
+      doesn’t list it. Use a toolbox, <code>mise</code> or <code>~/.local/bin</code>.
     </li>
     <li>
       <strong><code>sudo pip install</code> or <code>sudo npm install -g</code> on the host.</strong>{' '}
-      Fails on read-only <code>/usr</code> or lands in <code>/usr/local</code>. Use a venv or a
-      toolbox.
+      It either fails, because <code>/usr</code> is read-only, or lands in <code>/usr/local</code>,
+      where no update or rollback will ever touch it. Use a venv or a toolbox.
     </li>
     <li>
-      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> The edit
-      outlives updates and hides the real fix. If you must, take a{' '}
+      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> The edit outlives
+      updates and hides the real fix. If you must, take a{' '}
       <a href="/docs/updates#checkpoint">checkpoint</a> first.
     </li>
   </ul>
+
+  <h2 id="filesystem">The filesystem</h2>
+  <table>
+    <thead><tr><th>Path</th><th>What it is</th></tr></thead>
+    <tbody>
+      {PATHS.map(([p, what]) => (
+        <tr><td><code>{p}</code></td><td>{what}</td></tr>
+      ))}
+    </tbody>
+  </table>
 </Docs>
