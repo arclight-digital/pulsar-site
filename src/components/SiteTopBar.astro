@@ -311,6 +311,12 @@ const groups = await searchIndex();
     .actions arc-button {
       display: none;
     }
+    /* everything in it is hidden, so the box goes too: ARC only learns it is
+       empty by measuring after hydration, and without script it kept the
+       row's gap and pushed the search button 16px left */
+    .bar::part(actions) {
+      display: none;
+    }
     .find {
       width: 2.25rem;
       height: 2.25rem;
