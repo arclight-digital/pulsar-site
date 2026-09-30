@@ -41,8 +41,7 @@ const ENROL = 'sudo mokutil --import /etc/pki/pulsar/MOK.der\nsudo systemctl reb
 const VERIFY = [
   `cosign verify-blob ${ISOS.vanilla}.sha256 \\`,
   `  --key ${COSIGN_PUB} \\`,
-  `  --signature ${ISOS.vanilla}.sha256.sig \\`,
-  '  --insecure-ignore-tlog=true \\',
+  `  --bundle ${ISOS.vanilla}.sha256.sigstore.json \\`,
   `&& sha256sum -c ${ISOS.vanilla}.sha256`,
 ].join('\n');
 ---
@@ -76,7 +75,7 @@ const VERIFY = [
               </arc-button>
               <p class="door-file">
                 <span class="mono">{d.file}</span>
-                <span>5–6 GB · verify with <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>, <a href={`${ISO_BASE}/${d.file}.sha256.sig`}>.sig</a>, <a href={`${ISO_BASE}/${d.file}.json`}>.json</a></span>
+                <span>5–6 GB · verify with <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>, <a href={`${ISO_BASE}/${d.file}.sha256.sigstore.json`}>.sigstore.json</a>, <a href={`${ISO_BASE}/${d.file}.json`}>.json</a></span>
               </p>
             </div>
           </div>
@@ -197,7 +196,7 @@ const VERIFY = [
             the ISO against the checksum.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
-          <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, cosign’s public transparency log. Pulsar doesn’t upload its signatures there, so the check rests on the published key alone.</p>
+          <p class="hint">The <code>.sigstore.json</code> bundle carries the signature and its entry in Rekor, Sigstore’s public transparency log, so cosign checks both the key and that the signature was logged in public.</p>
         </div>
       </details>
     </div>

@@ -4,27 +4,24 @@
 import DownloadRow from './DownloadRow.astro';
 import { COSIGN_PUB, ISOS } from '../data/site';
 
-const SUMS = ['sha256', 'sha256.sig', 'json'];
+const SUMS = ['sha256', 'sha256.sigstore.json', 'json'];
 
 // The signature covers the checksum manifest, not the 5GB ISO -- verifying
 // the manifest and then checking the ISO against it proves the same thing
-// without cosign reading five gigabytes. --insecure-ignore-tlog is the
-// documented flag for plain key-based verification: the trust anchor here is
-// the published key, not a transparency-log entry, and the name is cosign's,
-// not a warning about this page.
+// without cosign reading five gigabytes. The bundle is the signature plus its
+// Rekor entry, so cosign checks the key and the public log in one go, with no
+// --insecure-ignore-tlog.
 const VERIFY = [
   `cosign verify-blob ${ISOS.vanilla}.sha256`,
   `--key ${COSIGN_PUB}`,
-  `--signature ${ISOS.vanilla}.sha256.sig`,
-  '--insecure-ignore-tlog=true',
+  `--bundle ${ISOS.vanilla}.sha256.sigstore.json`,
   `&& sha256sum -c ${ISOS.vanilla}.sha256`,
 ].join(' ');
 
 const shown = [
   `cosign verify-blob ${ISOS.vanilla}.sha256 \\`,
   `  --key ${COSIGN_PUB} \\`,
-  `  --signature ${ISOS.vanilla}.sha256.sig \\`,
-  '  --insecure-ignore-tlog=true \\',
+  `  --bundle ${ISOS.vanilla}.sha256.sigstore.json \\`,
   `&& sha256sum -c ${ISOS.vanilla}.sha256`,
 ].join('\n');
 ---
@@ -65,7 +62,7 @@ const shown = [
         <code>keys/cosign.pub</code>; the build verifies every signature against the committed copy
         before publishing.
       </p>
-      <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, cosign’s public transparency log. Pulsar doesn’t upload its signatures there, so the check rests on the published key alone.</p>
+      <p class="hint">The <code>.sigstore.json</code> bundle carries the signature and its entry in Rekor, Sigstore’s public transparency log, so cosign checks both the key and that the signature was logged in public.</p>
     </div>
   </div>
 </div>
