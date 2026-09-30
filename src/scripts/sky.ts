@@ -223,6 +223,11 @@ export function initSky(): void {
   };
   const draw = (seconds: number): void => {
     lastSeconds = seconds;
+    // Pulsar's light/dark eases only in the loop. With the loop paused (the
+    // hero scrolled away, as it is when someone is looking at the install
+    // stage) a redraw would show the ease wherever it stopped: picking Pulsar
+    // after Alucard, a light-only theme, painted Pulsar light on a dark page.
+    if (!running) themeShown = effectiveTheme() === 'light' ? 1 : 0;
     paint(spec, canvas.width, canvas.height, seconds, themeShown, lookShown);
   };
 
@@ -349,8 +354,10 @@ export function initSky(): void {
     // the same change -- a theme pick runs one for the theme and one for its
     // look): nothing. That case once cancelled the copy and ran the per-frame
     // follow for a second, a full-canvas readback every frame in Firefox.
-    if (changed) snapshotStage(true);
-    else if (flipped && spec.kind === 'pulsar') snapshotStage(false);
+    // A new picture that also flips Pulsar's mode is both: follow the ease,
+    // or the one copy lands two frames into it and the stage stays there.
+    if (flipped && spec.kind === 'pulsar' && running) snapshotStage(false);
+    else if (changed || flipped) snapshotStage(true);
   };
 
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
