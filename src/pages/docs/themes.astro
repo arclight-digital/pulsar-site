@@ -78,7 +78,7 @@ const TARGETS: [string, string, string][] = [
   ['ptyxis', 'the terminal’s palette, on every profile', 'at once'],
   ['gtksourceview', 'Text Editor, and anything else built on GtkSourceView', 'at once'],
   ['wallpaper', 'the desktop and lock-screen backgrounds', 'at once'],
-  ['shell', 'the top bar, quick settings, menus and notifications', 'at once'],
+  ['shell', 'the top bar, menus, quick settings, notifications, switchers, dialogs, app folders, the screenshot tool and the on-screen keyboard', 'at once'],
   ['btop', 'btop’s colors', 'at once'],
   ['flatpak', 'lets Flatpak apps read the same GTK colors', 'next launch'],
   ['agents', 'Claude Code, Gemini CLI and opencode draw with the terminal’s colors', 'next start'],
@@ -147,6 +147,10 @@ const TOC = [
       ))}
     </tbody>
   </table>
+  <p>
+    The login screen isn’t a target: it comes up before anyone logs in, so it wears Pulsar’s own
+    colors, the same for everyone. So does the lock screen’s prompt.
+  </p>
   <p>Two targets reach outside the desktop and can be left out; the choice persists:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="opt out" code={OPTOUT}></arc-code-block>
 
