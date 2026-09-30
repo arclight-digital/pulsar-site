@@ -1,58 +1,21 @@
 {
-  "generated": "2026-09-30T05:28:00Z",
+  "generated": "2026-09-30T19:29:46Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:1c2a0c0f5a2aca7fde929bb00a0b0245a14bfa9a4b1217561ce556bc939b4b22",
-    "digest": "sha256:1c2a0c0f5a2aca7fde929bb00a0b0245a14bfa9a4b1217561ce556bc939b4b22"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:d8baef697573660a247a870a9ca7f0bc200dac638d973987d288514838783851",
     "digest": "sha256:d8baef697573660a247a870a9ca7f0bc200dac638d973987d288514838783851"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:7e4b6187bf4e75fcc08052d7bdd444f846cd5a204a931e21085d29c2fd4e74af",
+    "digest": "sha256:7e4b6187bf4e75fcc08052d7bdd444f846cd5a204a931e21085d29c2fd4e74af"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 6,
+    "upgraded": 0,
     "downgraded": 0,
     "changed": 0
   },
   "added": [],
   "removed": [],
-  "changed": [
-    {
-      "name": "bootupd",
-      "from": "0.2.35-1.fc44",
-      "to": "0.3.2-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox",
-      "from": "156.0.1-1.fc44",
-      "to": "156.0.1-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox-langpacks",
-      "from": "156.0.1-1.fc44",
-      "to": "156.0.1-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hunspell",
-      "from": "1.7.3-1.fc44",
-      "to": "1.7.4-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hunspell-filesystem",
-      "from": "1.7.3-1.fc44",
-      "to": "1.7.4-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libmaxminddb",
-      "from": "1.14.0-1.fc44",
-      "to": "1.14.1-1.fc44",
-      "direction": "upgraded"
-    }
-  ]
+  "changed": []
 }
