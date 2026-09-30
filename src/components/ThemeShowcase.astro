@@ -65,7 +65,10 @@ const first = THEMES[0];
                 {dark.wall ? (
                   <>
                     <img class="w-dark" src={dark.wall} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
-                    <img class="w-light" src={light.wall} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
+                    {/* a one-look theme has one picture: its "light" falls back to it */}
+                    {light.wall !== dark.wall && (
+                      <img class="w-light" src={light.wall} alt="" width="1600" height="1000" loading="lazy" decoding="async" />
+                    )}
                   </>
                 ) : (
                   // A theme with no pictures yet (placeholder: true) is drawn from the palette until
@@ -173,20 +176,21 @@ const first = THEMES[0];
     height: 100%;
     object-fit: cover;
   }
+  /* a one-look theme has no .w-light, and keeps its one picture in both modes */
   .w-light {
     display: none;
   }
   :global(:root[data-theme='light']) .w-light {
     display: block;
   }
-  :global(:root[data-theme='light']) .w-dark {
+  :global(:root[data-theme='light']) .w-dark:has(+ .w-light) {
     display: none;
   }
   @media (prefers-color-scheme: light) {
     :global(:root[data-theme='auto']) .w-light {
       display: block;
     }
-    :global(:root[data-theme='auto']) .w-dark {
+    :global(:root[data-theme='auto']) .w-dark:has(+ .w-light) {
       display: none;
     }
   }
