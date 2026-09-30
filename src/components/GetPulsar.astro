@@ -311,23 +311,30 @@ const VERIFY = [
   }
   .stage h2 {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.3em;
     font-size: clamp(2.5rem, 5vw, 4.25rem);
     line-height: 1;
     letter-spacing: -0.035em;
     margin: 0;
   }
-  /* a tinted circle, as the agents' can / can't marks, sized to the heading */
+  /* a tinted circle, as the agents' can / can't marks, sized to the heading
+     -- the icon too, or on a phone ARC's fixed xl (32px) nearly fills it --
+     and set on the first line, so a heading that wraps keeps it there */
   .stage h2 .mark {
     flex: none;
     display: grid;
     place-items: center;
     width: 0.9em;
     height: 0.9em;
+    margin-top: 0.05em;
     border-radius: var(--radius-full);
     color: var(--accent-primary);
     background: color-mix(in oklab, var(--accent-primary) 16%, transparent);
+  }
+  .stage h2 .mark arc-icon {
+    width: 0.55em;
+    height: 0.55em;
   }
   .door-name arc-icon {
     flex: none;
