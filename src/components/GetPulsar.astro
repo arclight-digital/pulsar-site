@@ -55,7 +55,8 @@ const VERIFY = [
       <p class="stage-sub">
         Pulsar is free, today and always, and every line of it is open source. Choose the download
         that matches your system, write it to any USB stick of 8&nbsp;GB or more, and you’re one
-        restart away from your new desktop.
+        restart away from your new desktop. The installer ISO is refreshed weekly; once installed,
+        Pulsar updates from the nightly build.
       </p>
     </div>
     <div class="doors">
@@ -75,7 +76,7 @@ const VERIFY = [
               </arc-button>
               <p class="door-file">
                 <span class="mono">{d.file}</span>
-                <span>5–6 GB · a new installer weekly, updates every night · verify with <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>, <a href={`${ISO_BASE}/${d.file}.sha256.sig`}>.sig</a>, <a href={`${ISO_BASE}/${d.file}.json`}>.json</a></span>
+                <span>5–6 GB · verify with <a href={`${ISO_BASE}/${d.file}.sha256`}>.sha256</a>, <a href={`${ISO_BASE}/${d.file}.sha256.sig`}>.sig</a>, <a href={`${ISO_BASE}/${d.file}.json`}>.json</a></span>
               </p>
             </div>
           </div>
@@ -196,6 +197,7 @@ const VERIFY = [
             the ISO against the checksum.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
+          <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, cosign’s public transparency log. Pulsar doesn’t upload its signatures there, so the check rests on the published key alone.</p>
         </div>
       </details>
     </div>
