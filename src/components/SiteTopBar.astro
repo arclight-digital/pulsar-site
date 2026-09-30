@@ -78,25 +78,44 @@ const groups = await searchIndex();
   </arc-navigation-menu>
 </div>
 
-<arc-command-palette data-search placeholder="Search docs, themes, commands…" max-results="12">
-  {
-    groups.map((g) => (
-      <arc-command-group heading={g.heading}>
-        {g.items.map((i) => (
-          <arc-command-item value={i.href} icon={i.icon} description={i.description} keywords={i.keywords}>
-            {i.label}
-          </arc-command-item>
-        ))}
-      </arc-command-group>
-    ))
-  }
-</arc-command-palette>
+{/* The index rides as data and becomes the palette's items in the browser.
+    As markup it was 166 links on every page, which a reader without script
+    (a search engine, reader mode, a link preview) took for the page's nav. */}
+<arc-command-palette data-search placeholder="Search docs, themes, commands…" max-results="12"></arc-command-palette>
+<script type="application/json" id="search-index" set:html={JSON.stringify(groups).replace(/</g, '\\u003c')} />
 
 <script>
   import { detailOf, pick } from '../scripts/themes';
 
+  type Group = { heading: string; items: { href: string; icon?: string; description?: string; keywords?: string; label: string }[] };
   const palette = document.querySelector<HTMLElement & { open: boolean }>('[data-search]');
+  // build the items once, on first use or when the page goes idle
+  let built = false;
+  const build = () => {
+    if (built || !palette) return;
+    built = true;
+    const groups: Group[] = JSON.parse(document.getElementById('search-index')?.textContent || '[]');
+    const frag = document.createDocumentFragment();
+    for (const g of groups) {
+      const group = document.createElement('arc-command-group');
+      group.setAttribute('heading', g.heading);
+      for (const i of g.items) {
+        const item = document.createElement('arc-command-item');
+        item.setAttribute('value', i.href);
+        if (i.icon) item.setAttribute('icon', i.icon);
+        if (i.description) item.setAttribute('description', i.description);
+        if (i.keywords) item.setAttribute('keywords', i.keywords);
+        item.textContent = i.label;
+        group.append(item);
+      }
+      frag.append(group);
+    }
+    palette.append(frag);
+  };
+  if ('requestIdleCallback' in window) requestIdleCallback(build, { timeout: 3000 });
+  else setTimeout(build, 1500);
   const show = () => {
+    build();
     if (palette) palette.open = true;
   };
   document.querySelectorAll('[data-search-open]').forEach((b) => b.addEventListener('click', show));

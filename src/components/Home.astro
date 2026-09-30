@@ -9,7 +9,7 @@ import GetPulsar from './GetPulsar.astro';
 import Hero from './Hero.astro';
 import ThemeShowcase from './ThemeShowcase.astro';
 import Base from '../layouts/Base.astro';
-import { version } from '../data/build';
+import { release, version } from '../data/build';
 import { shotSrcset } from '../data/shots';
 import { THEMES, label, variant } from '../data/themes';
 
@@ -160,7 +160,7 @@ const MODES = [
           }
         </ol>
         <p class="hint buildline">
-          Last night’s build: <a href="/docs/changelog" class="mono" id="build-version" data-build-version>{version}</a>
+          {release && <><a href="/docs/releases" class="mono">Pulsar {release}</a>, </>}last night’s build <a href="/docs/changelog" class="mono" id="build-version" data-build-version>{version}</a>
           <span id="build-note" hidden></span>
           · <a href="/docs/updates">How updates work</a>
         </p>
