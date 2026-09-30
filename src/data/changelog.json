@@ -1,58 +1,21 @@
 {
-  "generated": "2026-09-29T22:28:29Z",
+  "generated": "2026-09-30T02:55:08Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:504d06659f37d24f91ba75344b5155c104d3f0782ee8f578c5bf26ab4b63ae39",
-    "digest": "sha256:504d06659f37d24f91ba75344b5155c104d3f0782ee8f578c5bf26ab4b63ae39"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:f22e8edcd8e52dde9749c9027c89e9e7e7fdfa483db9ea58d3896849fcadaab3",
     "digest": "sha256:f22e8edcd8e52dde9749c9027c89e9e7e7fdfa483db9ea58d3896849fcadaab3"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:1c2a0c0f5a2aca7fde929bb00a0b0245a14bfa9a4b1217561ce556bc939b4b22",
+    "digest": "sha256:1c2a0c0f5a2aca7fde929bb00a0b0245a14bfa9a4b1217561ce556bc939b4b22"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 6,
+    "upgraded": 0,
     "downgraded": 0,
     "changed": 0
   },
   "added": [],
   "removed": [],
-  "changed": [
-    {
-      "name": "google-noto-color-emoji-fonts",
-      "from": "20250623-4.fc44",
-      "to": "20260921-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "google-noto-emoji-fonts",
-      "from": "20250623-4.fc44",
-      "to": "20260921-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus-typing-booster",
-      "from": "2.31.0-1.fc44",
-      "to": "2.31.1-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mise",
-      "from": "2026.9.16-1",
-      "to": "2026.9.17-1",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-urllib3",
-      "from": "2.7.0-1.fc44",
-      "to": "2.8.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-urllib3+socks",
-      "from": "2.7.0-1.fc44",
-      "to": "2.8.0-1.fc44",
-      "direction": "upgraded"
-    }
-  ]
+  "changed": []
 }
