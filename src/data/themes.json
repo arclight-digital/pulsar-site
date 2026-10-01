@@ -700,6 +700,106 @@
     }
   },
   {
+    "slug": "redshift",
+    "name": "Redshift",
+    "author": "Arclight",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#17121a",
+          "#221a25",
+          "#e3806d",
+          "#ee6d82",
+          "#e6c97c",
+          "#a3c98c",
+          "#80c4c2",
+          "#93a6e8",
+          "#c79ce4",
+          "#eadcd8"
+        ],
+        "accent": "#e3806d",
+        "bg": "#17121a",
+        "deep": "#0f0b12",
+        "raised": "#221a25",
+        "fg": "#eadcd8",
+        "wall": "/assets/themes/redshift/wall-dark.webp",
+        "desktop": "/assets/themes/redshift/desktop-dark.webp"
+      },
+      "light": {
+        "swatch": [
+          "#f4ece9",
+          "#ebdfdc",
+          "#b04a38",
+          "#b3284a",
+          "#846508",
+          "#46712a",
+          "#1d7472",
+          "#3c5aae",
+          "#8144a6",
+          "#3a2530"
+        ],
+        "accent": "#b04a38",
+        "bg": "#f4ece9",
+        "deep": "#e6d8d5",
+        "raised": "#ebdfdc",
+        "fg": "#3a2530",
+        "wall": "/assets/themes/redshift/wall-light.webp",
+        "desktop": "/assets/themes/redshift/desktop-light.webp"
+      }
+    }
+  },
+  {
+    "slug": "regolith",
+    "name": "Regolith",
+    "author": "Arclight",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#17181a",
+          "#202124",
+          "#dea05a",
+          "#e2717a",
+          "#d8d27c",
+          "#9dc68a",
+          "#84c1c4",
+          "#90a9d8",
+          "#c49bc9",
+          "#dcdad4"
+        ],
+        "accent": "#dea05a",
+        "bg": "#17181a",
+        "deep": "#0f1011",
+        "raised": "#202124",
+        "fg": "#dcdad4",
+        "wall": "/assets/themes/regolith/wall-dark.webp",
+        "desktop": "/assets/themes/regolith/desktop-dark.webp"
+      },
+      "light": {
+        "swatch": [
+          "#e8e6e1",
+          "#dedcd6",
+          "#95570a",
+          "#aa2a3a",
+          "#666200",
+          "#2e6b40",
+          "#1c6a6e",
+          "#36569c",
+          "#823f88",
+          "#2a2926"
+        ],
+        "accent": "#95570a",
+        "bg": "#e8e6e1",
+        "deep": "#d8d6d0",
+        "raised": "#dedcd6",
+        "fg": "#2a2926",
+        "wall": "/assets/themes/regolith/wall-light.webp",
+        "desktop": "/assets/themes/regolith/desktop-light.webp"
+      }
+    }
+  },
+  {
     "slug": "dracula",
     "name": "Dracula",
     "author": "Dracula Theme (draculatheme.com), MIT",
@@ -841,6 +941,64 @@
         "fg": "#ffb000",
         "wall": "/assets/themes/amber/wall-dark.webp",
         "desktop": "/assets/themes/amber/desktop-dark.webp"
+      }
+    }
+  },
+  {
+    "slug": "magnetosphere",
+    "name": "Magnetosphere",
+    "author": "Arclight",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#0d1417",
+          "#152024",
+          "#74d3a0",
+          "#ec7a86",
+          "#e2d383",
+          "#a2d27e",
+          "#6ccbd0",
+          "#82a8ea",
+          "#c39ce9",
+          "#d6e4de"
+        ],
+        "accent": "#74d3a0",
+        "bg": "#0d1417",
+        "deep": "#080d0f",
+        "raised": "#152024",
+        "fg": "#d6e4de",
+        "wall": "/assets/themes/magnetosphere/wall-dark.webp",
+        "desktop": "/assets/themes/magnetosphere/desktop-dark.webp"
+      }
+    }
+  },
+  {
+    "slug": "eclipse",
+    "name": "Eclipse",
+    "author": "Arclight",
+    "prefer": "dark",
+    "variants": {
+      "dark": {
+        "swatch": [
+          "#0f1117",
+          "#191c24",
+          "#d98aab",
+          "#ec7069",
+          "#e0cc7a",
+          "#9ccc8e",
+          "#82c6d0",
+          "#8ea8e6",
+          "#c69be0",
+          "#e2e4e9"
+        ],
+        "accent": "#d98aab",
+        "bg": "#0f1117",
+        "deep": "#090a0e",
+        "raised": "#191c24",
+        "fg": "#e2e4e9",
+        "wall": "/assets/themes/eclipse/wall-dark.webp",
+        "desktop": "/assets/themes/eclipse/desktop-dark.webp"
       }
     }
   },

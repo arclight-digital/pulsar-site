@@ -14,7 +14,7 @@ const first = THEMES[0];
 ---
 
 <section class="chapter showcase" id="themes" data-showcase>
-  <h2>20 themes, or bring your own</h2>
+  <h2>24 themes, or bring your own</h2>
   <p class="lede lines">
     <span>Every theme recolors your whole desktop at once:</span>
     <span>your apps, the terminal and the wallpaper.</span>
@@ -142,8 +142,8 @@ const first = THEMES[0];
     margin: 0 0 var(--space-xl);
     padding: 0;
     display: grid;
-    /* ten across: twenty themes land as two even rows of ten */
-    grid-template-columns: repeat(10, minmax(0, 1fr));
+    /* eight across: twenty-four themes land as three even rows of eight */
+    grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: var(--space-md);
   }
   .tile {
@@ -241,9 +241,9 @@ const first = THEMES[0];
   }
 
   @media (max-width: 64rem) {
-    /* four even rows of five */
+    /* six even rows of four */
     .tiles {
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 

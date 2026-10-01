@@ -124,9 +124,9 @@ export const CARDS: Card[] = [
   {
     slug: 'themes',
     path: '/docs/themes',
-    headline: '20 themes',
+    headline: '24 themes',
     sub: 'Each covers GNOME, GTK apps, the terminal, the editor and the wallpaper.',
-    alt: 'The Pulsar logo, the heading "20 themes", and the command pulsar theme set catppuccin.',
+    alt: 'The Pulsar logo, the heading "24 themes", and the command pulsar theme set catppuccin.',
     visual: { kind: 'terminal', line: { cmd: 'pulsar theme set catppuccin' } },
   },
   {
