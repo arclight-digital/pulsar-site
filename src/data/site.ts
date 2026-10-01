@@ -31,11 +31,11 @@ export const IMAGES = {
 // without a site publish is visible instead of invisible. CORS is locked to
 // one origin (BUILDD_SITE_ORIGIN on helios), so this fetch fails on a dev
 // server by design -- src/scripts/beacon.ts treats that as "say nothing".
-export const BEACON = 'https://beacon.arclight.digital';
+export const BEACON = 'https://beacon.getpulsar.dev';
 
-// The public build status page: every night's build as it runs, including
-// the nights that skip or fail.
-export const BUILD_STATUS = 'https://beacon.getpulsar.dev';
+// The same host is the public build status page: every night's build as it
+// runs, including the nights that skip or fail.
+export const BUILD_STATUS = BEACON;
 
 // The R2 bucket the weekly ISO build uploads to, behind its public custom
 // domain. The -latest names are stable keys the build rewrites weekly; the
