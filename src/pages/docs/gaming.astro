@@ -4,7 +4,8 @@
 // usr/lib/sysctl.d/60-pulsar-gaming.conf, usr/lib/tmpfiles.d/60-pulsar-gaming.conf,
 // udev/rules.d/70-ntsync.rules, zz0-pulsar.gschema.override (check-alive-timeout),
 // the gamemode/mangohud/ntsync/flatpak-gl checks in cli/pulsar, and the
-// nvidia image's pulsar-gl-nvidia units. The doctor lines are real output.
+// nvidia image's pulsar-gl-nvidia units, and scripts/gg, scripts/ggm and
+// setup_launch_wrappers in cli/pulsar. The doctor lines are real output.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
@@ -25,6 +26,12 @@ const DOCTOR = [
 const GAMEMODE = [
   'gamemoderun %command%          # Steam: a game’s launch options',
   'sudo pulsar setup gamemode     # enroll accounts made since first boot, then log out and in',
+].join('\n');
+
+const LAUNCH = [
+  'gg %command%       # gamescale and gamemode',
+  'ggm %command%      # the same, with the MangoHud overlay',
+  'gg -x %command%    # flags before %command% go to gamescale',
 ].join('\n');
 
 const LAUNCHERS: [string, string][] = [
@@ -58,6 +65,7 @@ const JSONLD = [
 ];
 const TOC = [
   { id: 'launchers', label: 'The launchers', level: 2 },
+  { id: 'launch-options', label: 'Launch options', level: 2 },
   { id: 'gamemode', label: 'gamemode', level: 2 },
   { id: 'proton', label: 'Proton and the kernel', level: 2 },
   { id: 'nvidia', label: 'NVIDIA and Flatpak games', level: 2 },
@@ -93,6 +101,18 @@ const TOC = [
   <p>
     In the image: gamescope, gamemode, MangoHud, and controller/headset udev rules
     (<code>steam-devices</code>).
+  </p>
+
+  <h2 id="launch-options">Launch options</h2>
+  <p>
+    <code>gg</code> runs a game through <a href="/docs/gamescale">gamescale</a> and gamemode.{' '}
+    <code>ggm</code> also turns on MangoHud. In Steam, set a game’s Launch Options to one of:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="launch options" code={LAUNCH}></arc-code-block>
+  <p>
+    For the Steam Flatpak, run <code>pulsar setup gamescale --platform steam</code> once. It puts{' '}
+    <code>gg</code> and <code>ggm</code> in <code>~/.local/bin</code> beside gamescale, and leaves
+    alone any <code>gg</code> or <code>ggm</code> of your own already there.
   </p>
 
   <h2 id="gamemode">gamemode</h2>
