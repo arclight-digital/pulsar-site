@@ -6,7 +6,7 @@
 // system_files/usr/lib/systemd/system/pulsar-update-{auto,stage}.* and
 // zz0-pulsar.gschema.override. The status transcripts are real runs.
 import Docs from '../../layouts/Docs.astro';
-import { APP_ID, ORG_ID } from '../../data/site';
+import { APP_ID, BUILD_STATUS, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
   'How Pulsar updates: new builds download in the background and wait for your next restart, or one click on the notification does it. Then the ways back: rollback, pinning, and checkpoints for /etc and your settings.';
@@ -113,6 +113,7 @@ const TOC = [
   <p class="intro">
     A new image is built every night, downloaded in the background, and used from your next restart.
     The previous one stays in the boot menu. Nothing restarts on its own.
+    Each night's build is public while it runs, at <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
   </p>
 
   <h2 id="notice">How you hear about one</h2>

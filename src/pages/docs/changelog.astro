@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 import Docs from '../../layouts/Docs.astro';
 import { changelog, release, version } from '../../data/build';
 import { arithmetic, digest } from '../../data/digest';
-import { APP_ID, IMAGES } from '../../data/site';
+import { APP_ID, BUILD_STATUS, IMAGES } from '../../data/site';
 
 const DESCRIPTION =
   'Every package added, removed or upgraded in last night’s Pulsar build, diffed from the SBOMs attached to the images themselves. None of it is written by hand.';
@@ -52,6 +52,10 @@ const TOC = [
         </>
       )
     }
+  </p>
+  <p class="hint">
+    This page is written once a night's image is out. To watch tonight's build as it runs, or see
+    why a night skipped or failed, go to <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
   </p>
 
   <h2 id="last-night">Last night</h2>

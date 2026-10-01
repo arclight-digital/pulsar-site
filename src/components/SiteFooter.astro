@@ -4,7 +4,7 @@
 import { getCollection } from 'astro:content';
 import ByArclight from './ByArclight.astro';
 import Mark from './Mark.astro';
-import { REPO, SUPPORT_URL, TAGLINE } from '../data/site';
+import { BUILD_STATUS, REPO, SUPPORT_URL, TAGLINE } from '../data/site';
 
 const SITE = [
   { label: 'Install', href: '/docs/install' },
@@ -20,6 +20,7 @@ const SITE = [
 
 const MACHINE = [
   { label: 'Source', href: REPO },
+  { label: 'Build status', href: BUILD_STATUS },
   { label: 'The shader', href: `${REPO}/blob/main/assets/shaders/pulsar.frag` },
   { label: 'changelog.json', href: '/changelog.json' },
   { label: 'manifest.json', href: '/manifest.json' },

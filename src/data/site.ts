@@ -33,6 +33,10 @@ export const IMAGES = {
 // server by design -- src/scripts/beacon.ts treats that as "say nothing".
 export const BEACON = 'https://beacon.arclight.digital';
 
+// The public build status page: every night's build as it runs, including
+// the nights that skip or fail.
+export const BUILD_STATUS = 'https://beacon.getpulsar.dev';
+
 // The R2 bucket the weekly ISO build uploads to, behind its public custom
 // domain. The -latest names are stable keys the build rewrites weekly; the
 // dated originals stay in the bucket untouched.

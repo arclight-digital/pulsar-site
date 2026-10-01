@@ -11,7 +11,7 @@ import ThemeShowcase from './ThemeShowcase.astro';
 import Base from '../layouts/Base.astro';
 import { release, version } from '../data/build';
 import { shotSrcset } from '../data/shots';
-import { SUBLINE, TAGLINE } from '../data/site';
+import { BUILD_STATUS, SUBLINE, TAGLINE } from '../data/site';
 import { THEMES, label, variant } from '../data/themes';
 
 const DESCRIPTION = `${SUBLINE} Twenty-four desktop themes and games that just run, rebuilt every night from Fedora.`;
@@ -174,6 +174,7 @@ const MODES = [
               <span class="v mono" id="build-version" data-build-version>{version}</span>
             </a>
             <a class="go" href="/docs/updates">How updates work <span aria-hidden="true">→</span></a>
+            <a class="go" href={BUILD_STATUS}>Build status <span aria-hidden="true">→</span></a>
           </p>
           <p class="hint build-note" id="build-note" hidden></p>
         </div>
