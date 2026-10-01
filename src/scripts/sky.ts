@@ -463,6 +463,10 @@ export function initSky(): void {
   });
   for (const ev of ['pulsar:theme', 'pulsar:reset'])
     document.addEventListener(ev, () => requestAnimationFrame(follow));
+  // The bar's light/dark toggle picks no theme and no look: without this the
+  // stage kept the mode it had, Pulsar's always (its picture does not change
+  // with the mode) and any theme's while the hero was off screen.
+  onStateChange(follow);
 
   sync();
   snapshotStage();
