@@ -4,8 +4,10 @@
 // shader that renders Pulsar's wallpapers -- in its brand colors. Every other
 // theme wears upstream/assets/shaders/theme.frag, the shader that renders
 // THAT theme's wallpapers, with exactly the uniforms the wallpaper pipeline
-// hands it (upstream/theme-uniforms.json, written at publish by
-// scripts/render-theme-wallpapers.py --uniforms): the theme's own render
+// hands it (upstream/theme-uniforms.json, exported by the OS repo's
+// scripts/render-theme-wallpapers.py --uniforms in the same change that
+// adds a theme here -- src/data/themes.ts fails the build on a theme the
+// file lacks, so no theme waits on a nightly for its sky): the theme's own render
 // table for a look where it has one, the pipeline's defaults where it does
 // not. So each of the four looks is recolored by the site's theme the way the
 // OS recolors it, and the hero at any frame is that wallpaper, moving.

@@ -11,6 +11,7 @@
 // either is a full switch. A single-variant theme shows the variant it has
 // whichever mode the page is in.
 import raw from './themes.json';
+import UNIFORMS from '../../upstream/theme-uniforms.json';
 import { hasVersion, versioned } from './versioned';
 
 export type Variant = {
@@ -43,7 +44,22 @@ const pictures = (v: Variant): Variant => {
   }
   return { ...v, wall: v.wall && versioned(v.wall), desktop: v.desktop && versioned(v.desktop) };
 };
-export const THEMES = (raw as Theme[]).map((t) => ({
+// The hero only ever draws the live shader, recolored to a theme's own
+// wallpaper (src/scripts/sky.ts): never a still, never another theme's sky.
+// A theme the uniforms do not carry would fall back to Pulsar's sky, so it
+// fails the build instead. Pulsar's own themes wear pulsar.frag and need none.
+const SKY = UNIFORMS as Record<string, { shader: string; variants: Record<string, { looks?: object }> }>;
+const live = (t: Theme): Theme => {
+  const e = SKY[t.slug];
+  if (!e) throw new Error(`themes: ${t.slug} has no live sky in upstream/theme-uniforms.json -- export it with the OS repo's scripts/render-theme-wallpapers.py --uniforms`);
+  if (e.shader !== 'pulsar') {
+    for (const m of Object.keys(t.variants)) {
+      if (!e.variants[m]?.looks) throw new Error(`themes: ${t.slug} ${m} has no recolored looks in upstream/theme-uniforms.json`);
+    }
+  }
+  return t;
+};
+export const THEMES = (raw as Theme[]).map(live).map((t) => ({
   ...t,
   variants: Object.fromEntries(Object.entries(t.variants).map(([m, v]) => [m, pictures(v)])),
 }));

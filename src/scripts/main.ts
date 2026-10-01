@@ -6,7 +6,6 @@ import { initBeacon } from './beacon';
 import { initSky } from './sky';
 import { initSpin } from './spin';
 import { initTheme } from './theme';
-import { initHeroThemes } from './herothemes';
 import { initThemes } from './themes';
 import { initWallpaper } from './wallpaper';
 import { initWidont } from './widont';
@@ -18,7 +17,6 @@ initSpin();
 initSky();
 initThemes();
 initWallpaper();
-initHeroThemes();
 initZoom();
 
 // Last, and not awaited: the only thing here that touches the network. It
