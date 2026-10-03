@@ -2,10 +2,10 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.9.1",
-  "version": "44.20260930.2",
+  "version": "44.20261003.0",
   "base": "fedora-silverblue:44",
-  "built": "2026-09-30T18:23:02Z",
-  "kernel": "7.2.7-200.fc44.x86_64",
+  "built": "2026-10-03T04:24:18Z",
+  "kernel": "7.2.8-200.fc44.x86_64",
   "components": {
     "scheduler": "scx_bpfland",
     "sched_ext": "on",
@@ -14,7 +14,7 @@
     "mangohud": "0.8.3~rc1-2.fc44",
     "mesa": "26.2.3-1.fc44",
     "mesa_va": "freeworld",
-    "gamescale": "v2.0.2"
+    "gamescale": "v2.0.3"
   },
   "changelog_url": "https://getpulsar.dev/changelog.json",
   "nvidia_driver": "615.71.09"
