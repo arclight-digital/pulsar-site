@@ -5,7 +5,8 @@
 // udev/rules.d/70-ntsync.rules, zz0-pulsar.gschema.override (check-alive-timeout),
 // the gamemode/mangohud/ntsync/flatpak-gl checks in cli/pulsar, and the
 // nvidia image's pulsar-gl-nvidia units, and scripts/gg, scripts/ggm and
-// setup_launch_wrappers in cli/pulsar. The doctor lines are real output.
+// setup_launch_wrappers / setup_steam_builtin in cli/pulsar, scripts/steam-grants.sh,
+// and the user unit pulsar-steam-gl-profile.service. The doctor lines are real output.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
@@ -18,8 +19,7 @@ const DOCTOR = [
   '                     crw-rw-r-- root:root',
   'ok    gamemode       proto is in gamemode; renice=10 available',
   '                     igpu governor demotion disabled (igpu_power_threshold=-1)',
-  'warn  mangohud       flatpaks.list pins //25.08, Steam runs on 26.08',
-  '                     installed (25.08,26.08) still covers it; repin before the old branch goes',
+  "ok    mangohud       MangoHud layer 26.08 matches Steam's runtime",
   'ok    flatpak-gl     running Flatpak apps have the NVIDIA 615.71.09 driver',
 ].join('\n');
 
@@ -110,9 +110,16 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="launch options" code={LAUNCH}></arc-code-block>
   <p>
-    For the Steam Flatpak, run <code>pulsar setup gamescale --platform steam</code> once. It puts{' '}
-    <code>gg</code> and <code>ggm</code> in <code>~/.local/bin</code> beside gamescale, and leaves
-    alone any <code>gg</code> or <code>ggm</code> of your own already there.
+    The Steam Flatpak needs no setup. At every boot <code>pulsar-steam-grants.service</code> lets
+    Steam’s sandbox run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so they
+    update with the image.
+  </p>
+  <p>
+    Other Flatpak launchers need <code>pulsar setup gamescale --platform &lt;name&gt;</code> once. It
+    puts <code>gg</code> and <code>ggm</code> in <code>~/.local/bin</code> beside gamescale, and
+    leaves alone any <code>gg</code> or <code>ggm</code> of your own already there. If you ran it for
+    Steam on an older image, run <code>pulsar setup gamescale</code> again: it points Steam at the
+    image’s copies and removes old copies that match them.
   </p>
 
   <h2 id="gamemode">gamemode</h2>
@@ -163,6 +170,11 @@ const TOC = [
       An app started before its extension arrived renders on the integrated GPU (often a black
       window). Pulsar notifies: <strong>Restart Steam to use the NVIDIA GPU</strong>. Quit Steam
       fully and reopen it.
+    </li>
+    <li>
+      The Steam client’s own window runs with the NVIDIA driver’s vsync off, through a driver
+      profile matched on its process name, so it draws at the display’s refresh rate instead of
+      stalling. Games Steam starts keep their own vsync setting.
     </li>
   </ul>
   <p>

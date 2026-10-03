@@ -95,8 +95,8 @@ export const CARDS: Card[] = [
     path: '/docs/gamescale',
     headline: 'gamescale',
     sub: 'Native resolution for games when fractional scaling is on.',
-    alt: 'The Pulsar logo, the heading "gamescale", the gamescale icon, and the command that sets gamescale up for Steam.',
-    visual: { kind: 'terminal', icon: 'gamescale', line: { cmd: 'pulsar setup gamescale --platform steam' } },
+    alt: 'The Pulsar logo, the heading "gamescale", the gamescale icon, and the Steam launch option gamescale %command%.',
+    visual: { kind: 'terminal', icon: 'gamescale', line: { cmd: 'gamescale %command%', note: 'Steam launch options' } },
   },
   {
     slug: 'provenance',

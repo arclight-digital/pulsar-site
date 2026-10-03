@@ -1,7 +1,8 @@
 ---
 // Troubleshooting: doctor first, report when you need help, crashes, and the
 // logs. Every check id, message and flag here is cli/pulsar's own; the
-// transcripts are real runs on a Pulsar machine (44.20260928.0, nvidia),
+// transcripts are real runs on a Pulsar machine (doctor on 44.20261003.0,
+// report on 44.20260928.0, nvidia),
 // trimmed where a line said nothing new.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID, REPO } from '../../data/site';
@@ -11,16 +12,15 @@ const DESCRIPTION =
 
 const DOCTOR = [
   '$ pulsar doctor',
-  'Pulsar health  44.20260928.0',
+  'Pulsar health  26.9.1 · build 44.20261003.0',
   '',
-  'ok    scheduler      stock EEVDF: this kernel cannot load a BPF scheduler',
-  '                     scx kfuncs carry the implicit prog-aux argument (Fedora kernel BTF)',
+  'ok    scheduler      sched_ext enabled',
+  '                     root scheduler: bpfland_1.1.3_x86_64_unknown_linux_gnu',
   'ok    ntsync         /dev/ntsync present',
   '                     crw-rw-r-- root:root',
   'ok    gamemode       proto is in gamemode; renice=10 available',
   '                     igpu governor demotion disabled (igpu_power_threshold=-1)',
-  'warn  mangohud       flatpaks.list pins //25.08, Steam runs on 26.08',
-  '                     installed (25.08,26.08) still covers it; repin before the old branch goes',
+  "ok    mangohud       MangoHud layer 26.08 matches Steam's runtime",
   'ok    greenboot      health checks passed',
   '                     boot marked green',
   'ok    nvidia         nvidia-open 615.71.09 loaded',
@@ -32,7 +32,8 @@ const DOCTOR = [
   'ok    origin         not pinned to a digest',
   'ok    updates        no update staged',
   '                     2 deployment(s), 0 pinned, 2 layered -- updates go through rpm-ostree',
-  'ok    disk           /sysroot 67% used, 323G free',
+  'ok    disk           /sysroot 77% used, 217G free',
+  'ok    crashes        no crashes of yours this boot (1 ignored: pulsar crashes ignore list)',
   "ok    cli            'pulsar' is this system's CLI",
   '',
   'no failures',
@@ -81,6 +82,7 @@ const CRASH = [
   'pulsar doctor crashes                        # this boot’s crashes, by program',
   'pulsar report --crash latest --text          # the newest one, in full',
   'pulsar agent ask --crash latest              # hand it to your coding agent',
+  'pulsar crashes ignore add <program>          # stop announcing one program’s crashes',
   'coredumpctl list                             # older ones; then --crash <pid>',
 ].join('\n');
 
@@ -195,8 +197,8 @@ const TOC = [
   <h2 id="report">Asking for help</h2>
   <p>
     Paste <code>pulsar report</code> into an issue, forum post or agent. It includes doctor,
-    deployments, the image manifest, hardware, failed units, this boot’s warnings from Pulsar’s and
-    failed units, GPUs and their drivers, and Flatpak remotes and apps. JSON by default;{' '}
+    deployments, the image manifest, failed units, this boot’s warnings from Pulsar’s units and the
+    failed ones, GPUs and their drivers, and Flatpak remotes and apps. JSON by default;{' '}
     <code>--text</code> for people.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="report" code={REPORT}></arc-code-block>
@@ -221,7 +223,9 @@ const TOC = [
   <p>
     systemd-coredump records every crash. With a default coding agent (the only one installed, or
     set with <code>pulsar agent default</code>), a crash shows a notification (once per program per
-    boot) with an <strong>Ask</strong> button; nothing is sent unless you click. Without one,{' '}
+    boot) with an <strong>Ask</strong> button, which names your agent, and{' '}
+    <strong>Ignore this</strong>, which stops announcing that program’s crashes. Nothing is sent
+    unless you click Ask. Without one,{' '}
     <code>pulsar doctor</code> still lists crashes.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="crashes" code={CRASH}></arc-code-block>

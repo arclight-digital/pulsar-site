@@ -13,22 +13,30 @@ const DESCRIPTION =
 
 const LIST = [
   '$ pulsar theme list',
-  '* pulsar                   #0b0e1a #3ecbff #ff6b8b #5ee6a8 #ffd479 #8fa8ff #b69cff #3ecbff  Pulsar [dark+light]',
-  '  pulsar-holo              #120f24 #8fa8ff #ff7aa2 #7af0c0 #ffe08a #8fa8ff #c3a6ff #3ecbff  Pulsar Holo [dark+light]',
-  '  ayu                      #0b0e14 #e6b450 #f07178 #aad94c #ffb454 #59c2ff #d2a6ff #95e6cb  Ayu [dark+light]',
-  '  catppuccin               #1e1e2e #cba6f7 #f38ba8 #a6e3a1 #f9e2af #89b4fa #cba6f7 #94e2d5  Catppuccin [dark+light]',
-  '  everforest               #2d353b #a7c080 #e98183 #a7c080 #dbbc7f #7fbbb3 #d699b6 #83c092  Everforest [dark+light]',
-  '  flexoki                  #100f0f #4385be #d55044 #879a39 #d0a215 #4385be #8b7ec8 #3aa99f  Flexoki [dark+light]',
-  '  gruvbox                  #282828 #fe8019 #ff543e #b8bb26 #fabd2f #83a598 #d3869b #8ec07c  Gruvbox [dark+light]',
-  '  kanagawa                 #1f1f28 #7e9cd8 #e46876 #98bb6c #e6c384 #7e9cd8 #957fb8 #7aa89f  Kanagawa [dark+light]',
-  '  nord                     #2e3440 #88c0d0 #e4828a #a3be8c #ebcb8b #81a1c1 #b791b0 #88c0d0  Nord [dark+light]',
-  '  rose-pine                #191724 #c4a7e7 #eb6f92 #4a8ca8 #f6c177 #9ccfd8 #c4a7e7 #ebbcba  Rosé Pine [dark+light]',
-  '  solarized                #002b36 #268bd2 #fd544b #859900 #b58900 #3294dc #8086db #2aa198  Solarized [dark+light]',
-  '  tokyo-night              #1a1b26 #7aa2f7 #f7768e #9ece6a #e0af68 #7aa2f7 #bb9af7 #7dcfff  Tokyo Night [dark+light]',
-  '  amber                    #0a0703 #ffb000 #ff6a3d #b8c94a #ffd24a #a3b8cc #e38aa0 #a8d4b0  Amber [dark]',
-  '  dracula                  #282a36 #bd93f9 #ff5958 #50fa7b #f1fa8c #bd93f9 #ff79c6 #8be9fd  Dracula [dark]',
-  '  phosphor                 #050a06 #33ff66 #e38a6d #33ff66 #c8ff5c #57c8e0 #cf94b8 #66ffd0  Phosphor [dark]',
-  '  alucard                  #fffbeb #644ac9 #cb3a2a #14710a #846e15 #644ac9 #a3144d #036a96  Alucard [light]',
+  "* pulsar                   #0b0e1a #3ecbff #ff6b8b #5ee6a8 #ffd479 #8fa8ff #b69cff #3ecbff  Pulsar [dark+light]",
+  "  pulsar-holo              #120f24 #8fa8ff #ff7aa2 #7af0c0 #ffe08a #8fa8ff #c3a6ff #3ecbff  Pulsar Holo [dark+light]",
+  "  ayu                      #0b0e14 #e6b450 #f07178 #aad94c #ffb454 #59c2ff #d2a6ff #95e6cb  Ayu [dark+light]",
+  "  catppuccin               #1e1e2e #cba6f7 #f38ba8 #a6e3a1 #f9e2af #89b4fa #cba6f7 #94e2d5  Catppuccin [dark+light]",
+  "  everforest               #2d353b #a7c080 #e98183 #a7c080 #dbbc7f #7fbbb3 #d699b6 #83c092  Everforest [dark+light]",
+  "  flexoki                  #100f0f #4385be #d55044 #879a39 #d0a215 #4385be #8b7ec8 #3aa99f  Flexoki [dark+light]",
+  "  gruvbox                  #282828 #fe8019 #ff543e #b8bb26 #fabd2f #83a598 #d3869b #8ec07c  Gruvbox [dark+light]",
+  "  kanagawa                 #1f1f28 #7e9cd8 #e46876 #98bb6c #e6c384 #7e9cd8 #957fb8 #7aa89f  Kanagawa [dark+light]",
+  "  nord                     #2e3440 #88c0d0 #e4828a #a3be8c #ebcb8b #81a1c1 #b791b0 #88c0d0  Nord [dark+light]",
+  "  one                      #282c34 #61afef #e36f78 #98c379 #e5c07b #61afef #c678dd #56b6c2  One [dark+light]",
+  "  oxocarbon                #161616 #ff7eb6 #ee5396 #42be65 #f1c21b #78a9ff #be95ff #3ddbd9  Oxocarbon [dark+light]",
+  "  redshift                 #17121a #e3806d #ee6d82 #a3c98c #e6c97c #93a6e8 #c79ce4 #80c4c2  Redshift [dark+light]",
+  "  regolith                 #17181a #dea05a #e2717a #9dc68a #d8d27c #90a9d8 #c49bc9 #84c1c4  Regolith [dark+light]",
+  "  rose-pine                #191724 #c4a7e7 #eb6f92 #4a8ca8 #f6c177 #9ccfd8 #c4a7e7 #ebbcba  Rosé Pine [dark+light]",
+  "  solarized                #002b36 #268bd2 #fd544b #859900 #b58900 #3294dc #8086db #2aa198  Solarized [dark+light]",
+  "  tokyo-night              #1a1b26 #7aa2f7 #f7768e #9ece6a #e0af68 #7aa2f7 #bb9af7 #7dcfff  Tokyo Night [dark+light]",
+  "  amber                    #0a0703 #ffb000 #ff6a3d #b8c94a #ffd24a #a3b8cc #e38aa0 #a8d4b0  Amber [dark]",
+  "  dracula                  #282a36 #bd93f9 #ff5958 #50fa7b #f1fa8c #bd93f9 #ff79c6 #8be9fd  Dracula [dark]",
+  "  eclipse                  #0f1117 #d98aab #ec7069 #9ccc8e #e0cc7a #8ea8e6 #c69be0 #82c6d0  Eclipse [dark]",
+  "  magnetosphere            #0d1417 #74d3a0 #ec7a86 #a2d27e #e2d383 #82a8ea #c39ce9 #6ccbd0  Magnetosphere [dark]",
+  "  phosphor                 #050a06 #33ff66 #e38a6d #33ff66 #c8ff5c #57c8e0 #cf94b8 #66ffd0  Phosphor [dark]",
+  "  poimandres               #1b1e28 #5de4c7 #d0679d #5de4c7 #fffac2 #add7ff #fcc5e9 #89ddff  Poimandres [dark]",
+  "  synthwave-84             #262335 #ff7edb #ff4853 #72f1b8 #fede5d #7e89c6 #ff7edb #36f9f6  Synthwave '84 [dark]",
+  "  alucard                  #fffbeb #644ac9 #cb3a2a #14710a #846e15 #644ac9 #a3144d #036a96  Alucard [light]",
 ].join('\n');
 
 const SET = [
@@ -157,12 +165,13 @@ const TOC = [
   <h2 id="dark-light">Dark and light</h2>
   <ul>
     <li>
-      Twelve themes have both variants and follow Dark Style in Quick Settings. Settings you changed
+      Sixteen themes have both variants and follow Dark Style in Quick Settings. Settings you changed
       by hand (btop’s, your agent’s theme) are kept. <code>--variant dark|light</code> pins one.
     </li>
     <li>
-      Four are single-variant: Dracula, Phosphor and Amber (dark), Alucard (light). They set Dark or
-      Light Style and ignore the switch.
+      Eight have one variant: Amber, Dracula, Eclipse, Magnetosphere, Phosphor, Poimandres and
+      Synthwave ’84 (dark), and Alucard (light). They set Dark or Light Style and ignore the
+      switch.
     </li>
     <li>
       Phosphor and Amber tint every ANSI color toward the phosphor while keeping red distinct from

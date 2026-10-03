@@ -19,11 +19,12 @@ const JSONLD = [
     url: new URL('/docs/gamescale', Astro.site).href,
   },
 ];
-const SETUP = 'pulsar setup gamescale --platform steam';
+const SETUP = 'pulsar setup gamescale --platform <name>';
 const TOC = [
   { id: 'how', label: 'How it works', level: 2 },
   { id: 'in-the-image', label: 'What ships in the image', level: 2 },
-  { id: 'flatpak', label: 'Flatpak launchers', level: 2 },
+  { id: 'steam', label: 'Flatpak Steam', level: 2 },
+  { id: 'flatpak', label: 'Other Flatpak launchers', level: 2 },
 ];
 ---
 
@@ -49,10 +50,20 @@ const TOC = [
     a game crashes. That’s all native launchers and terminal use need.
   </p>
 
-  <h2 id="flatpak">Flatpak launchers need one more step</h2>
-  <p>Flatpak launchers (Steam included) can’t see the host’s <code>/usr</code>:</p>
+  <h2 id="steam">Flatpak Steam needs nothing</h2>
+  <p>Flatpak apps can’t see the host’s <code>/usr</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK_ERR}></arc-code-block>
-  <p>So gamescale must be installed under <code>$HOME</code>:</p>
+  <p>
+    At every boot <code>pulsar-steam-grants.service</code> gives Steam a read-only view of the
+    host OS and puts a directory holding only <code>gamescale</code>, <code>gg</code> and{' '}
+    <code>ggm</code> on its <code>PATH</code>. Steam runs the image’s copies, which update with the
+    image. If you set gamescale up for Steam on an older image, run{' '}
+    <code>pulsar setup gamescale</code> once: it points Steam back at the image’s copies and removes
+    old copies in <code>~/.local/bin</code> that match them.
+  </p>
+
+  <h2 id="flatpak">Other Flatpak launchers need one step</h2>
+  <p>Heroic, Faugus, Bottles and other launchers get gamescale under <code>$HOME</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
   <p>
     This runs the image’s pinned installer, offline. (Upstream’s <code>curl | sh</code> installs
