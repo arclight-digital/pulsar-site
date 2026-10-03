@@ -4,7 +4,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, COSIGN_PUB, IMAGES, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
-  'Every Pulsar image ships its full package list as an SPDX SBOM and is diffed package by package each night. Images, ISOs and the NVIDIA module are signed, and every signature is logged in Rekor.';
+  'Every Pulsar image ships its full package list as an SPDX SBOM and is diffed package by package each night. Images, ISOs and the NVIDIA module are signed, and image signatures are logged in Rekor.';
 
 const JSONLD = [
   {
@@ -49,8 +49,8 @@ const TOC = [
   <h2 id="verify">Check it yourself</h2>
   <p>
     Each image has an SPDX SBOM attached in the registry (<code>oras discover</code> lists it).
-    Images and ISOs are signed with Pulsar’s cosign release key, and every signature is logged in
-    Rekor, Sigstore’s public transparency log.
+    Images and ISOs are signed with Pulsar’s cosign release key. Image signatures are also logged
+    in Rekor, Sigstore’s public transparency log; ISO signatures are not logged yet.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sbom" code={SBOM}></arc-code-block>
   <p>
@@ -65,6 +65,10 @@ const TOC = [
   </arc-description-list>
   <p>Check an image’s signature and its log entry:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
+  <p>
+    On a Pulsar machine, <code>pulsar verify</code> prints the same check for the exact image you
+    booted, by digest, and runs it if <code>cosign</code> is installed.
+  </p>
   <p class="hint">
     <a href="/docs/install#iso">Verify an ISO</a> · <a href="/docs/signing">NVIDIA module signing</a>
   </p>

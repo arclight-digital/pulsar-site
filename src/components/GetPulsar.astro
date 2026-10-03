@@ -53,7 +53,7 @@ const VERIFY = [
     <div class="stage-head">
       <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Download Pulsar</h2>
       <p class="stage-sub">
-        Pulsar is free, today and always, and every line of it is open source. Choose the download
+        Pulsar is free, today and always, and its source is open under the MIT license. Choose the download
         that matches your system, write it to any USB stick of 8&nbsp;GB or more, and you’re one
         restart away from your new desktop. The installer ISO is refreshed weekly; once installed,
         Pulsar updates from the nightly build.
@@ -197,7 +197,7 @@ const VERIFY = [
             the ISO against the checksum.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
-          <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, cosign’s public transparency log. Pulsar doesn’t upload its signatures there, so the check rests on the published key alone.</p>
+          <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
         </div>
       </details>
     </div>

@@ -65,7 +65,7 @@ const shown = [
         <code>keys/cosign.pub</code>; the build verifies every signature against the committed copy
         before publishing.
       </p>
-      <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, cosign’s public transparency log. Pulsar doesn’t upload its signatures there, so the check rests on the published key alone.</p>
+      <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
     </div>
   </div>
 </div>
