@@ -1,6 +1,7 @@
 ---
 // The agent pillar: the one picture of an agent being handed a problem (the
-// real crash notification, its words crash_notify_one's in cli/pulsar), and
+// real crash notification, its words and both actions crash_notify_one's in
+// cli/pulsar), and
 // two short lists read across -- what an agent can do here and what it can't.
 // The second list is the point, so it gets the same weight as the first.
 // Titles only: every row is a page section in /docs/agents, and the limit
@@ -33,7 +34,7 @@ const CANT = [
     </div>
 
     {/* The real notification, drawn. Not a control: the page has nothing to
-        hand an agent, so the button is a picture of one. */}
+        hand an agent, so the buttons are a picture of them. */}
     <figure class="notice" aria-label="The notification Pulsar shows when a program crashes">
       <div class="note" aria-hidden="true">
         <p class="note-app"><arc-icon name="warning" size="sm"></arc-icon>Pulsar <span>· now</span></p>
@@ -42,7 +43,10 @@ const CANT = [
           Claude Code can read the stack trace and the logs, and help you fix or report it. Nothing
           is sent to it unless you click.
         </p>
-        <span class="note-btn">Ask Claude Code</span>
+        <span class="note-btns">
+          <span class="note-btn">Ask Claude Code</span>
+          <span class="note-btn">Ignore this</span>
+        </span>
       </div>
     </figure>
   </div>
@@ -163,8 +167,14 @@ const CANT = [
     color: var(--text-secondary);
     margin-bottom: var(--space-md) !important;
   }
-  /* GNOME's notification action: a pill across the banner's foot */
+  /* GNOME's notification actions: equal pills in a row across the banner's
+     foot, in the order notify-send gave them (ask, then ignore) */
+  .note-btns {
+    display: flex;
+    gap: var(--space-sm);
+  }
   .note-btn {
+    flex: 1 1 0;
     display: block;
     text-align: center;
     padding: var(--space-sm);
