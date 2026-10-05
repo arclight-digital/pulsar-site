@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-03T04:46:00Z",
+  "generated": "2026-10-05T02:36:20Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:6f30dadf02373da3917ac2e1729923e306f12052dc580eabc01c0da4ae7af3a2",
-    "digest": "sha256:6f30dadf02373da3917ac2e1729923e306f12052dc580eabc01c0da4ae7af3a2"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:ec9d038f8efc15203d8cb5ffcf28ae7438dedc4bd47e86ce75a90545fbb6a937",
     "digest": "sha256:ec9d038f8efc15203d8cb5ffcf28ae7438dedc4bd47e86ce75a90545fbb6a937"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae",
+    "digest": "sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 33,
+    "upgraded": 1,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,201 +19,9 @@
   "removed": [],
   "changed": [
     {
-      "name": "cifs-utils",
-      "from": "7.7-1.fc44",
-      "to": "7.8-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "cifs-utils-info",
-      "from": "7.7-1.fc44",
-      "to": "7.8-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "enchant2",
-      "from": "2.8.19-2.fc44",
-      "to": "2.8.21-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox",
-      "from": "156.0.1-2.fc44",
-      "to": "157.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox-langpacks",
-      "from": "156.0.1-2.fc44",
-      "to": "157.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "fuse-common",
-      "from": "3.18.2-1.fc44",
-      "to": "3.18.3-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "fuse3",
-      "from": "3.18.2-1.fc44",
-      "to": "3.18.3-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "fuse3-libs",
-      "from": "3.18.2-1.fc44",
-      "to": "3.18.3-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-common",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-efi-ia32",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-efi-x64",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-pc",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-pc-modules",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-tools",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "grub2-tools-minimal",
-      "from": "1:2.12-64.fc44",
-      "to": "1:2.12-66.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hplip",
-      "from": "3.26.4-7.fc44",
-      "to": "3.26.6-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hplip-common",
-      "from": "3.26.4-7.fc44",
-      "to": "3.26.6-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hplip-libs",
-      "from": "3.26.4-7.fc44",
-      "to": "3.26.6-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libX11",
-      "from": "1.8.13-1.fc44",
-      "to": "1.8.13-3.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libX11-common",
-      "from": "1.8.13-1.fc44",
-      "to": "1.8.13-3.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libX11-xcb",
-      "from": "1.8.13-1.fc44",
-      "to": "1.8.13-3.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libsane-hpaio",
-      "from": "3.26.4-7.fc44",
-      "to": "3.26.6-1.fc44",
-      "direction": "upgraded"
-    },
-    {
       "name": "mise",
-      "from": "2026.9.18-1",
-      "to": "2026.10.0-1",
-      "direction": "upgraded"
-    },
-    {
-      "name": "openssl",
-      "from": "1:3.5.8-1.fc44",
-      "to": "1:3.5.9-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "openssl-devel",
-      "from": "1:3.5.8-1.fc44",
-      "to": "1:3.5.9-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "openssl-libs",
-      "from": "1:3.5.8-1.fc44",
-      "to": "1:3.5.9-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "selinux-policy",
-      "from": "44.10-1.fc44",
-      "to": "44.11-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "selinux-policy-targeted",
-      "from": "44.10-1.fc44",
-      "to": "44.11-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "shim-ia32",
-      "from": "16.1-5",
-      "to": "16.1-7",
-      "direction": "upgraded"
-    },
-    {
-      "name": "shim-x64",
-      "from": "16.1-5",
-      "to": "16.1-7",
-      "direction": "upgraded"
-    },
-    {
-      "name": "sos",
-      "from": "4.12.0-1.fc44",
-      "to": "4.12.0-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "xen-libs",
-      "from": "4.21.2-1.fc44",
-      "to": "4.21.2-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "xen-licenses",
-      "from": "4.21.2-1.fc44",
-      "to": "4.21.2-2.fc44",
+      "from": "2026.10.0-1",
+      "to": "2026.10.2-1",
       "direction": "upgraded"
     }
   ]
