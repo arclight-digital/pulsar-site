@@ -2,9 +2,9 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.9.1",
-  "version": "44.20261005.0",
+  "version": "44.20261006.0",
   "base": "fedora-silverblue:44",
-  "built": "2026-10-05T02:14:17Z",
+  "built": "2026-10-06T02:17:21Z",
   "kernel": "7.2.8-200.fc44.x86_64",
   "components": {
     "scheduler": "scx_bpfland",

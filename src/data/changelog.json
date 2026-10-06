@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-05T02:36:20Z",
+  "generated": "2026-10-06T02:58:24Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:ec9d038f8efc15203d8cb5ffcf28ae7438dedc4bd47e86ce75a90545fbb6a937",
-    "digest": "sha256:ec9d038f8efc15203d8cb5ffcf28ae7438dedc4bd47e86ce75a90545fbb6a937"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae",
     "digest": "sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:d3a04b856c751752778bf1ab6f2a9e81d498ef9513d5ab6bc67d5569f9d9b83b",
+    "digest": "sha256:d3a04b856c751752778bf1ab6f2a9e81d498ef9513d5ab6bc67d5569f9d9b83b"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 1,
+    "upgraded": 10,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,9 +19,63 @@
   "removed": [],
   "changed": [
     {
+      "name": "flatpak",
+      "from": "1.18.2-1.fc44",
+      "to": "1.18.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "flatpak-libs",
+      "from": "1.18.2-1.fc44",
+      "to": "1.18.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "flatpak-selinux",
+      "from": "1.18.2-1.fc44",
+      "to": "1.18.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "flatpak-session-helper",
+      "from": "1.18.2-1.fc44",
+      "to": "1.18.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "hwdata",
+      "from": "0.411-1.fc44",
+      "to": "0.412-1.fc44",
+      "direction": "upgraded"
+    },
+    {
       "name": "mise",
-      "from": "2026.10.0-1",
-      "to": "2026.10.2-1",
+      "from": "2026.10.2-1",
+      "to": "2026.10.3-1",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nautilus",
+      "from": "50.3-1.fc44",
+      "to": "50.3.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nautilus-extensions",
+      "from": "50.3-1.fc44",
+      "to": "50.3.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "rsync",
+      "from": "3.5.0-2.fc44",
+      "to": "3.5.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "xxhash-libs",
+      "from": "0.8.3-4.fc44",
+      "to": "0.8.4-1.fc44",
       "direction": "upgraded"
     }
   ]
