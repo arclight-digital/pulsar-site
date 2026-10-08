@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-06T02:58:24Z",
+  "generated": "2026-10-08T02:52:38Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae",
-    "digest": "sha256:f34cb965daf967bfdaef3a98afbd720ba62a85764db7f48181f7f01b4937bcae"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:d3a04b856c751752778bf1ab6f2a9e81d498ef9513d5ab6bc67d5569f9d9b83b",
     "digest": "sha256:d3a04b856c751752778bf1ab6f2a9e81d498ef9513d5ab6bc67d5569f9d9b83b"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:a9ab85ab4008bf1fef69574ba81670fce05edfa0d3d4d146678abd30a0ce3fda",
+    "digest": "sha256:a9ab85ab4008bf1fef69574ba81670fce05edfa0d3d4d146678abd30a0ce3fda"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 10,
+    "upgraded": 45,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,63 +19,273 @@
   "removed": [],
   "changed": [
     {
-      "name": "flatpak",
-      "from": "1.18.2-1.fc44",
-      "to": "1.18.4-1.fc44",
+      "name": "SDL3",
+      "from": "3.4.16-1.fc44",
+      "to": "3.4.18-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "flatpak-libs",
-      "from": "1.18.2-1.fc44",
-      "to": "1.18.4-1.fc44",
+      "name": "b43-fwcutter",
+      "from": "020-1.fc44",
+      "to": "021-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "flatpak-selinux",
-      "from": "1.18.2-1.fc44",
-      "to": "1.18.4-1.fc44",
+      "name": "cairo",
+      "from": "1.18.4-6.fc44",
+      "to": "1.18.6-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "flatpak-session-helper",
-      "from": "1.18.2-1.fc44",
-      "to": "1.18.4-1.fc44",
+      "name": "cairo-gobject",
+      "from": "1.18.4-6.fc44",
+      "to": "1.18.6-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "hwdata",
-      "from": "0.411-1.fc44",
-      "to": "0.412-1.fc44",
+      "name": "expat",
+      "from": "2.8.3-1.fc44",
+      "to": "2.8.5-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "freerdp-libs",
+      "from": "2:3.31.1-1.fc44",
+      "to": "2:3.32.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gcr",
+      "from": "4.4.0.1-7.fc44",
+      "to": "4.4.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gcr-libs",
+      "from": "4.4.0.1-7.fc44",
+      "to": "4.4.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "git-core",
+      "from": "2.55.0-1.fc44",
+      "to": "2.56.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "git-core-doc",
+      "from": "2.55.0-1.fc44",
+      "to": "2.56.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "httpd",
+      "from": "2.4.68-1.fc44",
+      "to": "2.4.69-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "httpd-core",
+      "from": "2.4.68-1.fc44",
+      "to": "2.4.69-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "httpd-filesystem",
+      "from": "2.4.68-1.fc44",
+      "to": "2.4.69-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "httpd-tools",
+      "from": "2.4.68-1.fc44",
+      "to": "2.4.69-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk4.1",
+      "from": "2.54.0-2.fc44",
+      "to": "2.54.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk6.0",
+      "from": "2.54.0-2.fc44",
+      "to": "2.54.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libgsf",
+      "from": "1.14.58-1.fc44",
+      "to": "1.14.60-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libical",
+      "from": "3.0.20-7.fc44",
+      "to": "3.0.20-8.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libical-glib",
+      "from": "3.0.20-7.fc44",
+      "to": "3.0.20-8.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libmd",
+      "from": "1.2.0-1.fc44",
+      "to": "1.3.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "librepo",
+      "from": "1.21.1-1.fc44",
+      "to": "1.21.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "librsvg2",
+      "from": "2.62.3-1.fc44",
+      "to": "2.62.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libwinpr",
+      "from": "2:3.31.1-1.fc44",
+      "to": "2:3.32.1-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.2-1",
-      "to": "2026.10.3-1",
+      "from": "2026.10.3-1",
+      "to": "2026.10.4-1",
       "direction": "upgraded"
     },
     {
-      "name": "nautilus",
-      "from": "50.3-1.fc44",
-      "to": "50.3.1-1.fc44",
+      "name": "mod_lua",
+      "from": "2.4.68-1.fc44",
+      "to": "2.4.69-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "nautilus-extensions",
-      "from": "50.3-1.fc44",
-      "to": "50.3.1-1.fc44",
+      "name": "orca",
+      "from": "50.2-1.fc44",
+      "to": "50.3-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "rsync",
-      "from": "3.5.0-2.fc44",
-      "to": "3.5.1-1.fc44",
+      "name": "passt",
+      "from": "0^20260728.gf8df3f1-2.fc44",
+      "to": "0^20261002.gcba3570-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "xxhash-libs",
-      "from": "0.8.3-4.fc44",
-      "to": "0.8.4-1.fc44",
+      "name": "passt-selinux",
+      "from": "0^20260728.gf8df3f1-2.fc44",
+      "to": "0^20261002.gcba3570-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "perl-podlators",
+      "from": "1:6.0.2-521.fc44",
+      "to": "1:6.0.2-522.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python-unversioned-command",
+      "from": "3.14.7-1.fc44",
+      "to": "3.14.8-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3",
+      "from": "3.14.7-1.fc44",
+      "to": "3.14.8-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-boto3",
+      "from": "1.43.104-1.fc44",
+      "to": "1.43.106-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-botocore",
+      "from": "1.43.104-1.fc44",
+      "to": "1.43.106-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-libs",
+      "from": "3.14.7-1.fc44",
+      "to": "3.14.8-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-regex",
+      "from": "2026.7.19-1.fc44",
+      "to": "2026.9.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "qt6-qtbase",
+      "from": "6.11.2-2.fc44",
+      "to": "6.11.2-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "qt6-qtbase-common",
+      "from": "6.11.2-2.fc44",
+      "to": "6.11.2-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "qt6-qtbase-gui",
+      "from": "6.11.2-2.fc44",
+      "to": "6.11.2-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "sdl2-compat",
+      "from": "2.32.72-1.fc44",
+      "to": "2.32.74-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "tesseract-common",
+      "from": "5.5.3-1.fc44",
+      "to": "5.5.3-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "tesseract-libs",
+      "from": "5.5.3-1.fc44",
+      "to": "5.5.3-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "upower",
+      "from": "1.91.4-1.fc44",
+      "to": "1.91.5-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "upower-libs",
+      "from": "1.91.4-1.fc44",
+      "to": "1.91.5-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkit2gtk4.1",
+      "from": "2.54.0-2.fc44",
+      "to": "2.54.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkitgtk6.0",
+      "from": "2.54.0-2.fc44",
+      "to": "2.54.1-1.fc44",
       "direction": "upgraded"
     }
   ]
