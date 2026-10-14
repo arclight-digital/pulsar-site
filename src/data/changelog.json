@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-12T04:47:30Z",
+  "generated": "2026-10-14T03:01:23Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:a9ab85ab4008bf1fef69574ba81670fce05edfa0d3d4d146678abd30a0ce3fda",
-    "digest": "sha256:a9ab85ab4008bf1fef69574ba81670fce05edfa0d3d4d146678abd30a0ce3fda"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:50cab6a4bc21b339091a89711c4f9a40d6f3e753808459c7a5a65115cc8ea439",
     "digest": "sha256:50cab6a4bc21b339091a89711c4f9a40d6f3e753808459c7a5a65115cc8ea439"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:f02906665ea9d84298f0265185559d146288f5b426c68415231e20c46b01401f",
+    "digest": "sha256:f02906665ea9d84298f0265185559d146288f5b426c68415231e20c46b01401f"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 55,
+    "upgraded": 12,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,333 +19,75 @@
   "removed": [],
   "changed": [
     {
-      "name": "7zip",
-      "from": "26.03-1.fc44",
-      "to": "26.04-1.fc44",
+      "name": "cairomm1.16",
+      "from": "1.18.0-16.fc44",
+      "to": "1.18.1-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "curl",
-      "from": "8.18.0-10.fc44",
-      "to": "8.18.0-12.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox",
-      "from": "157.0-1.fc44",
-      "to": "157.0.1-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox-langpacks",
-      "from": "157.0-1.fc44",
-      "to": "157.0.1-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "glib2",
-      "from": "2.88.3-1.fc44",
-      "to": "2.88.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gst-editing-services",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugin-libav",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-bad-free",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-bad-free-libs",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-base",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-good",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-good-qt",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-good-qt6",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-ugly-free",
-      "from": "1.28.7-1.fc44",
-      "to": "1.28.8-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hunspell",
-      "from": "1.7.4-2.fc44",
-      "to": "1.7.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "hunspell-filesystem",
-      "from": "1.7.4-2.fc44",
-      "to": "1.7.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel-core",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
+      "from": "8.18.0-12.fc44",
+      "to": "8.18.0-13.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-devel",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.10-200.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-modules",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
+      "name": "libcamera",
+      "from": "0.7.1-1.fc44",
+      "to": "0.7.1-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-modules-core",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel-modules-extra",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel-tools",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel-tools-libs",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kf6-filesystem",
-      "from": "6.30.0-1.fc44",
-      "to": "6.31.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kf6-karchive",
-      "from": "6.30.0-1.fc44",
-      "to": "6.31.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kf6-kimageformats",
-      "from": "6.30.0-1.fc44",
-      "to": "6.31.0-1.fc44",
+      "name": "libcamera-ipa",
+      "from": "0.7.1-1.fc44",
+      "to": "0.7.1-2.fc44",
       "direction": "upgraded"
     },
     {
       "name": "libcurl-minimal",
-      "from": "8.18.0-10.fc44",
-      "to": "8.18.0-12.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libva-intel-media-driver",
-      "from": "26.2.4-1.fc44",
-      "to": "26.3.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-dri-drivers",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-filesystem",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libEGL",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libGL",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libgbm",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-va-drivers-freeworld",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-vulkan-drivers",
-      "from": "26.2.3-1.fc44",
-      "to": "26.2.4-1.fc44",
+      "from": "8.18.0-12.fc44",
+      "to": "8.18.0-13.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.4-1",
-      "to": "2026.10.8-1",
+      "from": "2026.10.8-1",
+      "to": "2026.10.9-1",
       "direction": "upgraded"
     },
     {
-      "name": "nspr",
-      "from": "4.39.0-5.fc44",
-      "to": "4.39.0-6.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nss",
-      "from": "3.129.0-1.fc44",
-      "to": "3.130.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nss-softokn",
-      "from": "3.129.0-1.fc44",
-      "to": "3.130.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nss-softokn-freebl",
-      "from": "3.129.0-1.fc44",
-      "to": "3.130.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nss-sysinit",
-      "from": "3.129.0-1.fc44",
-      "to": "3.130.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nss-util",
-      "from": "3.129.0-1.fc44",
-      "to": "3.130.0-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "openvpn",
-      "from": "2.7.7-1.fc44",
-      "to": "2.7.8-1.fc44",
+      "name": "openldap",
+      "from": "2.6.14-1.fc44",
+      "to": "2.6.15-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "perf",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.10-200.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "python3-boto3",
-      "from": "1.43.106-1.fc44",
-      "to": "1.43.109-1.fc44",
+      "name": "wget2",
+      "from": "2.2.1-2.fc44",
+      "to": "2.3.0-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "python3-botocore",
-      "from": "1.43.106-1.fc44",
-      "to": "1.43.109-1.fc44",
+      "name": "wget2-libs",
+      "from": "2.2.1-2.fc44",
+      "to": "2.3.0-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "python3-perf",
-      "from": "7.2.8-200.fc44",
-      "to": "7.2.9-201.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "rpm-ostree",
-      "from": "2026.2-1.fc44",
-      "to": "2026.3-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "rpm-ostree-libs",
-      "from": "2026.2-1.fc44",
-      "to": "2026.3-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "sudo",
-      "from": "1.9.17-8.p2.fc44",
-      "to": "1.9.17-10.p2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "sudo-python-plugin",
-      "from": "1.9.17-8.p2.fc44",
-      "to": "1.9.17-10.p2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "tzdata",
-      "from": "2026c-2.fc44",
-      "to": "2026e-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "xorg-x11-server-Xwayland",
-      "from": "24.1.13-1.fc44",
-      "to": "24.1.14-1.fc44",
+      "name": "wget2-wget",
+      "from": "2.2.1-2.fc44",
+      "to": "2.3.0-1.fc44",
       "direction": "upgraded"
     }
   ]
