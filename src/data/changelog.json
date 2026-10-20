@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-14T03:01:23Z",
+  "generated": "2026-10-20T02:38:36Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:50cab6a4bc21b339091a89711c4f9a40d6f3e753808459c7a5a65115cc8ea439",
-    "digest": "sha256:50cab6a4bc21b339091a89711c4f9a40d6f3e753808459c7a5a65115cc8ea439"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:f02906665ea9d84298f0265185559d146288f5b426c68415231e20c46b01401f",
     "digest": "sha256:f02906665ea9d84298f0265185559d146288f5b426c68415231e20c46b01401f"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0ddd04387129d5a44b36002a1a0f40bf0e8f4e27074a9e91375eff9ea3bad30a",
+    "digest": "sha256:0ddd04387129d5a44b36002a1a0f40bf0e8f4e27074a9e91375eff9ea3bad30a"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 12,
+    "upgraded": 91,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,75 +19,549 @@
   "removed": [],
   "changed": [
     {
-      "name": "cairomm1.16",
-      "from": "1.18.0-16.fc44",
-      "to": "1.18.1-1.fc44",
+      "name": "android-tools",
+      "from": "1:37.0.0-4.fc44",
+      "to": "1:37.0.0p1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "buildah",
+      "from": "2:1.43.4-1.fc44",
+      "to": "2:1.43.5-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "curl",
-      "from": "8.18.0-12.fc44",
-      "to": "8.18.0-13.fc44",
+      "from": "8.18.0-13.fc44",
+      "to": "8.18.0-14.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "device-mapper-persistent-data",
+      "from": "1.3.3-1.fc44",
+      "to": "1.3.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "faad2-libs",
+      "from": "1:2.11.2-6.fc44",
+      "to": "1:2.11.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "firefox",
+      "from": "157.0.1-1.fc44",
+      "to": "158.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "firefox-langpacks",
+      "from": "157.0.1-1.fc44",
+      "to": "158.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "freerdp-libs",
+      "from": "2:3.32.1-1.fc44",
+      "to": "2:3.32.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gnome-shell",
+      "from": "50.5-1.fc44",
+      "to": "50.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gnome-shell-common",
+      "from": "50.5-1.fc44",
+      "to": "50.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-core",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-devel",
+      "from": "7.2.10-200.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules",
       "from": "7.2.9-201.fc44",
-      "to": "7.2.10-200.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-core",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-extra",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools-libs",
+      "from": "7.2.9-201.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libaom",
+      "from": "3.13.3-1.fc44",
+      "to": "3.15.2-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "libcamera",
-      "from": "0.7.1-1.fc44",
-      "to": "0.7.1-2.fc44",
+      "from": "0.7.1-2.fc44",
+      "to": "0.7.2-2.fc44",
       "direction": "upgraded"
     },
     {
       "name": "libcamera-ipa",
-      "from": "0.7.1-1.fc44",
-      "to": "0.7.1-2.fc44",
+      "from": "0.7.1-2.fc44",
+      "to": "0.7.2-2.fc44",
       "direction": "upgraded"
     },
     {
       "name": "libcurl-minimal",
-      "from": "8.18.0-12.fc44",
-      "to": "8.18.0-13.fc44",
+      "from": "8.18.0-13.fc44",
+      "to": "8.18.0-14.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libheif",
+      "from": "1.23.5-3.fc44",
+      "to": "1.23.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libheif-ffmpeg",
+      "from": "1.23.5-3.fc44",
+      "to": "1.23.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libsane-airscan",
+      "from": "0.99.36-2.fc44",
+      "to": "0.99.38-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libsolv",
+      "from": "0.7.40-1.fc44",
+      "to": "0.7.40-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libtiff",
+      "from": "4.7.2-1.fc44",
+      "to": "4.7.2-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-client",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-client-qemu",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-common",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-config-network",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-config-nwfilter",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-ch",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-interface",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-libxl",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-lxc",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-network",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-nodedev",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-nwfilter",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-qemu",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-secret",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-core",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-disk",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-gluster",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-iscsi",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-iscsi-direct",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-logical",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-mpath",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-rbd",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-storage-scsi",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-driver-vbox",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-lock",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-log",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-plugin-lockd",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-daemon-proxy",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libvirt-libs",
+      "from": "12.0.0-3.fc44",
+      "to": "12.0.0-5.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libwinpr",
+      "from": "2:3.32.1-1.fc44",
+      "to": "2:3.32.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libwmf-lite",
+      "from": "0.2.16-1.fc44",
+      "to": "0.2.17-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "m17n-db",
+      "from": "1.8.14-1.fc44",
+      "to": "1.8.15-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.8-1",
-      "to": "2026.10.9-1",
+      "from": "2026.10.9-1",
+      "to": "2026.10.15-1",
       "direction": "upgraded"
     },
     {
-      "name": "openldap",
-      "from": "2.6.14-1.fc44",
-      "to": "2.6.15-1.fc44",
+      "name": "mutter",
+      "from": "50.5-1.fc44",
+      "to": "50.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "mutter-common",
+      "from": "50.5-1.fc44",
+      "to": "50.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nautilus",
+      "from": "50.3.1-1.fc44",
+      "to": "50.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nautilus-extensions",
+      "from": "50.3.1-1.fc44",
+      "to": "50.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nspr",
+      "from": "4.39.0-6.fc44",
+      "to": "4.39.0-7.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss",
+      "from": "3.130.0-1.fc44",
+      "to": "3.131.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-softokn",
+      "from": "3.130.0-1.fc44",
+      "to": "3.131.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-softokn-freebl",
+      "from": "3.130.0-1.fc44",
+      "to": "3.131.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-sysinit",
+      "from": "3.130.0-1.fc44",
+      "to": "3.131.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-util",
+      "from": "3.130.0-1.fc44",
+      "to": "3.131.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pcp-conf",
+      "from": "7.2.1-1.fc44",
+      "to": "7.2.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pcp-libs",
+      "from": "7.2.1-1.fc44",
+      "to": "7.2.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pcp-selinux-import",
+      "from": "7.2.1-1.fc44",
+      "to": "7.2.2-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "perf",
+      "from": "7.2.10-200.fc44",
+      "to": "7.2.11-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "podman",
+      "from": "5:5.8.7-1.fc44",
+      "to": "5:5.8.9-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-boto3",
+      "from": "1.43.109-1.fc44",
+      "to": "1.43.114-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-botocore",
+      "from": "1.43.109-1.fc44",
+      "to": "1.43.114-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-perf",
       "from": "7.2.9-201.fc44",
-      "to": "7.2.10-200.fc44",
+      "to": "7.2.11-200.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "wget2",
-      "from": "2.2.1-2.fc44",
-      "to": "2.3.0-1.fc44",
+      "name": "python3-urllib3",
+      "from": "2.8.0-1.fc44",
+      "to": "2.8.0-3.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "wget2-libs",
-      "from": "2.2.1-2.fc44",
-      "to": "2.3.0-1.fc44",
+      "name": "python3-urllib3+socks",
+      "from": "2.8.0-1.fc44",
+      "to": "2.8.0-3.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "wget2-wget",
-      "from": "2.2.1-2.fc44",
-      "to": "2.3.0-1.fc44",
+      "name": "qt5-qtbase",
+      "from": "5.15.18-2.fc44",
+      "to": "5.15.18-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "qt5-qtbase-common",
+      "from": "5.15.18-2.fc44",
+      "to": "5.15.18-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "qt5-qtbase-gui",
+      "from": "5.15.18-2.fc44",
+      "to": "5.15.18-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "sane-airscan",
+      "from": "0.99.36-2.fc44",
+      "to": "0.99.38-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "scx-scheds",
+      "from": "1.1.3-3.fc44",
+      "to": "1.1.4-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "vim-data",
+      "from": "2:9.2.1129-1.fc44",
+      "to": "2:9.2.1202-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "vim-minimal",
+      "from": "2:9.2.1129-1.fc44",
+      "to": "2:9.2.1202-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "virtualbox-guest-additions",
+      "from": "7.2.16-1.fc44",
+      "to": "7.2.20-1.fc44",
       "direction": "upgraded"
     }
   ]
