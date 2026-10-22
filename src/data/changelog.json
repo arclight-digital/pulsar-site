@@ -1,68 +1,171 @@
 {
-  "generated": "2026-10-21T02:50:20Z",
+  "generated": "2026-10-22T02:44:00Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0ddd04387129d5a44b36002a1a0f40bf0e8f4e27074a9e91375eff9ea3bad30a",
-    "digest": "sha256:0ddd04387129d5a44b36002a1a0f40bf0e8f4e27074a9e91375eff9ea3bad30a"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:a244abbfdf17a2bfe503ef5b4147d018c6bd529203094c2a53726f9e01940a4f",
     "digest": "sha256:a244abbfdf17a2bfe503ef5b4147d018c6bd529203094c2a53726f9e01940a4f"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:c1bfde2d3c758b288dffeafc1a6c2a6ea3170208328b87db87fa13bcdfc920b4",
+    "digest": "sha256:c1bfde2d3c758b288dffeafc1a6c2a6ea3170208328b87db87fa13bcdfc920b4"
+  },
   "summary": {
     "added": 0,
-    "removed": 1,
-    "upgraded": 7,
+    "removed": 0,
+    "upgraded": 25,
     "downgraded": 0,
     "changed": 0
   },
   "added": [],
-  "removed": [
-    {
-      "name": "mesa-va-drivers-freeworld",
-      "version": "26.2.4-1.fc44"
-    }
-  ],
+  "removed": [],
   "changed": [
     {
-      "name": "mise",
-      "from": "2026.10.15-1",
-      "to": "2026.10.17-1",
+      "name": "ImageMagick",
+      "from": "1:7.1.2.32-1.fc44",
+      "to": "1:7.1.2.34-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "pcp-conf",
-      "from": "7.2.2-1.fc44",
-      "to": "7.2.2-2.fc44",
+      "name": "ImageMagick-libs",
+      "from": "1:7.1.2.32-1.fc44",
+      "to": "1:7.1.2.34-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "pcp-libs",
-      "from": "7.2.2-1.fc44",
-      "to": "7.2.2-2.fc44",
+      "name": "appstream-data",
+      "from": "44-4.fc44",
+      "to": "44-6.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "pcp-selinux-import",
-      "from": "7.2.2-1.fc44",
-      "to": "7.2.2-2.fc44",
+      "name": "bind-libs",
+      "from": "32:9.18.50-2.fc44",
+      "to": "32:9.18.51^git20261003.d0a87358-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "scx-tools-git",
-      "from": "1.1.3.20260923.1.git.247fd05-1.fc44",
-      "to": "1.1.3.20261019.1.git.2c9c3ee-1.fc44",
+      "name": "bind-utils",
+      "from": "32:9.18.50-2.fc44",
+      "to": "32:9.18.51^git20261003.d0a87358-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "xen-libs",
-      "from": "4.21.2-2.fc44",
-      "to": "4.21.2-4.fc44",
+      "name": "bootc",
+      "from": "1.16.13-1.fc44",
+      "to": "1.17.1-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "xen-licenses",
-      "from": "4.21.2-2.fc44",
-      "to": "4.21.2-4.fc44",
+      "name": "cifs-utils",
+      "from": "7.8-2.fc44",
+      "to": "7.9-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "cifs-utils-info",
+      "from": "7.8-2.fc44",
+      "to": "7.9-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "ghostscript",
+      "from": "10.06.0-2.fc44",
+      "to": "10.06.0-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "ghostscript-tools-fontutils",
+      "from": "10.06.0-2.fc44",
+      "to": "10.06.0-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "ghostscript-tools-printing",
+      "from": "10.06.0-2.fc44",
+      "to": "10.06.0-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "less",
+      "from": "704-4.fc44",
+      "to": "710-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libgs",
+      "from": "10.06.0-2.fc44",
+      "to": "10.06.0-3.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libnotify",
+      "from": "0.8.8-1.fc44",
+      "to": "0.8.9-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "m17n-lib",
+      "from": "1.8.6-3.fc44",
+      "to": "1.8.7-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-container",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-libs",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-networkd",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-oomd-defaults",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-pam",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-resolved",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-shared",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-sysusers",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "systemd-udev",
+      "from": "259.9-1.fc44",
+      "to": "259.10-1.fc44",
       "direction": "upgraded"
     }
   ]
