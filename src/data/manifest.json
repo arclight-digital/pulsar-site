@@ -2,9 +2,9 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.10.1",
-  "version": "44.20261022.0",
+  "version": "44.20261023.0",
   "base": "fedora-silverblue:44",
-  "built": "2026-10-22T02:17:29Z",
+  "built": "2026-10-23T02:15:34Z",
   "kernel": "7.2.11-200.fc44.x86_64",
   "components": {
     "scheduler": "scx_bpfland",
@@ -12,8 +12,8 @@
     "gamescope": "3.16.29-1.fc44",
     "gamemode": "1.8.2-4.fc44",
     "mangohud": "0.8.3~rc1-2.fc44",
-    "mesa": "26.2.4-1.fc44",
-    "mesa_va": "fedora",
+    "mesa": "26.2.5-1.fc44",
+    "mesa_va": "freeworld",
     "gamescale": "v2.0.3"
   },
   "changelog_url": "https://getpulsar.dev/changelog.json",
