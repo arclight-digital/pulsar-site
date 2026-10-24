@@ -1,230 +1,51 @@
 {
-  "generated": "2026-10-23T02:39:37Z",
+  "generated": "2026-10-24T02:35:32Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:c1bfde2d3c758b288dffeafc1a6c2a6ea3170208328b87db87fa13bcdfc920b4",
-    "digest": "sha256:c1bfde2d3c758b288dffeafc1a6c2a6ea3170208328b87db87fa13bcdfc920b4"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:33344634f3938dec8848a513a1d5a80d1d593bcd2bf94b65d8e918c05a07a4f0",
     "digest": "sha256:33344634f3938dec8848a513a1d5a80d1d593bcd2bf94b65d8e918c05a07a4f0"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04",
+    "digest": "sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04"
+  },
   "summary": {
-    "added": 1,
+    "added": 0,
     "removed": 0,
-    "upgraded": 34,
+    "upgraded": 5,
     "downgraded": 0,
     "changed": 0
   },
-  "added": [
-    {
-      "name": "mesa-va-drivers-freeworld",
-      "version": "26.2.5-1.fc44"
-    }
-  ],
+  "added": [],
   "removed": [],
   "changed": [
     {
-      "name": "amd-gpu-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "amd-ucode-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "atheros-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "brcmfmac-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
       "name": "ca-certificates",
-      "from": "2026.2.90_v9.0.317-1.fc44",
-      "to": "2026.2.92_v9.0.319-1.fc44",
+      "from": "2026.2.92_v9.0.319-1.fc44",
+      "to": "2026.2.92_v9.0.319-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "cirrus-audio-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
+      "name": "firefox",
+      "from": "158.0-1.fc44",
+      "to": "158.0.1-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "hplip",
-      "from": "3.26.6-1.fc44",
-      "to": "3.26.6-2.fc44",
+      "name": "firefox-langpacks",
+      "from": "158.0-1.fc44",
+      "to": "158.0.1-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "hplip-common",
-      "from": "3.26.6-1.fc44",
-      "to": "3.26.6-2.fc44",
+      "name": "mise",
+      "from": "2026.10.17-1",
+      "to": "2026.10.18-1",
       "direction": "upgraded"
     },
     {
-      "name": "hplip-libs",
-      "from": "3.26.6-1.fc44",
-      "to": "3.26.6-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "intel-audio-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "intel-gpu-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "intel-npu-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "intel-vsc-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "iwlbluetooth-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "iwlegacy-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "iwlwifi-dvm-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "iwlwifi-mld-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "iwlwifi-mvm-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libertas-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libsane-hpaio",
-      "from": "3.26.6-1.fc44",
-      "to": "3.26.6-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "linux-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "linux-firmware-whence",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-dri-drivers",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-filesystem",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libEGL",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libGL",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libgbm",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-vulkan-drivers",
-      "from": "26.2.4-1.fc44",
-      "to": "26.2.5-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mt7xxx-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nvidia-gpu-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "nxpwireless-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "qcom-wwan-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "realtek-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "tiwilink-firmware",
-      "from": "20260916-1.fc44",
-      "to": "20261019-1.fc44",
+      "name": "sos",
+      "from": "4.12.0-2.fc44",
+      "to": "4.12.1-1.fc44",
       "direction": "upgraded"
     }
   ]
