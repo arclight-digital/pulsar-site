@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-24T02:35:32Z",
+  "generated": "2026-10-25T02:40:50Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:33344634f3938dec8848a513a1d5a80d1d593bcd2bf94b65d8e918c05a07a4f0",
-    "digest": "sha256:33344634f3938dec8848a513a1d5a80d1d593bcd2bf94b65d8e918c05a07a4f0"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04",
     "digest": "sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:955aa4eb8d571eda303117c4ab1a7dd9bca8bc38d127ad17ac57ff3e7fdc6cf2",
+    "digest": "sha256:955aa4eb8d571eda303117c4ab1a7dd9bca8bc38d127ad17ac57ff3e7fdc6cf2"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 5,
+    "upgraded": 1,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,33 +19,9 @@
   "removed": [],
   "changed": [
     {
-      "name": "ca-certificates",
-      "from": "2026.2.92_v9.0.319-1.fc44",
-      "to": "2026.2.92_v9.0.319-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox",
-      "from": "158.0-1.fc44",
-      "to": "158.0.1-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox-langpacks",
-      "from": "158.0-1.fc44",
-      "to": "158.0.1-2.fc44",
-      "direction": "upgraded"
-    },
-    {
       "name": "mise",
-      "from": "2026.10.17-1",
-      "to": "2026.10.18-1",
-      "direction": "upgraded"
-    },
-    {
-      "name": "sos",
-      "from": "4.12.0-2.fc44",
-      "to": "4.12.1-1.fc44",
+      "from": "2026.10.18-1",
+      "to": "2026.10.19-1",
       "direction": "upgraded"
     }
   ]
