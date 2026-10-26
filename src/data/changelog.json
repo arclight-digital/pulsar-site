@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-25T02:40:50Z",
+  "generated": "2026-10-26T02:42:05Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04",
-    "digest": "sha256:471352731f8eff365527c60227f13f5a7ca980828ff8b1645a02f6b442c85e04"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:955aa4eb8d571eda303117c4ab1a7dd9bca8bc38d127ad17ac57ff3e7fdc6cf2",
     "digest": "sha256:955aa4eb8d571eda303117c4ab1a7dd9bca8bc38d127ad17ac57ff3e7fdc6cf2"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:b094bd0eadc25c989a88e11db5b36f74622301f5a067967b0f9d08a6e13c409c",
+    "digest": "sha256:b094bd0eadc25c989a88e11db5b36f74622301f5a067967b0f9d08a6e13c409c"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 1,
+    "upgraded": 13,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,9 +19,81 @@
   "removed": [],
   "changed": [
     {
-      "name": "mise",
-      "from": "2026.10.18-1",
-      "to": "2026.10.19-1",
+      "name": "openssh",
+      "from": "10.2p1-14.fc44",
+      "to": "10.2p1-16.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "openssh-clients",
+      "from": "10.2p1-14.fc44",
+      "to": "10.2p1-16.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "openssh-server",
+      "from": "10.2p1-14.fc44",
+      "to": "10.2p1-16.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-alsa",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-config-raop",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-gstreamer",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-jack-audio-connection-kit",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-jack-audio-connection-kit-libs",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-libs",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-plugin-libcamera",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-pulseaudio",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-utils",
+      "from": "1.6.9-1.fc44",
+      "to": "1.6.10-1.fc44",
       "direction": "upgraded"
     }
   ]
