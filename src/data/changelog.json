@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-27T02:35:09Z",
+  "generated": "2026-10-28T03:40:53Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:b094bd0eadc25c989a88e11db5b36f74622301f5a067967b0f9d08a6e13c409c",
-    "digest": "sha256:b094bd0eadc25c989a88e11db5b36f74622301f5a067967b0f9d08a6e13c409c"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:8c87dfa7f6ef1c1cb11482041a9372c36815604782676ae46ac12b0af25d3127",
     "digest": "sha256:8c87dfa7f6ef1c1cb11482041a9372c36815604782676ae46ac12b0af25d3127"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:afd0a0f9208384e860b805410fb1b636fc4a47dd7a3ac8ee1bf89a5614eb9fad",
+    "digest": "sha256:afd0a0f9208384e860b805410fb1b636fc4a47dd7a3ac8ee1bf89a5614eb9fad"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 5,
+    "upgraded": 24,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,33 +19,147 @@
   "removed": [],
   "changed": [
     {
-      "name": "desktop-backgrounds-gnome",
-      "from": "44.0.0-2.fc44",
-      "to": "44.0.0-3.fc44",
+      "name": "expat",
+      "from": "2.8.5-1.fc44",
+      "to": "2.9.0-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "fwupd",
+      "from": "2.1.8-1.fc44",
+      "to": "2.1.9-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "fwupd-plugin-modem-manager",
+      "from": "2.1.8-1.fc44",
+      "to": "2.1.9-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "fwupd-plugin-uefi-capsule-data",
+      "from": "2.1.8-1.fc44",
+      "to": "2.1.9-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk4.1",
+      "from": "2.54.1-1.fc44",
+      "to": "2.54.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk6.0",
+      "from": "2.54.1-1.fc44",
+      "to": "2.54.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-core",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-devel",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-core",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-extra",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools-libs",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libical",
+      "from": "3.0.20-8.fc44",
+      "to": "3.0.20-9.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libical-glib",
+      "from": "3.0.20-8.fc44",
+      "to": "3.0.20-9.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.19-1",
-      "to": "2026.10.20-1",
+      "from": "2026.10.20-1",
+      "to": "2026.10.21-1",
       "direction": "upgraded"
     },
     {
-      "name": "wget2",
-      "from": "2.3.0-1.fc44",
-      "to": "2.3.0-2.fc44",
+      "name": "mutter",
+      "from": "50.6-1.fc44",
+      "to": "50.6-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "wget2-libs",
-      "from": "2.3.0-1.fc44",
-      "to": "2.3.0-2.fc44",
+      "name": "mutter-common",
+      "from": "50.6-1.fc44",
+      "to": "50.6-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "wget2-wget",
-      "from": "2.3.0-1.fc44",
-      "to": "2.3.0-2.fc44",
+      "name": "perf",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-anyio",
+      "from": "4.13.0-1.fc44",
+      "to": "4.13.0-2.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-perf",
+      "from": "7.2.11-200.fc44",
+      "to": "7.2.12-200.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkit2gtk4.1",
+      "from": "2.54.1-1.fc44",
+      "to": "2.54.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkitgtk6.0",
+      "from": "2.54.1-1.fc44",
+      "to": "2.54.2-1.fc44",
       "direction": "upgraded"
     }
   ]
