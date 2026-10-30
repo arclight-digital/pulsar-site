@@ -1,17 +1,17 @@
 {
-  "generated": "2026-10-28T03:40:53Z",
+  "generated": "2026-10-30T02:41:01Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:8c87dfa7f6ef1c1cb11482041a9372c36815604782676ae46ac12b0af25d3127",
-    "digest": "sha256:8c87dfa7f6ef1c1cb11482041a9372c36815604782676ae46ac12b0af25d3127"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:afd0a0f9208384e860b805410fb1b636fc4a47dd7a3ac8ee1bf89a5614eb9fad",
     "digest": "sha256:afd0a0f9208384e860b805410fb1b636fc4a47dd7a3ac8ee1bf89a5614eb9fad"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:4f5495ba91b78ea82bc778fe00138ab52931e2a9c98ff61a35b2b5806cd2c593",
+    "digest": "sha256:4f5495ba91b78ea82bc778fe00138ab52931e2a9c98ff61a35b2b5806cd2c593"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 24,
+    "upgraded": 29,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,147 +19,177 @@
   "removed": [],
   "changed": [
     {
-      "name": "expat",
-      "from": "2.8.5-1.fc44",
-      "to": "2.9.0-1.fc44",
+      "name": "LibRaw",
+      "from": "0.22.2-1.fc44",
+      "to": "0.22.3-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "fwupd",
-      "from": "2.1.8-1.fc44",
-      "to": "2.1.9-1.fc44",
+      "name": "PackageKit-glib",
+      "from": "1.4.0-1.fc44",
+      "to": "1.4.0-2.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "fwupd-plugin-modem-manager",
-      "from": "2.1.8-1.fc44",
-      "to": "2.1.9-1.fc44",
+      "name": "firefox",
+      "from": "158.0.1-2.fc44",
+      "to": "159.0-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "fwupd-plugin-uefi-capsule-data",
-      "from": "2.1.8-1.fc44",
-      "to": "2.1.9-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "javascriptcoregtk4.1",
-      "from": "2.54.1-1.fc44",
-      "to": "2.54.2-1.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "javascriptcoregtk6.0",
-      "from": "2.54.1-1.fc44",
-      "to": "2.54.2-1.fc44",
+      "name": "firefox-langpacks",
+      "from": "158.0.1-2.fc44",
+      "to": "159.0-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-core",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-devel",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-modules",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-modules-core",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-modules-extra",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-tools",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "kernel-tools-libs",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "libical",
-      "from": "3.0.20-8.fc44",
-      "to": "3.0.20-9.fc44",
+      "name": "libblkid",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "libical-glib",
-      "from": "3.0.20-8.fc44",
-      "to": "3.0.20-9.fc44",
+      "name": "libbrotli",
+      "from": "1.2.0-3.fc44",
+      "to": "1.2.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libfdisk",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "liblastlog2",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libmount",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "librabbitmq",
+      "from": "0.18.0-1.fc44",
+      "to": "0.18.1-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libsmartcols",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libuuid",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.20-1",
-      "to": "2026.10.21-1",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mutter",
-      "from": "50.6-1.fc44",
-      "to": "50.6-2.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mutter-common",
-      "from": "50.6-1.fc44",
-      "to": "50.6-2.fc44",
+      "from": "2026.10.21-1",
+      "to": "2026.10.23-1",
       "direction": "upgraded"
     },
     {
       "name": "perf",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-anyio",
-      "from": "4.13.0-1.fc44",
-      "to": "4.13.0-2.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
       "name": "python3-perf",
-      "from": "7.2.11-200.fc44",
-      "to": "7.2.12-200.fc44",
+      "from": "7.2.12-200.fc44",
+      "to": "7.2.13-200.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "webkit2gtk4.1",
-      "from": "2.54.1-1.fc44",
-      "to": "2.54.2-1.fc44",
+      "name": "python3-pillow",
+      "from": "12.3.0-1.fc44",
+      "to": "12.3.0-4.fc44",
       "direction": "upgraded"
     },
     {
-      "name": "webkitgtk6.0",
-      "from": "2.54.1-1.fc44",
-      "to": "2.54.2-1.fc44",
+      "name": "unbound-anchor",
+      "from": "1.26.1-1.fc44",
+      "to": "1.26.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "unbound-libs",
+      "from": "1.26.1-1.fc44",
+      "to": "1.26.2-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "util-linux",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "util-linux-core",
+      "from": "2.41.5-1.fc44",
+      "to": "2.41.6-1.fc44",
+      "direction": "upgraded"
+    },
+    {
+      "name": "xxhash-libs",
+      "from": "0.8.4-1.fc44",
+      "to": "0.8.4-2.fc44",
       "direction": "upgraded"
     }
   ]
