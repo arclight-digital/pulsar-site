@@ -55,7 +55,7 @@ const ogImage = new URL('/og.jpg', Astro.site).href;
 // with no card, so a new page fails the build until it has one.
 // noindex pages (the 404) are never shared on purpose: they borrow the
 // home card rather than each needing an entry in the list.
-const card = cardFor(noindex ? '/' : path);
+const card = await cardFor(noindex ? '/' : path);
 const cardImage = new URL(cardUrl(card), Astro.site).href;
 
 // Structured data, honest only: everything here is real and verifiable, and
@@ -215,6 +215,8 @@ const ldJson = JSON.stringify(structuredData).replace(/</g, '\\u003c');
         paint back -- FCP 2.8-2.9 s without this preload, 2.3 s with it, on
         Lighthouse's mobile profile. */}
     <link rel="preload" as="font" type="font/woff2" href="/assets/JetBrainsMono-Regular.woff2" crossorigin />
+
+    <link rel="alternate" type="application/rss+xml" title="Pulsar blog" href="/blog/rss.xml" />
 
     <script is:inline type="application/ld+json" set:html={ldJson} />
 

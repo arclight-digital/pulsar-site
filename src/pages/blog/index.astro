@@ -1,0 +1,79 @@
+---
+// Every live post, newest first: the date, the title and its one-line
+// description, and nothing else.
+import Blog from '../../layouts/Blog.astro';
+import { isoDay, longDate, postHref, posts } from '../../data/blog';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+const DESCRIPTION =
+  'News from Pulsar: moves to a new Fedora or GNOME, new features, and how the nightly images are built and checked before they reach you.';
+const all = await posts();
+
+const JSONLD = [
+  {
+    '@type': 'Blog',
+    name: 'Pulsar blog',
+    description: DESCRIPTION,
+    url: new URL('/blog', Astro.site).href,
+    publisher: { '@id': ORG_ID },
+    about: { '@id': APP_ID },
+    inLanguage: 'en',
+  },
+];
+---
+
+<Blog title="Pulsar blog — news about the OS and its builds" crumb="Blog" description={DESCRIPTION} path="/blog" jsonLd={JSONLD}>
+  <h1>Blog</h1>
+  {
+    all.length ? (
+      <ol class="posts">
+        {all.map((p) => (
+          <li>
+            <time datetime={isoDay(p.data.date)}>{longDate(p.data.date)}</time>
+            <h2><a href={postHref(p)}>{p.data.title}</a></h2>
+            <p>{p.data.description}</p>
+          </li>
+        ))}
+      </ol>
+    ) : (
+      <p>Nothing here yet.</p>
+    )
+  }
+  <p class="hint">
+    New posts by feed reader: <a href="/blog/rss.xml">RSS</a>.
+  </p>
+</Blog>
+
+<style>
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .posts li {
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .posts time {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .posts h2 {
+    font-size: var(--text-xl);
+    margin: var(--space-xs) 0 var(--space-sm);
+  }
+  .posts h2 a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .posts h2 a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .posts p {
+    margin: 0;
+  }
+  .hint {
+    margin-top: var(--space-xl);
+  }
+</style>

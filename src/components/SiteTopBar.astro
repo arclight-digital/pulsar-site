@@ -12,6 +12,7 @@
 // opens it anywhere, and so does / outside a text field.
 import { getCollection } from 'astro:content';
 import Mark from './Mark.astro';
+import { posts } from '../data/blog';
 import { REPO } from '../data/site';
 import { searchIndex } from '../data/search';
 
@@ -29,6 +30,8 @@ const NAV = [
   { label: 'Docs', href: '/docs', on: onDocs && path !== '/docs/themes' && path !== '/docs/releases' },
   { label: 'Themes', href: '/docs/themes', on: path === '/docs/themes' },
   ...(hasReleases ? [{ label: 'Releases', href: '/docs/releases', on: path === '/docs/releases' }] : []),
+  // the blog once it has a live post, for the same reason
+  ...((await posts()).length ? [{ label: 'Blog', href: '/blog', on: path === '/blog' || path.startsWith('/blog/') }] : []),
 ];
 const groups = await searchIndex();
 ---
