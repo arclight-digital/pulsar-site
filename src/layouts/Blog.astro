@@ -1,0 +1,79 @@
+---
+// The blog's shell: one reading column inside the site's Base, set like the
+// docs' article so a post and a guide read as the same site. No sidebar and
+// no table of contents: a post is short, and read top to bottom.
+import Base from './Base.astro';
+import { REPO } from '../data/site';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  crumb: string;
+  jsonLd?: Record<string, unknown>[];
+}
+const { title, description, path, crumb, jsonLd = [] } = Astro.props;
+---
+
+<Base title={title} crumb={crumb} description={description} path={path} jsonLd={jsonLd}>
+  <main id="main" class="page">
+    <arc-container size="lg">
+      <article class="prose">
+        <slot />
+        <p class="provenance">
+          Written with help from AI and reviewed by a person before publishing.
+          Spotted a mistake? <a href={`${REPO}/issues`}>Let us know.</a>
+        </p>
+      </article>
+    </arc-container>
+  </main>
+</Base>
+
+<style>
+  .prose {
+    min-width: 0;
+    max-width: 46rem;
+    margin: 0 auto;
+    padding-bottom: var(--space-3xl);
+  }
+  .prose :global(h1) {
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+    margin: 0 0 var(--space-lg);
+  }
+  .prose :global(h2) {
+    font-size: var(--text-2xl);
+    margin: var(--space-2xl) 0 var(--space-md);
+  }
+  .prose :global(h3) {
+    font-size: var(--text-lg);
+    margin: var(--space-xl) 0 var(--space-sm);
+  }
+  .prose :global(p),
+  .prose :global(li) {
+    color: var(--text-secondary);
+    text-wrap: pretty;
+  }
+  .prose :global(strong) {
+    color: var(--text-primary);
+  }
+  .prose :global(pre) {
+    padding: var(--space-md) var(--space-lg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+    overflow-x: auto;
+    font-size: var(--text-sm);
+  }
+  .prose .provenance {
+    margin-top: var(--space-3xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--border-subtle);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+  .prose .provenance a {
+    color: inherit;
+  }
+</style>

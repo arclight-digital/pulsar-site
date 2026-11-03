@@ -3,6 +3,7 @@
 // `pulsar` command. No index service and no runtime fetch: ARC's command
 // palette ranks these on the page itself.
 import { getCollection, render } from 'astro:content';
+import { postHref, posts } from './blog';
 import { USAGE } from './cli';
 import { DOCS_NAV, hrefOf } from './docs';
 import { THEMES, label, setCommand } from './themes';
@@ -57,8 +58,17 @@ export async function searchIndex(): Promise<SearchGroup[]> {
     if (m) commands.push({ label: m[1], href: '/docs/cli', description: m[2], keywords: 'command cli terminal', icon: 'terminal-window' });
   }
 
+  const blog: SearchItem[] = (await posts()).map((p) => ({
+    label: p.data.title,
+    href: postHref(p),
+    description: 'Blog',
+    keywords: 'blog news',
+    icon: 'newspaper',
+  }));
+
   return [
     { heading: 'Pages', items: pages },
+    { heading: 'Blog', items: blog },
     { heading: 'Sections', items: sections },
     { heading: 'Themes', items: themes },
     { heading: 'Commands', items: commands },

@@ -8,6 +8,6 @@ import { renderCard } from '../og/render';
 export const prerender = true;
 
 export const GET = async (): Promise<Response> => {
-  const jpeg = await renderCard(cardFor('/'));
+  const jpeg = await renderCard(await cardFor('/'));
   return new Response(new Uint8Array(jpeg), { headers: { 'content-type': 'image/jpeg' } });
 };

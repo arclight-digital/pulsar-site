@@ -1,0 +1,54 @@
+---
+// One post from src/content/blog/, once it is live (see src/data/blog.ts).
+import { render } from 'astro:content';
+import Blog from '../../layouts/Blog.astro';
+import { isoDay, longDate, postHref, posts, type Post } from '../../data/blog';
+import { APP_ID, ORG_ID } from '../../data/site';
+
+export async function getStaticPaths() {
+  return (await posts()).map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props as { post: Post };
+const { Content } = await render(post);
+const { title, description, date } = post.data;
+const url = new URL(postHref(post), Astro.site).href;
+
+const JSONLD = [
+  {
+    '@type': 'BlogPosting',
+    headline: title,
+    description,
+    datePublished: isoDay(date),
+    url,
+    mainEntityOfPage: url,
+    image: new URL(`/og/blog-${post.id}.jpg`, Astro.site).href,
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    about: { '@id': APP_ID },
+    inLanguage: 'en',
+  },
+];
+---
+
+<Blog title={`${title} — Pulsar blog`} crumb={title} description={description} path={postHref(post)} jsonLd={JSONLD}>
+  <p class="kicker"><a href="/blog">Blog</a> · <time datetime={isoDay(date)}>{longDate(date)}</time></p>
+  <h1>{title}</h1>
+  <Content />
+</Blog>
+
+<style>
+  .kicker {
+    margin: 0 0 var(--space-sm);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .kicker a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .kicker a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>

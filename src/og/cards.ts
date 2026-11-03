@@ -15,6 +15,7 @@
 // shows (a real command, a real screenshot, the real build), never an
 // illustration of a claim.
 import { changelog, version } from '../data/build';
+import { postHref, posts } from '../data/blog';
 import { IMAGES, SUBLINE, TAGLINE } from '../data/site';
 
 /** A card's command: after a prompt, with an optional comment beside it. */
@@ -186,6 +187,14 @@ export const CARDS: Card[] = [
     visual: { kind: 'terminal', line: { cmd: 'podman run --device nvidia.com/gpu=all …' } },
   },
   {
+    slug: 'blog',
+    path: '/blog',
+    headline: 'Pulsar blog',
+    sub: 'News about Pulsar and the images it ships.',
+    alt: `The Pulsar logo, the heading "Pulsar blog", and the latest build, ${version}, built ${buildDate}.`,
+    visual: { kind: 'build' },
+  },
+  {
     slug: 'docs',
     path: '/docs',
     headline: 'Pulsar docs',
@@ -195,13 +204,28 @@ export const CARDS: Card[] = [
   },
 ];
 
+/** The fixed cards above, then one per live blog post: its title, its
+    description, and the command the post names as its card. */
+export async function allCards(): Promise<Card[]> {
+  const blog: Card[] = (await posts()).map((p) => ({
+    slug: `blog-${p.id}`,
+    path: postHref(p),
+    headline: p.data.title,
+    sub: p.data.description,
+    alt: `The Pulsar logo, the heading "${p.data.title}", and the command ${p.data.card}.`,
+    visual: { kind: 'terminal', line: { cmd: p.data.card } },
+  }));
+  return [...CARDS, ...blog];
+}
+
 /** The card for a route. Throws, so a page without one fails the build. A
     page under /docs without a card of its own shares the docs card. */
-export function cardFor(path: string): Card {
+export async function cardFor(path: string): Promise<Card> {
   const trimmed = path.length > 1 ? path.replace(/\/+$/, '') : path;
+  const cards = await allCards();
   const card =
-    CARDS.find((c) => c.path === trimmed) ??
-    (trimmed.startsWith('/docs/') ? CARDS.find((c) => c.path === '/docs') : undefined);
+    cards.find((c) => c.path === trimmed) ??
+    (trimmed.startsWith('/docs/') ? cards.find((c) => c.path === '/docs') : undefined);
   if (!card) {
     throw new Error(
       `og: no share card for route "${path}". Add one to site/src/og/cards.ts.`,
