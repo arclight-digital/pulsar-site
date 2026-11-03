@@ -54,8 +54,8 @@ const news = await bannerPost();
       news && (
         <a class="news" href={postHref(news)}>
           <span class="news-k">New</span>
-          <span>{news.data.banner}</span>
-          <span aria-hidden="true">→</span>
+          <span class="news-t">{news.data.banner}</span>
+          <span class="news-go" aria-hidden="true">→</span>
         </a>
       )
     }
@@ -139,34 +139,49 @@ const news = await bannerPost();
     mask-image: radial-gradient(ellipse closest-side at 50% 50%, #000 0%, rgb(0 0 0 / 0.57) 50%, transparent 100%);
   }
 
-  /* the news line: small, in the hero's own ink, underlined on hover like
-     every other link that is only text */
+  /* the news line: a contained strip of glass above the mark, so it reads as
+     news and not as part of the lockup. Body size, not larger: it is
+     prominent by its frame and ground, and the wordmark stays the biggest
+     thing on the page. */
   .news {
     display: inline-flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0 var(--space-sm);
+    align-items: center;
+    gap: var(--space-sm);
     margin-bottom: var(--space-xl);
+    padding: var(--space-xs) var(--space-md);
+    border: 1px solid color-mix(in oklab, var(--accent-primary) 45%, transparent);
+    border-radius: var(--radius-full);
+    background: color-mix(in oklab, var(--bg-deep) 70%, transparent);
+    backdrop-filter: blur(8px);
     font-size: var(--text-sm);
-    color: inherit;
+    color: var(--text-primary);
     text-decoration: none;
-    opacity: 0.85;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
   }
   .news:hover {
-    opacity: 1;
-  }
-  .news:hover span:nth-child(2) {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+    border-color: var(--accent-primary);
+    background: color-mix(in oklab, var(--bg-deep) 85%, transparent);
   }
   .news:focus-visible {
     outline: 2px solid var(--accent-primary);
-    outline-offset: 4px;
-    border-radius: var(--radius-sm);
+    outline-offset: 3px;
   }
+  /* "New" is a word in the strip, set off by a hairline, not a badge of its
+     own: one frame, not a pill inside a pill */
   .news-k {
     color: var(--accent-primary);
     font-weight: 600;
+    padding-right: var(--space-sm);
+    border-right: 1px solid color-mix(in oklab, var(--accent-primary) 45%, transparent);
+  }
+  .news-go {
+    color: var(--accent-primary);
+  }
+  @media (max-width: 40rem) {
+    .news {
+      border-radius: var(--radius-lg);
+      text-align: left;
+    }
   }
 
   .hero :global(.mark) {

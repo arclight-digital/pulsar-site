@@ -6,11 +6,18 @@ import Docs from '../../layouts/Docs.astro';
 import { changelog, release, version } from '../../data/build';
 import { arithmetic, digest } from '../../data/digest';
 import { APP_ID, BUILD_STATUS, IMAGES } from '../../data/site';
+import { postHref, posts } from '../../data/blog';
 
 const DESCRIPTION =
   'Every package added, removed or upgraded in last night’s Pulsar build, diffed from the SBOMs attached to the images themselves. None of it is written by hand.';
 
 const lead = digest.lead;
+// The night Pulsar moved to a new Fedora release: nearly every package moved,
+// so the page says so and points at the post about the move instead of
+// listing them (see baseMoveOf in src/data/digest.ts).
+const move = digest.baseMove;
+const movePost = move ? (await posts()).find((p) => p.data.base === move.to) : undefined;
+const moved = digest.packages + digest.added.length + digest.removed.length;
 // the other changelog: Pulsar's own releases, once a nightly has shipped them
 const hasReleases = (await getCollection('docs')).some((d) => d.id === 'releases');
 const extra = lead ? lead.members.length - 1 : 0;
@@ -26,10 +33,12 @@ const JSONLD = [
     url: new URL('/docs/changelog', Astro.site).href,
   },
 ];
-const TOC = [
-  { id: 'last-night', label: 'Last night', level: 2 },
-  { id: 'every-package', label: 'Every package that moved', level: 2 },
-];
+const TOC = move
+  ? [{ id: 'last-night', label: 'Last night', level: 2 }]
+  : [
+      { id: 'last-night', label: 'Last night', level: 2 },
+      { id: 'every-package', label: 'Every package that moved', level: 2 },
+    ];
 ---
 
 <Docs
@@ -61,7 +70,21 @@ const TOC = [
   <h2 id="last-night">Last night</h2>
   <div class="lead">
     {
-      digest.baseline ? (
+      move ? (
+        <>
+          <p class="lead-say">Moved to Fedora {move.to}.</p>
+          <p class="lede">
+            Last night’s image is the first built on Fedora {move.to}, so nearly every package
+            changed: {moved.toLocaleString('en-US')} in all. That is a new release, not a night’s
+            changes, so they are not listed here.
+            {movePost && (
+              <>
+                {' '}What it brings is in <a href={postHref(movePost)}>{movePost.data.title}</a>.
+              </>
+            )}
+          </p>
+        </>
+      ) : digest.baseline ? (
         <p class="lead-say">First build.</p>
       ) : digest.quiet ? (
         <p class="lead-say">Nothing moved.</p>
@@ -82,7 +105,7 @@ const TOC = [
         )
       )
     }
-    <p class="lede">{arithmetic()}</p>
+    {!move && <p class="lede">{arithmetic()}</p>}
     <p class="prov mono">
       <arc-badge variant="primary" size="sm" class="mono">{version}</arc-badge>
       {
@@ -103,8 +126,14 @@ const TOC = [
     <p class="hint skip-note" data-skip-note hidden></p>
   </div>
 
-  <h2 id="every-package">Every package that moved</h2>
-  <Ledger />
+  {
+    !move && (
+      <>
+        <h2 id="every-package">Every package that moved</h2>
+        <Ledger />
+      </>
+    )
+  }
   <p class="hint">
     Every row, unsummarized: <a href="/changelog.json">changelog.json</a>. The package list it was
     computed from ships attached to the&nbsp;image:{' '}

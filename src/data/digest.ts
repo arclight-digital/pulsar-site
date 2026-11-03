@@ -268,6 +268,23 @@ export interface Digest {
   /** short digests, for the line that names what was compared */
   fromDigest: string;
   toDigest: string;
+  /** the night the image moved to a new Fedora release, or null */
+  baseMove: { from: number; to: number } | null;
+}
+
+// A move to a new Fedora release changes nearly every package: the first
+// Fedora 45 build changed about 1,800 against the last Fedora 44 one. That is
+// not a night's changelog, and a page of 1,800 rows reads as noise, so the
+// changelog page says what happened and points at the blog post about the
+// move instead (see src/pages/docs/changelog.astro). Read off the diff's own
+// fedora-release-common row, so it needs nothing the nightly does not already
+// publish.
+export function baseMoveOf(changed: PackageChange[]): { from: number; to: number } | null {
+  const row = changed.find((c) => c.name === 'fedora-release-common');
+  if (!row) return null;
+  const from = Number(splitEvr(row.from).version);
+  const to = Number(splitEvr(row.to).version);
+  return Number.isInteger(from) && Number.isInteger(to) && from !== to ? { from, to } : null;
 }
 
 const short = (digest?: string) => (digest ?? '').replace(/^sha256:/, '').slice(0, 12);
@@ -336,6 +353,7 @@ export function buildDigest(source: Changelog = changelog): Digest {
       .reduce((total, group) => total + group.members.length, 0),
     fromDigest: short(source.from?.digest),
     toDigest: short(source.to?.digest),
+    baseMove: baseMoveOf(source.changed ?? []),
   };
 }
 
