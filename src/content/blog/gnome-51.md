@@ -8,7 +8,7 @@ card: sudo pulsar update
 ---
 
 Pulsar's nightly builds now start from Fedora 45, released on November 3.
-The first is `45.20261103.0`. It brings GNOME 51 and Linux 7.2, and it
+The first is `45.20261103.1`. It brings GNOME 51 and Linux 7.2, and it
 arrives the way every update does: downloaded in the background, ready at
 your next restart.
 
@@ -63,6 +63,12 @@ GNOME's [release notes](https://release.gnome.org/51/) list everything.
   with real fonts and handles all of Unicode.
 - **Toolboxes** you already have stay on Fedora 44 and keep working. A
   toolbox you create from now on starts from Fedora 45.
+
+## Known issue
+
+- **AMD graphics** decode video on the CPU for now. RPM Fusion hasn't yet
+  built its hardware video driver for Fedora 45's Mesa; Pulsar picks it up
+  in the first nightly after it appears.
 
 ## Behind the scenes
 
