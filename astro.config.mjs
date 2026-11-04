@@ -12,7 +12,7 @@ import changelog from './src/data/changelog.json' with { type: 'json' };
 // that stamp; the other pages change only when the repo does, and a guessed
 // date is worse than none, so they carry no lastmod at all.
 // the old addresses of pages that moved into /docs; see `redirects`
-const MOVED = ['/install', '/cli', '/gamescale', '/provenance', '/changelog'];
+const MOVED = ['/install', '/cli', '/gamescale', '/provenance', '/changelog', '/blog/gnome-51'];
 
 const NIGHTLY = changelog.generated ? new Date(changelog.generated).toISOString() : undefined;
 
@@ -50,6 +50,8 @@ export default defineConfig({
     '/gamescale': '/docs/gamescale',
     '/provenance': '/docs/provenance',
     '/changelog': '/docs/changelog',
+    // the Fedora 45 post's first address, before its slug said what it was
+    '/blog/gnome-51': '/blog/upgrade-to-fedora-45',
   },
   integrations: [
     arcDsd(),

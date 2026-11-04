@@ -58,9 +58,12 @@ function lightDom(html) {
   return out;
 }
 
+// A bare attribute is the empty string: Astro writes alt="" as plain `alt`,
+// which is how a decorative image (a byline's portrait) says so.
 const attr = (tag, name) => {
   const m = tag.match(new RegExp(`\\s${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, 'i'));
-  return m ? (m[2] ?? m[3] ?? m[4] ?? '') : null;
+  if (m) return m[2] ?? m[3] ?? m[4] ?? '';
+  return new RegExp(`\\s${name}(?=[\\s/>])`, 'i').test(tag) ? '' : null;
 };
 const decode = (s) =>
   s

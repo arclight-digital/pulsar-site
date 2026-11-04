@@ -1,0 +1,51 @@
+---
+// The blog's masthead ground: the home page's nebula still, recolored with
+// the worn theme the same way an author's portrait is (Portrait.astro). The
+// still keeps its own light and shape, the accent lends it a hue, and it
+// fades out into the page before the reading starts. Decoration only, so it
+// is hidden from assistive tech and holds no content.
+//
+// It is the hero's still (assets-static/nebula-still-*.jpg), already cached by
+// anyone who came from the home page; no new image.
+---
+
+<div class="sky" aria-hidden="true"></div>
+
+<style>
+  .sky {
+    position: absolute;
+    inset: 0 0 auto;
+    height: min(34rem, 80svh);
+    overflow: hidden;
+    isolation: isolate;
+    pointer-events: none;
+    background: url('/assets/nebula-still-dark.jpg') center 30% / cover no-repeat var(--bg-deep);
+    --sky-tint: 0.6;
+    --sky-strength: 0.7;
+    opacity: var(--sky-strength);
+    /* fades to nothing well above the fold's end, so no line of body text
+       ever sits on the picture */
+    mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 100%);
+  }
+  .sky::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent-primary);
+    mix-blend-mode: color;
+    opacity: var(--sky-tint);
+  }
+
+  :global([data-theme='light']) .sky {
+    background-image: url('/assets/nebula-still-light.jpg');
+    --sky-tint: 0.35;
+    --sky-strength: 0.55;
+  }
+  @media (prefers-color-scheme: light) {
+    :global([data-theme='auto']) .sky {
+      background-image: url('/assets/nebula-still-light.jpg');
+      --sky-tint: 0.35;
+      --sky-strength: 0.55;
+    }
+  }
+</style>

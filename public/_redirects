@@ -7,3 +7,6 @@
 /gamescale   /docs/gamescale   301
 /provenance  /docs/provenance  301
 /changelog   /docs/changelog   301
+
+# The Fedora 45 post's first address, before its slug said what it was.
+/blog/gnome-51  /blog/upgrade-to-fedora-45  301

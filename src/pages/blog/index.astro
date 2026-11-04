@@ -1,13 +1,23 @@
 ---
-// Every live post, newest first: the date, the title and its one-line
-// description, and nothing else.
+// Every live post, newest first. The newest is set large, with the command
+// its share card shows (the post's `card`); the rest follow as a dated list,
+// grouped by year.
 import Blog from '../../layouts/Blog.astro';
-import { isoDay, longDate, postHref, posts } from '../../data/blog';
+import Portrait from '../../components/Portrait.astro';
+import { AUTHORS, authorHref } from '../../data/authors';
+import { isoDay, longDate, postHref, posts, readingMinutes } from '../../data/blog';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
   'News from Pulsar: moves to a new Fedora or GNOME, new features, and how the nightly images are built and checked before they reach you.';
-const all = await posts();
+const [latest, ...earlier] = await posts();
+
+const years = new Map<number, typeof earlier>();
+for (const p of earlier) {
+  const y = p.data.date.getUTCFullYear();
+  years.set(y, [...(years.get(y) ?? []), p]);
+}
+const shortDate = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', timeZone: 'UTC' });
 
 const JSONLD = [
   {
@@ -22,58 +32,270 @@ const JSONLD = [
 ];
 ---
 
-<Blog title="Pulsar blog — news about the OS and its builds" crumb="Blog" description={DESCRIPTION} path="/blog" jsonLd={JSONLD}>
-  <h1>Blog</h1>
+<Blog title="Pulsar blog — news about the OS and its builds" crumb="Blog" description={DESCRIPTION} path="/blog" jsonLd={JSONLD} wide>
+  <Fragment slot="head">
+    <h1>Blog</h1>
+    <p class="lede">{DESCRIPTION}</p>
+    <a class="feed" href="/blog/rss.xml">
+      <arc-icon name="rss" size="sm"></arc-icon>
+      <span>Follow by RSS</span>
+    </a>
+  </Fragment>
+
   {
-    all.length ? (
-      <ol class="posts">
-        {all.map((p) => (
-          <li>
-            <time datetime={isoDay(p.data.date)}>{longDate(p.data.date)}</time>
-            <h2><a href={postHref(p)}>{p.data.title}</a></h2>
-            <p>{p.data.description}</p>
-          </li>
-        ))}
-      </ol>
+    latest ? (
+      <article class="lead">
+        <div class="lead-text">
+          <p class="facts">
+            <time datetime={isoDay(latest.data.date)}>{longDate(latest.data.date)}</time>
+            <span aria-hidden="true" class="sep" />
+            <span>{readingMinutes(latest)} min read</span>
+          </p>
+          <h2>
+            <a class="lead-link" href={postHref(latest)}>{latest.data.title}</a>
+          </h2>
+          <p class="lead-desc">{latest.data.description}</p>
+          <a class="by" href={authorHref(latest.data.author)}>
+            <Portrait author={latest.data.author} size="sm" />
+            <span>{AUTHORS[latest.data.author].name}</span>
+          </a>
+        </div>
+        <div class="lead-cmd">
+          <span class="prompt" aria-hidden="true">$</span>
+          <code>{latest.data.card}</code>
+        </div>
+      </article>
     ) : (
-      <p>Nothing here yet.</p>
+      <p class="empty">Nothing here yet.</p>
     )
   }
-  <p class="hint">
-    New posts by feed reader: <a href="/blog/rss.xml">RSS</a>.
-  </p>
+
+  {
+    years.size > 0 && (
+      <section class="archive" aria-labelledby="earlier">
+        <h2 id="earlier" class="archive-h">Earlier</h2>
+        {[...years].map(([year, list]) => (
+          <div class="year">
+            <p class="year-n">{year}</p>
+            <ol>
+              {list.map((p) => (
+                <li>
+                  <time datetime={isoDay(p.data.date)}>{shortDate(p.data.date)}</time>
+                  <div>
+                    <a href={postHref(p)}>{p.data.title}</a>
+                    <p>{p.data.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </section>
+    )
+  }
 </Blog>
 
 <style>
-  .posts {
+  .feed {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-lg);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .feed:hover {
+    color: var(--accent-primary);
+  }
+
+  /* ---- the newest post -------------------------------------------------- */
+  .lead {
+    position: relative;
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklab, var(--bg-card) 85%, transparent);
+    overflow: hidden;
+    transition: border-color 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  }
+  .lead:hover {
+    border-color: var(--border-bright);
+    box-shadow: 0 18px 48px -24px rgb(var(--accent-primary-rgb) / 0.35);
+  }
+  .lead-text {
+    padding: var(--space-2xl) var(--space-2xl) var(--space-xl);
+  }
+  .facts {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin: 0 0 var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+  .lead h2 {
+    font-size: clamp(var(--text-2xl), 3.4vw, 2.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    margin: 0 0 var(--space-md);
+    max-width: 22ch;
+  }
+  .lead-link {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  /* the whole card is the link; the author link sits above it */
+  .lead-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+  .lead:hover .lead-link {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+  .lead-link:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+  .lead:has(.lead-link:focus-visible) {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+  .lead-desc {
+    color: var(--text-secondary);
+    font-size: var(--text-lg);
+    max-width: 52ch;
+    margin: 0 0 var(--space-lg);
+  }
+  .by {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .by:hover span {
+    text-decoration: underline;
+  }
+
+  /* The post's command, as its share card shows it: the site's dark chip,
+     dark in both modes, like every terminal on the site. */
+  .lead-cmd {
+    display: flex;
+    align-items: baseline;
+    gap: 1ch;
+    padding: var(--space-md) var(--space-2xl);
+    border-top: 1px solid var(--chip-line);
+    background: var(--chip);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  /* --chip is translucent, built for the dark sky; on a light page it
+     reads as gray, so there it is made solid from the theme's own ink */
+  :global([data-theme='light']) .lead-cmd {
+    background: color-mix(in oklab, var(--text-primary) 88%, #000);
+  }
+  @media (prefers-color-scheme: light) {
+    :global([data-theme='auto']) .lead-cmd {
+      background: color-mix(in oklab, var(--text-primary) 88%, #000);
+    }
+  }
+  .prompt {
+    color: var(--cyan);
+  }
+  .lead-cmd code {
+    color: var(--star);
+    font-size: inherit;
+  }
+
+  .empty {
+    color: var(--text-secondary);
+  }
+
+  /* ---- earlier posts ---------------------------------------------------- */
+  .archive {
+    margin-top: var(--space-3xl);
+  }
+  .archive-h {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-lg);
+  }
+  .year {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: var(--space-lg);
+    border-top: 1px solid var(--border-subtle);
+    padding-top: var(--space-md);
+  }
+  .year + .year {
+    margin-top: var(--space-lg);
+  }
+  .year-n {
+    margin: 0;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .year ol {
     list-style: none;
     margin: 0;
     padding: 0;
   }
-  .posts li {
-    padding: var(--space-lg) 0;
+  .year li {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: var(--space-md);
+    padding-bottom: var(--space-md);
+  }
+  .year li + li {
+    padding-top: var(--space-md);
     border-top: 1px solid var(--border-subtle);
   }
-  .posts time {
+  .year time {
     font-size: var(--text-sm);
     color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.15em;
   }
-  .posts h2 {
-    font-size: var(--text-xl);
-    margin: var(--space-xs) 0 var(--space-sm);
-  }
-  .posts h2 a {
+  .year a {
     color: var(--text-primary);
+    font-weight: 700;
     text-decoration: none;
   }
-  .posts h2 a:hover {
+  .year a:hover {
     text-decoration: underline;
-    text-underline-offset: 0.2em;
   }
-  .posts p {
-    margin: 0;
+  .year li p {
+    margin: var(--space-xs) 0 0;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
   }
-  .hint {
-    margin-top: var(--space-xl);
+
+  @media (max-width: 40rem) {
+    .lead-text {
+      padding: var(--space-xl) var(--space-lg) var(--space-lg);
+    }
+    .lead-cmd {
+      padding: var(--space-md) var(--space-lg);
+    }
+    .year {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--space-sm);
+    }
   }
 </style>

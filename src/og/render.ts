@@ -290,6 +290,20 @@ function topRow(card: Card): Node {
   );
 }
 
+// An author's portrait for their card: the file the page washes in
+// CSS, tinted here the same way in the site's own colors -- the cyan as the
+// hue, nothing darker than the ink -- so the photo's black backdrop is the
+// card's ground.
+async function portrait(src: string, size: number): Promise<string> {
+  const file = join(SITE, 'assets-static', src.replace(/^\/assets\//, ''));
+  const tinted = await sharp(asset(file)).resize(size * 2, size * 2).tint(CYAN).toBuffer();
+  const jpeg = await sharp(tinted)
+    .composite([{ input: { create: { width: size * 2, height: size * 2, channels: 3, background: INK } }, blend: 'lighten' }])
+    .jpeg({ quality: 82, mozjpeg: true })
+    .toBuffer();
+  return dataUri('image/jpeg', jpeg);
+}
+
 async function inner(card: Card): Promise<Node> {
   const v = card.visual;
   const width = W - 2 * PAD;
@@ -298,14 +312,34 @@ async function inner(card: Card): Promise<Node> {
   // what the headline has once the lockup row, the sub, the strip and the
   // air between them are paid for
   const room = H - top - 48 - 40 - (card.sub ? 24 + 2 * SUB * 1.3 : 0) - 40 - STRIP_H - PAD;
-  const size = fitHead(card, width - 60, room);
+
+  // A portrait card keeps its photo at the right, between the lockup row and
+  // the strip, and the words take what is left of the width.
+  const photoTop = top + 48 + 32;
+  const photoSize = v.kind === 'portrait' ? Math.round(H - photoTop - PAD - STRIP_H - 32) : 0;
+  const textWidth = v.kind === 'portrait' ? width - photoSize - 56 : width;
+  const size = fitHead(card, textWidth - 60, room);
 
   let visual: Node;
   if (v.kind === 'terminal') visual = strip(v.line, width, v.icon);
   else if (v.kind === 'build') visual = buildStrip(width);
-  else throw new Error(`og: card "${card.slug}" has a visual only the home card draws`);
+  else if (v.kind === 'portrait') {
+    visual = h(
+      'div',
+      { display: 'flex', width, paddingTop: 22, borderTop: HAIRLINE, fontFamily: 'JetBrains Mono', fontSize: 30, color: MUTED },
+      v.links.join('  ·  '),
+    );
+  } else throw new Error(`og: card "${card.slug}" has a visual only the home card draws`);
 
   return ground(
+    v.kind === 'portrait'
+      ? img(await portrait(v.photo, photoSize), photoSize, photoSize, {
+          position: 'absolute',
+          top: photoTop,
+          right: PAD,
+          borderRadius: 24,
+        })
+      : null,
     h(
       'div',
       {
@@ -323,8 +357,8 @@ async function inner(card: Card): Promise<Node> {
       h(
         'div',
         { display: 'flex', flexDirection: 'column' },
-        headline(card.headline, size, width - 60),
-        card.sub ? sub(card.sub) : null,
+        headline(card.headline, size, textWidth - 60),
+        card.sub ? sub(card.sub, SUB, textWidth) : null,
       ),
       visual,
     ),

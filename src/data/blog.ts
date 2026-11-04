@@ -38,3 +38,35 @@ export const postHref = (p: Post) => `/blog/${p.id}`;
 export const longDate = (d: Date) =>
   d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' });
 export const isoDay = (d: Date) => d.toISOString().slice(0, 10);
+
+/** Minutes to read, at a steady 220 words a minute, never under one. Counted
+    from the Markdown source, so code and link targets count a little. */
+export const readingMinutes = (p: Post) => Math.max(1, Math.round((p.body ?? '').split(/\s+/).filter(Boolean).length / 220));
+
+/** The newer and older neighbors of a post, for the foot of its page. */
+export async function neighbors(p: Post): Promise<{ newer?: Post; older?: Post }> {
+  const all = await posts();
+  const i = all.findIndex((x) => x.id === p.id);
+  return { newer: all[i - 1], older: all[i + 1] };
+}
+
+// The Markdown renderer's code blocks are Shiki's, colored with a fixed
+// GitHub theme that no site theme reaches. A post's code instead becomes the
+// same arc-code-block the docs use -- themed, labelled with its language,
+// with a copy button -- by rewriting the rendered HTML. Shiki's spans are
+// dropped and the text kept exactly, so what is copied is what was written.
+const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", '#39': "'" };
+const decode = (s: string) =>
+  s.replace(/&(#x[0-9a-f]+|#\d+|\w+);/gi, (m, e: string) =>
+    e[0] === '#'
+      ? String.fromCodePoint(e[1].toLowerCase() === 'x' ? parseInt(e.slice(2), 16) : Number(e.slice(1)))
+      : (ENTITIES[e] ?? m),
+  );
+const attr = (s: string) => s.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+export function codeBlocks(html: string): string {
+  return html.replace(/<pre class="astro-code[^"]*"[^>]*?(?:data-language="([\w-]+)")?[^>]*><code>([\s\S]*?)<\/code><\/pre>/g, (_, lang: string | undefined, inner: string) => {
+    const code = decode(inner.replace(/<[^>]+>/g, '')).replace(/\n$/, '');
+    const language = lang && lang !== 'plaintext' && lang !== 'text' ? ` language="${attr(lang)}"` : '';
+    return `<arc-code-block class="theme-fixed-dark"${language} code="${attr(code)}"></arc-code-block>`;
+  });
+}

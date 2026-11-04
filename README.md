@@ -55,12 +55,16 @@ has it.
   `src/data/site.ts`. The hero, the footer, the share cards and the home
   page's title and description all read them from there.
 - **Blog.** Posts are Markdown in `src/content/blog/`; the file name is the
-  address (`gnome-51.md` is `/blog/gnome-51`), and the frontmatter fields are
-  described in `src/content.config.ts`. A post with `base: 45` stays
+  address (`upgrade-to-fedora-45.md` is `/blog/upgrade-to-fedora-45`), and
+  the frontmatter fields are described in `src/content.config.ts`. A post with `base: 45` stays
   unpublished until the nightly's manifest says the image is on Fedora 45.
   A post with a `banner` line is announced above the home page's mark for
   30 days. The index, the RSS feed (`/blog/rss.xml`), the share cards, the
   search and the Blog links in the bar and footer all follow the live posts.
+  Every post names its `author`, a key in `src/data/authors.ts`, which holds
+  the name, the bio and the portrait behind the byline and the about page
+  (`/blog/authors/nick`). Portraits are committed in color in
+  `assets-static/authors/` and tinted with the worn theme in CSS.
 - **Share cards.** `src/og/` draws one 1200×630 card per page at build time
   with satori, from the same lockup, fonts and screenshots as the site.
   Nothing is committed.

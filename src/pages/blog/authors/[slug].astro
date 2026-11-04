@@ -1,0 +1,120 @@
+---
+// An author's about page: the portrait in the worn theme, who they are in two
+// paragraphs, where else to find them, and what they have written here.
+// Everything but the prose comes from src/data/authors.ts.
+import Portrait from '../../../components/Portrait.astro';
+import Blog from '../../../layouts/Blog.astro';
+import { AUTHORS, AUTHOR_KEYS, authorHref, authorId, personLd, type AuthorKey } from '../../../data/authors';
+import { isoDay, longDate, postHref, posts } from '../../../data/blog';
+
+export function getStaticPaths() {
+  return AUTHOR_KEYS.map((key) => ({ params: { slug: key }, props: { key } }));
+}
+
+const { key } = Astro.props as { key: AuthorKey };
+const a = AUTHORS[key];
+const theirs = (await posts()).filter((p) => p.data.author === key);
+const url = new URL(authorHref(key), Astro.site).href;
+
+const JSONLD = [
+  personLd(key),
+  {
+    '@type': 'ProfilePage',
+    url,
+    mainEntity: { '@id': authorId(key) },
+    inLanguage: 'en',
+  },
+];
+---
+
+<Blog title={`${a.name}, who builds Pulsar — Pulsar blog`} crumb={a.name} description={a.description} path={authorHref(key)} jsonLd={JSONLD}>
+  <div slot="head" class="who">
+    <Portrait author={key} size="lg" />
+    <div>
+      <h1>{a.name}</h1>
+      <p class="lede">{a.role}</p>
+    </div>
+  </div>
+
+  <div class="bio">
+    {a.bio.map((para) => <p set:html={para} />)}
+  </div>
+
+  <ul class="links">
+    {a.links.map((l) => <li><a href={l.href} rel="me">{l.label}</a></li>)}
+  </ul>
+
+  {
+    theirs.length > 0 && (
+      <>
+        <h2 class="posts-h">Posts</h2>
+        <ol class="posts">
+          {theirs.map((p) => (
+            <li>
+              <a href={postHref(p)}>{p.data.title}</a>
+              <time datetime={isoDay(p.data.date)}>{longDate(p.data.date)}</time>
+            </li>
+          ))}
+        </ol>
+      </>
+    )
+  }
+</Blog>
+
+<style>
+  .who {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-lg) var(--space-xl);
+  }
+  .who h1 {
+    margin: 0 0 var(--space-sm);
+  }
+  .bio p {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+    color: var(--text-secondary);
+  }
+  .posts-h {
+    font-size: var(--text-xl);
+    margin: var(--space-3xl) 0 var(--space-md);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-lg);
+    list-style: none;
+    margin: var(--space-lg) 0 0;
+    padding: 0;
+  }
+  .links a {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .posts {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .posts a {
+    color: var(--text-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .posts a:hover {
+    text-decoration: underline;
+  }
+  .posts li {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-xs) var(--space-md);
+    padding: var(--space-sm) 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .posts time {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+</style>

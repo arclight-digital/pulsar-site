@@ -140,6 +140,13 @@ await cp(join(SITE, 'assets-static', 'themes'), join(OUT, 'themes'), { recursive
   throw new Error(`cannot stage assets-static/themes: ${cause.message}`, { cause });
 });
 
+// The blog authors' portraits, in color: the page washes them with
+// the worn theme's colors in CSS (src/components/Portrait.astro), so one file
+// serves every theme. src/data/authors.ts names them.
+await cp(join(SITE, 'assets-static', 'authors'), join(OUT, 'authors'), { recursive: true }).catch((cause) => {
+  throw new Error(`cannot stage assets-static/authors: ${cause.message}`, { cause });
+});
+
 // The two faces the page sets itself in, as WOFF2: the OS ships TrueType,
 // which is ~2.7x the bytes over the wire, and every page preloads all three.
 // (src/og/render.ts reads the TrueType files straight from upstream/: Satori

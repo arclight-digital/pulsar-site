@@ -1,7 +1,8 @@
 // The blog as an RSS 2.0 feed, built with the site from the same live posts
-// the index lists. Titles and descriptions only: a feed reader follows the
+// the index lists. Titles, authors and descriptions only: a feed reader follows the
 // link for the post.
 import type { APIRoute } from 'astro';
+import { AUTHORS } from '../../data/authors';
 import { postHref, posts } from '../../data/blog';
 
 export const prerender = true;
@@ -18,13 +19,14 @@ export const GET: APIRoute = async ({ site }) => {
       <title>${esc(p.data.title)}</title>
       <link>${abs(postHref(p))}</link>
       <guid isPermaLink="true">${abs(postHref(p))}</guid>
+      <dc:creator>${esc(AUTHORS[p.data.author].name)}</dc:creator>
       <pubDate>${p.data.date.toUTCString()}</pubDate>
       <description>${esc(p.data.description)}</description>
     </item>`,
     )
     .join('\n');
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Pulsar blog</title>
     <link>${abs('/blog')}</link>

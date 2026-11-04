@@ -4,12 +4,14 @@
 // title is its first heading.
 //
 // The blog is the site's own, written here in src/content/blog/. A post's id
-// is its file name, which is also its address: gnome-51.md is /blog/gnome-51.
+// is its file name, which is also its address: upgrade-to-fedora-45.md is
+// /blog/upgrade-to-fedora-45.
 // src/data/blog.ts decides when a post goes live and when the home page
 // points at it.
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { AUTHOR_KEYS } from './data/authors';
 
 const docs = defineCollection({
   loader: glob({ pattern: '*.md', base: './upstream/docs', generateId: ({ entry }) => entry.replace(/\.md$/, '').toLowerCase() }),
@@ -34,6 +36,9 @@ const blog = defineCollection({
     // The command along the bottom of the share card. The post must show
     // it too: a card only pictures what its page has.
     card: z.string(),
+    // who wrote it: a key of AUTHORS in src/data/authors.ts, which owns the
+    // name, the portrait and the about page at /blog/authors/<key>
+    author: z.enum(AUTHOR_KEYS),
   }),
 });
 

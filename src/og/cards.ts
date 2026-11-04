@@ -15,6 +15,7 @@
 // shows (a real command, a real screenshot, the real build), never an
 // illustration of a claim.
 import { changelog, version } from '../data/build';
+import { AUTHORS, AUTHOR_KEYS, authorHref } from '../data/authors';
 import { postHref, posts } from '../data/blog';
 import { IMAGES, SUBLINE, TAGLINE } from '../data/site';
 
@@ -27,7 +28,9 @@ export type Visual =
   /** One real command, as the poster's small print along the bottom. */
   | { kind: 'terminal'; line: Line; icon?: string }
   /** The latest build, from the build data the changelog page renders. */
-  | { kind: 'build' };
+  | { kind: 'build' }
+  /** An author's portrait, tinted cyan, and the links their page lists. */
+  | { kind: 'portrait'; photo: string; links: string[] };
 
 export interface Card {
   /** file name under /og/, and the route it belongs to */
@@ -204,8 +207,9 @@ export const CARDS: Card[] = [
   },
 ];
 
-/** The fixed cards above, then one per live blog post: its title, its
-    description, and the command the post names as its card. */
+/** The fixed cards above, then one per live blog post (its title, its
+    description, and the command the post names as its card), then one per
+    author (the name, the role and the portrait). */
 export async function allCards(): Promise<Card[]> {
   const blog: Card[] = (await posts()).map((p) => ({
     slug: `blog-${p.id}`,
@@ -215,7 +219,18 @@ export async function allCards(): Promise<Card[]> {
     alt: `The Pulsar logo, the heading "${p.data.title}", and the command ${p.data.card}.`,
     visual: { kind: 'terminal', line: { cmd: p.data.card } },
   }));
-  return [...CARDS, ...blog];
+  const authors: Card[] = AUTHOR_KEYS.map((key) => {
+    const a = AUTHORS[key];
+    return {
+      slug: `author-${key}`,
+      path: authorHref(key),
+      headline: a.name,
+      sub: a.role,
+      alt: `The Pulsar logo, the heading "${a.name}", and a portrait photo of ${a.name}, tinted cyan.`,
+      visual: { kind: 'portrait', photo: a.photo.large, links: a.links.slice(0, 2).map((l) => l.label) },
+    };
+  });
+  return [...CARDS, ...blog, ...authors];
 }
 
 /** The card for a route. Throws, so a page without one fails the build. A

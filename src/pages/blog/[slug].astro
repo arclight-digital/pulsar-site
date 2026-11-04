@@ -1,8 +1,13 @@
 ---
-// One post from src/content/blog/, once it is live (see src/data/blog.ts).
+// One post from src/content/blog/, once it is live (see src/data/blog.ts):
+// the masthead (title, the description as its lede, who and when), the post,
+// its author, and the way on to the next one. The rail beside it is the
+// docs' contents, following the scroll.
 import { render } from 'astro:content';
 import Blog from '../../layouts/Blog.astro';
-import { isoDay, longDate, postHref, posts, type Post } from '../../data/blog';
+import Portrait from '../../components/Portrait.astro';
+import { AUTHORS, authorHref, authorId, personLd } from '../../data/authors';
+import { codeBlocks, isoDay, longDate, neighbors, postHref, posts, readingMinutes, type Post } from '../../data/blog';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 export async function getStaticPaths() {
@@ -10,8 +15,13 @@ export async function getStaticPaths() {
 }
 
 const { post } = Astro.props as { post: Post };
-const { Content } = await render(post);
-const { title, description, date } = post.data;
+const { headings } = await render(post);
+const html = codeBlocks(post.rendered?.html ?? '');
+const { title, description, date, author } = post.data;
+const who = AUTHORS[author];
+const minutes = readingMinutes(post);
+const { newer, older } = await neighbors(post);
+const toc = headings.filter((h) => h.depth === 2);
 const url = new URL(postHref(post), Astro.site).href;
 
 const JSONLD = [
@@ -23,32 +33,275 @@ const JSONLD = [
     url,
     mainEntityOfPage: url,
     image: new URL(`/og/blog-${post.id}.jpg`, Astro.site).href,
-    author: { '@id': ORG_ID },
+    author: { '@id': authorId(author) },
     publisher: { '@id': ORG_ID },
     about: { '@id': APP_ID },
     inLanguage: 'en',
   },
+  personLd(author),
 ];
 ---
 
 <Blog title={`${title} — Pulsar blog`} crumb={title} description={description} path={postHref(post)} jsonLd={JSONLD}>
-  <p class="kicker"><a href="/blog">Blog</a> · <time datetime={isoDay(date)}>{longDate(date)}</time></p>
-  <h1>{title}</h1>
-  <Content />
+  <Fragment slot="head">
+    <h1>{title}</h1>
+    <p class="lede">{description}</p>
+    <div class="meta">
+      <a class="by" href={authorHref(author)}>
+        <Portrait author={author} size="sm" />
+        <span>{who.name}</span>
+      </a>
+      <span class="facts">
+        <time datetime={isoDay(date)}>{longDate(date)}</time>
+        <span aria-hidden="true" class="sep"></span>
+        <span>{minutes} min read</span>
+      </span>
+    </div>
+  </Fragment>
+
+  <article class="prose" set:html={html} />
+
+  <aside class="author" aria-label="About the author">
+    <Portrait author={author} size="md" />
+    <div>
+      <p class="author-name"><a href={authorHref(author)}>{who.name}</a></p>
+      <p class="author-role">{who.role}</p>
+    </div>
+  </aside>
+
+  <nav class="more" aria-label="More posts">
+    {
+      older && (
+        <a class="step" href={postHref(older)}>
+          <span class="step-k"><arc-icon name="arrow-left" size="sm"></arc-icon> Older</span>
+          <span class="step-t">{older.data.title}</span>
+        </a>
+      )
+    }
+    {
+      newer && (
+        <a class="step next" href={postHref(newer)}>
+          <span class="step-k">Newer <arc-icon name="arrow-right" size="sm"></arc-icon></span>
+          <span class="step-t">{newer.data.title}</span>
+        </a>
+      )
+    }
+    <a class="all" href="/blog"><arc-icon name="arrow-left" size="sm"></arc-icon> All posts</a>
+  </nav>
+
+  <Fragment slot="rail">
+    {
+      toc.length > 1 && (
+        <arc-scroll-spy progress="both">
+          {toc.map((h) => (
+            <arc-spy-link target={h.slug} level={0}>{h.text}</arc-spy-link>
+          ))}
+        </arc-scroll-spy>
+      )
+    }
+    <a class="feed" href="/blog/rss.xml">
+      <arc-icon name="rss" size="sm"></arc-icon>
+      <span>Follow by RSS</span>
+    </a>
+  </Fragment>
 </Blog>
 
 <style>
-  .kicker {
-    margin: 0 0 var(--space-sm);
+  /* ---- masthead ---------------------------------------------------------- */
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm) var(--space-lg);
+    margin-top: var(--space-xl);
+    font-size: var(--text-sm);
+  }
+  .by {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .by:hover span {
+    text-decoration: underline;
+  }
+  .facts {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .sep {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ---- the post ---------------------------------------------------------- */
+  .prose {
+    font-size: 1.0625rem;
+    line-height: 1.75;
+  }
+  .prose :global(h2) {
+    font-size: var(--text-2xl);
+    letter-spacing: -0.025em;
+    margin: var(--space-3xl) 0 var(--space-md);
+  }
+  .prose :global(h2::after) {
+    content: '';
+    display: block;
+    width: 48px;
+    height: 2px;
+    margin-top: var(--space-sm);
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  }
+  .prose :global(h3) {
+    font-size: var(--text-lg);
+    margin: var(--space-xl) 0 var(--space-sm);
+  }
+  .prose :global(p),
+  .prose :global(li) {
+    color: var(--text-secondary);
+  }
+  .prose :global(strong) {
+    color: var(--text-primary);
+  }
+  .prose :global(ul) {
+    padding-left: 1.25rem;
+    margin: 0 0 var(--space-md);
+  }
+  .prose :global(li) {
+    margin-bottom: var(--space-sm);
+    padding-left: var(--space-xs);
+  }
+  .prose :global(li::marker) {
+    color: var(--accent-primary);
+  }
+  .prose :global(:not(pre) > code) {
+    padding: 0.1em 0.35em;
+    border-radius: var(--radius-sm);
+    background: color-mix(in oklab, var(--text-primary) 7%, transparent);
+    color: var(--text-primary);
+  }
+  .prose :global(arc-code-block) {
+    display: block;
+    margin: var(--space-md) 0 var(--space-lg);
+  }
+  /* a break before a sign-off: the h2 rule's short gradient, alone */
+  .prose :global(hr) {
+    width: 48px;
+    height: 2px;
+    margin: var(--space-2xl) 0;
+    border: 0;
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  }
+
+  /* ---- the author, and on ------------------------------------------------- */
+  .author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-3xl);
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .author p {
+    margin: 0;
+  }
+  .author-name {
+    font-family: var(--font-display);
+    font-weight: var(--font-display-weight);
+    font-size: var(--text-lg);
+  }
+  .author-name a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .author-name a:hover {
+    text-decoration: underline;
+  }
+  .author-role {
+    color: var(--text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .more {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+    margin-top: var(--space-xl);
+  }
+  .step {
+    display: grid;
+    gap: var(--space-xs);
+    padding: var(--space-md) var(--space-lg);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    text-decoration: none;
+    transition: border-color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
+  }
+  .step:hover {
+    border-color: var(--border-bright);
+    background: color-mix(in oklab, var(--accent-primary) 5%, transparent);
+  }
+  .step.next {
+    grid-column: 2;
+    text-align: right;
+  }
+  .step-k {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
     font-size: var(--text-sm);
     color: var(--text-muted);
   }
-  .kicker a {
-    color: inherit;
+  .next .step-k {
+    justify-content: flex-end;
+  }
+  .step-t {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+  .all {
+    grid-column: 1 / -1;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    font-size: var(--text-sm);
+  }
+
+  /* ---- rail -------------------------------------------------------------- */
+  .feed {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-xl);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
     text-decoration: none;
   }
-  .kicker a:hover {
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
+  .feed:hover {
+    color: var(--accent-primary);
+  }
+
+  @media (max-width: 40rem) {
+    .more {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .step.next {
+      grid-column: 1;
+      text-align: left;
+    }
+    .next .step-k {
+      justify-content: flex-start;
+    }
   }
 </style>

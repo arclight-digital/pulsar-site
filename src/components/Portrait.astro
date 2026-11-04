@@ -1,0 +1,107 @@
+---
+// An author's portrait in the worn theme's colors.
+//
+// The photo on disk is in color, with its highlights eased down. Two layers
+// over it wash it in the theme's own tokens, so it follows the picker and the
+// light/dark toggle live, with no file per theme:
+//   - the accent, blended as `color` at half strength or less: each pixel
+//     leans toward the accent's hue and keeps its own lightness, so the face
+//     reads in the theme while some of its own skin tone shows through;
+//   - the shade, blended as `lighten`: nothing goes darker than it, so the
+//     photo's black backdrop becomes the page's own ground in dark mode and
+//     melts into it.
+// A light page has no dark ground to melt into, so there the shade is the
+// theme's text color, deepened and leaning toward the accent, the tint is
+// softer, and the portrait stands as a tile. Without blend-mode support it
+// is the plain photo, which is fine.
+import { AUTHORS, type AuthorKey } from '../data/authors';
+
+interface Props {
+  author: AuthorKey;
+  /** lg: the about page (up to 240px); md: a post's author card (64px);
+      sm: a byline (40px) */
+  size: 'lg' | 'md' | 'sm';
+}
+const { author, size } = Astro.props;
+const a = AUTHORS[author];
+const px = { lg: 240, md: 64, sm: 40 }[size];
+---
+
+<span class:list={['portrait', size]}>
+  <img
+    src={size === 'lg' ? a.photo.large : a.photo.small}
+    width={px}
+    height={px}
+    alt={size === 'lg' ? `${a.name}, smiling, in glasses and a dark jacket` : ''}
+    loading={size === 'lg' ? 'eager' : 'lazy'}
+    decoding="async"
+  />
+</span>
+
+<style>
+  .portrait {
+    --shade: var(--bg-deep);
+    /* a wash, not a recolor: at full strength the face is all accent, and a
+       bright one (cyan, orange) clips the skin's highlights */
+    --tint: 0.5;
+    position: relative;
+    display: block;
+    flex: none;
+    overflow: hidden;
+    isolation: isolate;
+    line-height: 0;
+    background: var(--shade);
+  }
+  .portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+  .portrait::before,
+  .portrait::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* No filter or opacity on the img: either would paint it in the same
+     layer as these overlays, after the first one, and hide the tint. */
+  .portrait::before {
+    background: var(--accent-primary);
+    mix-blend-mode: color;
+    opacity: var(--tint);
+  }
+  .portrait::after {
+    background: var(--shade);
+    mix-blend-mode: lighten;
+  }
+
+  /* light: a deep shade from the theme's own text color, and a softer tint,
+     since a light theme's accent is fitted dark and saturated for its page */
+  :global([data-theme='light']) .portrait {
+    --shade: color-mix(in oklab, color-mix(in oklab, var(--text-primary) 55%, #000) 80%, var(--accent-primary));
+    --tint: 0.4;
+  }
+  @media (prefers-color-scheme: light) {
+    :global([data-theme='auto']) .portrait {
+      --shade: color-mix(in oklab, color-mix(in oklab, var(--text-primary) 55%, #000) 80%, var(--accent-primary));
+      --tint: 0.4;
+    }
+  }
+
+  .lg {
+    width: min(100%, 15rem);
+    aspect-ratio: 1;
+    border-radius: var(--radius-lg);
+  }
+  .md {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+  }
+  .sm {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+  }
+</style>
