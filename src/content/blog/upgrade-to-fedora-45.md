@@ -71,16 +71,17 @@ The full list is in GNOME's [release notes](https://release.gnome.org/51/).
 
 ## One known issue
 
-- **AMD graphics** decode video on the CPU for now. RPM Fusion hasn't built
-  its hardware video driver for Fedora 45's Mesa yet. Once it does, Pulsar
-  picks it up in the very next nightly.
+- **AMD graphics** decode video on the CPU for now. RPM Fusion's hardware
+  video driver has to match Mesa's version exactly, and Fedora's Silverblue
+  45 base image is still one Mesa update behind Fedora's own updates. RPM
+  Fusion built its driver for the newer one, so the two don't line up yet.
 
 ## Behind the scenes
 
-GNOME 51 dropped the Shell effect Pulsar's glass was built on, so the glass
-got rewritten for GNOME 51. The headless test that checks every theme's glass
-before an image ships runs on GNOME 51 now too, and it picked up a new check
-for stacked notifications, which is exactly what the first rewrite got wrong.
+The new GNOME dropped the Shell effect Pulsar's glass was built on, so the
+glass had to be rewritten. The headless test that checks every theme's glass
+before an image ships moved over too, and it picked up a new check for
+stacked notifications, which is exactly what the first rewrite got wrong.
 
 ---
 
