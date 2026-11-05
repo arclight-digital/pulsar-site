@@ -1,129 +1,140 @@
 {
-  "generated": "2026-11-04T05:19:26Z",
+  "generated": "2026-11-05T03:14:48Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0f35e083a7b05871671439266eb6e04dfcd973ae84b2d1ff51c4c59c4528a44a",
-    "digest": "sha256:0f35e083a7b05871671439266eb6e04dfcd973ae84b2d1ff51c4c59c4528a44a"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:978df88e3930a14da81d84dd2187699f85134c83956e8b547c3cd45df62ebca6",
     "digest": "sha256:978df88e3930a14da81d84dd2187699f85134c83956e8b547c3cd45df62ebca6"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:2485d131cec38aa8c427f8f4b2a50df6f8ac029f86fc625e285a67839757474a",
+    "digest": "sha256:2485d131cec38aa8c427f8f4b2a50df6f8ac029f86fc625e285a67839757474a"
+  },
   "summary": {
-    "added": 0,
+    "added": 1,
     "removed": 0,
-    "upgraded": 18,
+    "upgraded": 19,
     "downgraded": 0,
     "changed": 0
   },
-  "added": [],
+  "added": [
+    {
+      "name": "mesa-va-drivers-freeworld",
+      "version": "26.2.6-1.fc45"
+    }
+  ],
   "removed": [],
   "changed": [
     {
-      "name": "fwupd-efi",
-      "from": "1.8-1.fc44",
-      "to": "1.9-3.fc45",
+      "name": "ImageMagick",
+      "from": "1:7.1.2.34-1.fc45",
+      "to": "1:7.1.2.35-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus-typing-booster",
-      "from": "2.31.1-1.fc45",
-      "to": "2.31.3-1.fc45",
+      "name": "ImageMagick-libs",
+      "from": "1:7.1.2.34-1.fc45",
+      "to": "1:7.1.2.35-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "edk2-ovmf",
+      "from": "20260812-9.fc45",
+      "to": "20260812-10.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-core",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "edk2-shell-x64",
+      "from": "20260812-9.fc45",
+      "to": "20260812-10.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-modules",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "hyphen",
+      "from": "2.8.8-30.fc45",
+      "to": "2.8.10-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-modules-core",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "less",
+      "from": "710-1.fc45",
+      "to": "710-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-modules-extra",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "malcontent",
+      "from": "0.14.0-7.fc45",
+      "to": "0.14.0-8.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-tools",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "malcontent-control",
+      "from": "0.14.0-7.fc45",
+      "to": "0.14.0-8.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kernel-tools-libs",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
+      "name": "malcontent-libs",
+      "from": "0.14.0-7.fc45",
+      "to": "0.14.0-8.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "liblerc",
-      "from": "4.2.0-1.fc45",
-      "to": "4.3.0-1.fc45",
+      "name": "malcontent-ui-libs",
+      "from": "0.14.0-7.fc45",
+      "to": "0.14.0-8.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libopenmpt",
-      "from": "0.8.7-2.fc45",
-      "to": "0.8.10-1.fc45",
+      "name": "mesa-dri-drivers",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mcelog",
-      "from": "3:212-1.fc45",
-      "to": "3:213-1.fc45",
+      "name": "mesa-filesystem",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "mesa-libEGL",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "mesa-libGL",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "mesa-libgbm",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "mesa-vulkan-drivers",
+      "from": "26.2.5-1.fc45",
+      "to": "26.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.10.25-1",
-      "to": "2026.11.0-1",
+      "from": "2026.11.0-1",
+      "to": "2026.11.1-1",
       "direction": "upgraded"
     },
     {
-      "name": "openldap",
-      "from": "2.6.15-1.fc45",
-      "to": "2.6.16-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-perf",
-      "from": "7.2.14-300.fc45",
-      "to": "7.2.15-300.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-pillow",
-      "from": "12.3.0-3.fc45",
-      "to": "12.3.0-7.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "rpmfusion-free-release",
+      "name": "rpmfusion-nonfree-release",
       "from": "45-0.2",
       "to": "45-2",
       "direction": "upgraded"
     },
     {
-      "name": "thermald",
-      "from": "2.5.13-2.fc45",
-      "to": "2.5.13-3.fc45",
+      "name": "uriparser",
+      "from": "1.0.2-2.fc45",
+      "to": "1.0.3-1.fc45",
       "direction": "upgraded"
     }
   ]
