@@ -1,140 +1,148 @@
 {
-  "generated": "2026-11-05T03:14:48Z",
+  "generated": "2026-11-06T03:16:20Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:978df88e3930a14da81d84dd2187699f85134c83956e8b547c3cd45df62ebca6",
-    "digest": "sha256:978df88e3930a14da81d84dd2187699f85134c83956e8b547c3cd45df62ebca6"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:2485d131cec38aa8c427f8f4b2a50df6f8ac029f86fc625e285a67839757474a",
     "digest": "sha256:2485d131cec38aa8c427f8f4b2a50df6f8ac029f86fc625e285a67839757474a"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:8bfb499031c2c2cbd979a323b6a4f76fffff8dddc087a9acf1bd8c408e238be0",
+    "digest": "sha256:8bfb499031c2c2cbd979a323b6a4f76fffff8dddc087a9acf1bd8c408e238be0"
+  },
   "summary": {
-    "added": 1,
+    "added": 9,
     "removed": 0,
-    "upgraded": 19,
+    "upgraded": 15,
     "downgraded": 0,
     "changed": 0
   },
   "added": [
     {
-      "name": "mesa-va-drivers-freeworld",
-      "version": "26.2.6-1.fc45"
+      "name": "GraphicsMagick",
+      "version": "1.3.45-11.fc45"
+    },
+    {
+      "name": "jasper-libs",
+      "version": "4.2.8-3.fc45"
+    },
+    {
+      "name": "libutempter",
+      "version": "1.2.1-21.fc45"
+    },
+    {
+      "name": "mkfontscale",
+      "version": "1.2.4-5.fc45"
+    },
+    {
+      "name": "tesseract",
+      "version": "5.5.4-1.fc45"
+    },
+    {
+      "name": "tmux",
+      "version": "3.8-2.fc45"
+    },
+    {
+      "name": "urw-base35-fonts-legacy",
+      "version": "20200910-29.fc45"
+    },
+    {
+      "name": "zbar",
+      "version": "0.23.95-1.fc45"
+    },
+    {
+      "name": "zbar-libs",
+      "version": "0.23.95-1.fc45"
     }
   ],
   "removed": [],
   "changed": [
     {
-      "name": "ImageMagick",
-      "from": "1:7.1.2.34-1.fc45",
-      "to": "1:7.1.2.35-1.fc45",
+      "name": "bind-libs",
+      "from": "32:9.18.50-35.fc45",
+      "to": "32:9.18.51^git20261003.d0a87358-12.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ImageMagick-libs",
-      "from": "1:7.1.2.34-1.fc45",
-      "to": "1:7.1.2.35-1.fc45",
+      "name": "bind-utils",
+      "from": "32:9.18.50-35.fc45",
+      "to": "32:9.18.51^git20261003.d0a87358-12.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "edk2-ovmf",
-      "from": "20260812-9.fc45",
-      "to": "20260812-10.fc45",
+      "name": "curl",
+      "from": "8.21.0-8.fc45",
+      "to": "8.21.0-9.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "edk2-shell-x64",
-      "from": "20260812-9.fc45",
-      "to": "20260812-10.fc45",
+      "name": "dracut",
+      "from": "111-4.fc45",
+      "to": "111-5.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "hyphen",
-      "from": "2.8.8-30.fc45",
-      "to": "2.8.10-1.fc45",
+      "name": "gdm",
+      "from": "1:51.0-1.fc45",
+      "to": "1:51.1.1-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "less",
-      "from": "710-1.fc45",
-      "to": "710-2.fc45",
+      "name": "hwdata",
+      "from": "0.412-1.fc45",
+      "to": "0.413-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "malcontent",
-      "from": "0.14.0-7.fc45",
-      "to": "0.14.0-8.fc45",
+      "name": "libcurl",
+      "from": "8.21.0-8.fc45",
+      "to": "8.21.0-9.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "malcontent-control",
-      "from": "0.14.0-7.fc45",
-      "to": "0.14.0-8.fc45",
+      "name": "libical",
+      "from": "3.0.20-9.fc45",
+      "to": "3.0.20-11.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "malcontent-libs",
-      "from": "0.14.0-7.fc45",
-      "to": "0.14.0-8.fc45",
+      "name": "libical-glib",
+      "from": "3.0.20-9.fc45",
+      "to": "3.0.20-11.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "malcontent-ui-libs",
-      "from": "0.14.0-7.fc45",
-      "to": "0.14.0-8.fc45",
+      "name": "libportal",
+      "from": "0.10.0-2.fc45",
+      "to": "0.11.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mesa-dri-drivers",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
+      "name": "libportal-gtk4",
+      "from": "0.10.0-2.fc45",
+      "to": "0.11.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mesa-filesystem",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
+      "name": "librados2",
+      "from": "2:21.1.2-1.fc45",
+      "to": "2:21.2.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mesa-libEGL",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libGL",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-libgbm",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mesa-vulkan-drivers",
-      "from": "26.2.5-1.fc45",
-      "to": "26.2.6-1.fc45",
+      "name": "librbd1",
+      "from": "2:21.1.2-1.fc45",
+      "to": "2:21.2.0-1.fc45",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.11.0-1",
-      "to": "2026.11.1-1",
+      "from": "2026.11.1-1",
+      "to": "2026.11.2-1",
       "direction": "upgraded"
     },
     {
-      "name": "rpmfusion-nonfree-release",
-      "from": "45-0.2",
-      "to": "45-2",
-      "direction": "upgraded"
-    },
-    {
-      "name": "uriparser",
-      "from": "1.0.2-2.fc45",
-      "to": "1.0.3-1.fc45",
+      "name": "xdg-desktop-portal-gnome",
+      "from": "51.0-1.fc45",
+      "to": "51.0-2.fc45",
       "direction": "upgraded"
     }
   ]
