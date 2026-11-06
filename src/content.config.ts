@@ -30,6 +30,9 @@ const blog = defineCollection({
     // published image is on that release, so it goes live in the same
     // nightly commit that ships it, and never on a night the build failed.
     base: z.number().int().optional(),
+    // The same for a post about a Pulsar release: held back until the
+    // published image carries that release (YY.M.N) or a later one.
+    release: z.string().regex(/^\d+\.\d+\.\d+$/).optional(),
     // One line for the home page, shown for the first BANNER_DAYS after the
     // date. Most posts have none.
     banner: z.string().optional(),

@@ -245,6 +245,9 @@ const JSONLD = [
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-lg);
     text-decoration: none;
+    /* base.css keeps a link in a .more on one line; a post's title in a
+       card has to wrap */
+    white-space: normal;
     transition: border-color 0.2s var(--ease-out), background-color 0.2s var(--ease-out);
   }
   .step:hover {

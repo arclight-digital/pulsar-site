@@ -4,7 +4,8 @@
 // A post with `base` waits for the published image. manifest.json is written
 // by the nightly's publish (see build.ts), so a post about moving to Fedora
 // 45 appears in the same commit that ships the first Fedora 45 image, and a
-// night whose build failed leaves it unpublished.
+// night whose build failed leaves it unpublished. A post with `release` waits
+// the same way for the image that carries that Pulsar release.
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { manifest } from './build';
 
@@ -18,7 +19,26 @@ export const BANNER_DAYS = 30;
 // which holds every gated post back rather than guessing.
 const shippedBase = Number(manifest.base.split(':')[1]);
 
-const live = (p: Post) => p.data.base === undefined || shippedBase >= p.data.base;
+// "26.11.1" -> [26, 11, 1]. A manifest with no release (or an unreadable
+// one) gives NaNs, which hold every release-gated post back.
+const parts = (r: string) => r.split('.').map(Number);
+const shippedRelease = parts(manifest.release ?? '');
+
+/** Whether the published release is `want` or later, part by part:
+    26.11.1 is past 26.9.1, though it sorts before it as text. */
+function shipped(want: string): boolean {
+  const w = parts(want);
+  for (let i = 0; i < w.length; i++) {
+    const have = shippedRelease[i];
+    if (!(have >= w[i])) return false; // false for NaN too
+    if (have > w[i]) return true;
+  }
+  return true;
+}
+
+const live = (p: Post) =>
+  (p.data.base === undefined || shippedBase >= p.data.base) &&
+  (p.data.release === undefined || shipped(p.data.release));
 
 /** Every live post, newest first. */
 export async function posts(): Promise<Post[]> {
