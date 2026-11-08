@@ -1,174 +1,62 @@
 {
-  "generated": "2026-11-07T03:19:52Z",
+  "generated": "2026-11-08T03:17:39Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:8bfb499031c2c2cbd979a323b6a4f76fffff8dddc087a9acf1bd8c408e238be0",
-    "digest": "sha256:8bfb499031c2c2cbd979a323b6a4f76fffff8dddc087a9acf1bd8c408e238be0"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:0865e62a3c93dcd225c6ce6b3f2a039b1a1b901cd20ff526293d2e640b45eda9",
     "digest": "sha256:0865e62a3c93dcd225c6ce6b3f2a039b1a1b901cd20ff526293d2e640b45eda9"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:06b0d1915240d58290cb5835c2f59b609993fae7a85fe5e5000f7348e4276d5f",
+    "digest": "sha256:06b0d1915240d58290cb5835c2f59b609993fae7a85fe5e5000f7348e4276d5f"
+  },
   "summary": {
-    "added": 2,
+    "added": 1,
     "removed": 0,
-    "upgraded": 24,
+    "upgraded": 6,
     "downgraded": 0,
     "changed": 0
   },
   "added": [
     {
-      "name": "fuse",
-      "version": "2.9.9-26.fc45"
-    },
-    {
-      "name": "fuse-libs",
-      "version": "2.9.9-26.fc45"
+      "name": "icu-tzdata",
+      "version": "2026f-1.fc45"
     }
   ],
   "removed": [],
   "changed": [
     {
-      "name": "SDL3",
-      "from": "3.4.18-1.fc45",
-      "to": "3.4.20-1.fc45",
+      "name": "gnome-software",
+      "from": "51.0-1.fc45",
+      "to": "51.1-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "criu",
-      "from": "4.2.1-2.fc45",
-      "to": "4.3-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "criu-libs",
-      "from": "4.2.1-2.fc45",
-      "to": "4.3-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "dnf5",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "dnf5-plugins",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "dnf5daemon-server",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "dnf5daemon-server-polkit",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox",
-      "from": "159.0-1.fc45",
-      "to": "159.0.1-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "firefox-langpacks",
-      "from": "159.0-1.fc45",
-      "to": "159.0.1-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "freerdp-libs",
-      "from": "2:3.32.2-1.fc45",
-      "to": "2:3.33.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libaom",
-      "from": "3.15.2-1.fc45",
-      "to": "3.15.3-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libcamera",
-      "from": "0.7.2-3.fc45",
-      "to": "0.7.2-5.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libcamera-ipa",
-      "from": "0.7.2-3.fc45",
-      "to": "0.7.2-5.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-cli",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-appstream",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-expired-pgp-keys",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libdnf5-plugin-systemd-inhibit",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libicu",
-      "from": "78.3-8.fc45",
-      "to": "78.3-9.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "librepo",
-      "from": "1.21.2-2.fc45",
-      "to": "1.22.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libwinpr",
-      "from": "2:3.32.2-1.fc45",
-      "to": "2:3.33.0-1.fc45",
+      "name": "gnome-software-rpm-ostree",
+      "from": "51.0-1.fc45",
+      "to": "51.1-1.fc45",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.11.2-1",
-      "to": "2026.11.3-1",
+      "from": "2026.11.3-1",
+      "to": "2026.11.4-1",
       "direction": "upgraded"
     },
     {
-      "name": "python3-dbus",
-      "from": "1.5.0-1.fc45",
-      "to": "1.5.1-1.fc45",
+      "name": "python3-boto3",
+      "from": "1.43.116-1.fc45",
+      "to": "1.43.124-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "python3-libdnf5",
-      "from": "5.4.6.0-3.fc45",
-      "to": "5.4.7.0-1.fc45",
+      "name": "python3-botocore",
+      "from": "1.43.116-1.fc45",
+      "to": "1.43.124-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "tzdata",
+      "from": "2026e-1.fc45",
+      "to": "2026f-1.fc45",
       "direction": "upgraded"
     }
   ]
