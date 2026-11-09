@@ -66,6 +66,10 @@ const TOC = [
   <p>Check an image’s signature and its log entry:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
   <p>
+    Images and ISOs from before November 9, 2026 were signed with an earlier key, kept as{' '}
+    <a href={`${REPO}/blob/main/keys/cosign-before-2026-11-09.pub`}><code>keys/cosign-before-2026-11-09.pub</code></a>.
+  </p>
+  <p>
     On a Pulsar machine, <code>pulsar verify</code> prints the same check for the exact image you
     booted, by digest, and runs it if <code>cosign</code> is installed.
   </p>

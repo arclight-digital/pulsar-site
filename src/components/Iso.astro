@@ -2,7 +2,7 @@
 // The install doc's fresh-install section: the weekly installers, and how
 // to check one. One column: it lives in the docs' reading column.
 import DownloadRow from './DownloadRow.astro';
-import { COSIGN_PUB, ISOS } from '../data/site';
+import { COSIGN_PUB, ISOS, REPO } from '../data/site';
 
 const SUMS = ['sha256', 'sha256.sig', 'json'];
 
@@ -63,7 +63,9 @@ const shown = [
       <p class="hint">
         The public half is published next to the ISOs and committed to the repo as{' '}
         <code>keys/cosign.pub</code>. Every signature is checked against the committed copy before
-        anything is published.
+        anything is published. ISOs published before November 9, 2026 were signed with an earlier
+        key, kept as{' '}
+        <a href={`${REPO}/blob/main/keys/cosign-before-2026-11-09.pub`}><code>keys/cosign-before-2026-11-09.pub</code></a>.
       </p>
       <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
     </div>
