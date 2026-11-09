@@ -223,8 +223,8 @@ const TOC = [
     installing: <a href="/docs/install#secure-boot">steps</a>.
   </p>
   <p>
-    The installer asks which disk and layout and changes nothing until you confirm. On a laptop,
-    turn on disk encryption at the disk step.
+    The installer writes nothing until you press the button on its last page. Disk encryption is on
+    by default; on a laptop, leave it on.
   </p>
   <arc-alert variant="info" heading="Clock in the wrong time zone?">
     The installer sets UTC. Settings → <strong>System → Date &amp; Time</strong>: turn on automatic
@@ -236,17 +236,19 @@ const TOC = [
   <ol>
     <li>
       <strong>Make room.</strong> Disk Management → right-click C: → <strong>Shrink Volume</strong>.
-      100&nbsp;GB or more for games. Leave it unallocated.
+      Pulsar needs 36&nbsp;GB; give it 100&nbsp;GB or more for games. Leave it unallocated.
     </li>
     <li>
       <strong>Turn off Fast Startup</strong> (Control Panel → Power Options → Choose what the power
       buttons do), or the Windows drive stays locked.
     </li>
     <li>
-      <strong>Have the BitLocker key</strong> from <a href="#backup">Before you start</a>.
+      <strong>Turn off BitLocker</strong> and let it finish decrypting. The installer won’t install
+      beside a drive that has it on.
     </li>
     <li>
-      <strong>In the installer, pick the free space.</strong> Leave the Windows partitions alone.
+      <strong>In the installer, pick the disk, then Install alongside Windows.</strong> Windows’
+      partitions and boot files stay as they are, and Windows goes in the startup menu.
     </li>
   </ol>
   <p>

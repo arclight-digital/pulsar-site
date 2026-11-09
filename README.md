@@ -28,67 +28,85 @@ npm run build:checked   # build, then check every page's title, description and 
 
 ## What comes from the OS repo
 
-The site and the OS must not drift apart, so the site never keeps its own
-copies of the OS's files. The marks, fonts, wallpaper shaders and docs it
-uses live in `upstream/`. After each nightly it publishes, the OS repo's
-`scripts/publish.sh` replaces them. The same commit updates
-`src/data/changelog.json` and `src/data/manifest.json` with that night's
-build. The site therefore never documents a feature before the image that
-has it.
+The site keeps no copies of the OS's files. The marks, fonts, wallpaper
+shaders and docs it uses are in `upstream/`, and the OS repo's
+`scripts/publish.sh` replaces them after each nightly it publishes. The same
+commit writes that night's `src/data/changelog.json` and
+`src/data/manifest.json`. A feature shows up on the site in the same commit
+as the image that has it, and never a night early.
 
-- `upstream.list` names every file the site takes. Edit it here.
-- Never edit `upstream/` by hand. Fix the file in the OS repo, and it
-  arrives with the next published image.
-- `src/data/changelog.json` and `src/data/manifest.json` belong to the
-  nightly the same way.
-- The docs under `/docs` are the OS repo's `docs/*.md` plus the pages in
-  `src/pages/docs/`. A repo doc appears in the sidebar once a nightly has
-  shipped it.
+`upstream.list` names every file the site takes. Edit it here. Don't edit `upstream/`, `changelog.json` or
+`manifest.json` by hand: fix the file in the OS repo and it arrives with the
+next published image.
+
+The docs under `/docs` are the OS repo's `docs/*.md` plus the pages in
+`src/pages/docs/`. A repo doc is in the sidebar once a nightly has shipped it.
 
 ## How a page is built
 
-- **Components.** Pages use ARC UI's web components. After the build,
-  `integrations/arc-dsd.mjs` renders each one into declarative shadow DOM,
-  so a page reads correctly before any JavaScript runs. `npm run dev` skips
-  that step, so dev pages flash as they load; `npm run build` is what ships.
-- **Brand lines.** The tagline and the subline live once, in
-  `src/data/site.ts`. The hero, the footer, the share cards and the home
-  page's title and description all read them from there.
-- **Blog.** Posts are Markdown in `src/content/blog/`; the file name is the
-  address (`upgrade-to-fedora-45.md` is `/blog/upgrade-to-fedora-45`), and
-  the frontmatter fields are described in `src/content.config.ts`. A post with `base: 45` stays
-  unpublished until the nightly's manifest says the image is on Fedora 45.
-  A post with a `banner` line is announced above the home page's mark for
-  30 days. The index, the RSS feed (`/blog/rss.xml`), the share cards, the
-  search and the Blog links in the bar and footer all follow the live posts.
-  Every post names its `author`, a key in `src/data/authors.ts`, which holds
-  the name, the bio and the portrait behind the byline and the about page
-  (`/blog/authors/nick`). Portraits are committed in color in
-  `assets-static/authors/` and tinted with the worn theme in CSS.
-- **Share cards.** `src/og/` draws one 1200×630 card per page at build time
-  with satori, from the same lockup, fonts and screenshots as the site.
-  Nothing is committed.
-- **Search.** The palette's index is built with the site
-  (`src/data/search.ts`) and ships as JSON on each page. The browser turns it
-  into results on first use. No service is involved.
-- **Themes.** The theme picker recolors the site with the same palettes the
-  OS ships (`src/data/themes.json`), fitted for contrast in
-  `src/data/sitetheme.ts`.
+Pages use ARC UI's web components. After the build,
+`integrations/arc-dsd.mjs` renders each one into declarative shadow DOM, so a
+page reads correctly before any JavaScript runs. `npm run dev` skips that
+step, which is why dev pages flash as they load.
+
+`npm run build` deletes and re-stages `public/assets` first. A running
+`astro dev` loses track of those files and every `/assets/` URL 404s until
+it's restarted, so stop the dev server before you build.
+
+The tagline and the subline are in `src/data/site.ts`. The hero, the footer,
+the share cards and the home page's title and description all read them from
+there.
+
+### Blog
+
+Posts are Markdown in `src/content/blog/`. The file name is the address
+(`upgrade-to-fedora-45.md` is `/blog/upgrade-to-fedora-45`), and
+`src/content.config.ts` describes the frontmatter. Two fields hold a post
+back:
+
+- `base: 45` keeps it unpublished until the nightly's manifest says the image
+  is on Fedora 45.
+- `release: 26.11.1` waits for an image that carries that release or a later
+  one.
+
+A `banner` line goes above the home page's mark for 30 days
+(`BANNER_DAYS` in `src/data/blog.ts`). The index, `/blog/rss.xml`, the share
+cards, search and the Blog links only ever list live posts.
+
+`author` is a key in `src/data/authors.ts`, which has the name, bio and
+portrait for the byline and the about page (`/blog/authors/nick`). Portraits
+are committed in color in `assets-static/authors/`; CSS tints them to the
+current theme.
+
+A live post's slug is a URL people have shared. Renaming one needs a 301 in
+`public/_redirects`, plus the old path in `redirects` and `MOVED` in
+`astro.config.mjs`.
+
+### The rest
+
+- `src/og/` draws a 1200×630 share card for every page at build time with
+  satori, from the site's own lockup, fonts and screenshots. None of the
+  cards are committed.
+- The search index is built with the site (`src/data/search.ts`) and ships
+  as JSON on each page; the browser builds results from it on first use.
+- The theme picker recolors the site with the OS's palettes
+  (`src/data/themes.json`), adjusted for contrast in `src/data/sitetheme.ts`.
 
 ## Checks the build runs
 
-- `integrations/security-headers.mjs` writes `dist/_headers`, including a
-  Content-Security-Policy that names the hash of every inline script.
-- `integrations/no-notes.mjs` fails the build if an HTML comment longer
-  than a few words would reach visitors. Keep notes in `{/* */}` or `//`
-  comments, which Astro drops.
+- `integrations/security-headers.mjs` writes `dist/_headers`, with a
+  Content-Security-Policy that lists the hash of every inline script.
+- `integrations/no-notes.mjs` fails the build if an HTML comment longer than
+  a few words would reach visitors. Put notes in `{/* */}` or `//` comments,
+  which Astro drops.
 - The share-card renderer fails the build if a card's text is too small to
-  read or doesn't fit.
-- `npm run seo` checks every page's title length, description length, `h1`
-  and structured data.
+  read or overflows.
+- `npm run seo` checks each page's title and description length, its `h1` and
+  its structured data. It also reports the `/install.html`-style redirect
+  stubs, which have none of those, so a clean run isn't zero failures yet.
 
 ## Deploying
 
 Cloudflare's git integration builds `main` and serves `dist/` as static
-assets (`wrangler.jsonc`). Pages are cached with revalidation, so a deploy is
-live at once. There is nothing to run by hand.
+assets (`wrangler.jsonc`). Pages are cached with revalidation, so a deploy
+goes live as soon as it finishes.

@@ -30,8 +30,8 @@ const DOWNLOADS = [
 
 const STOPS = [
   { i: 'usb', t: 'Write the ISO to a USB stick', d: '8 GB or bigger. GNOME Disks can write it, or Fedora Media Writer on Windows and macOS.' },
-  { i: 'hard-drives', t: 'Boot it and install', d: 'You pick the disk and layout. Nothing is written until you confirm.' },
-  { i: 'sign-in', t: 'Log in', d: 'Pick a theme, and a coding agent if you want one. Apps keep installing in the background for a while after.' },
+  { i: 'hard-drives', t: 'Boot it and install', d: 'Pick a disk, and whether to keep what’s on it. Nothing is written until the last page.' },
+  { i: 'sign-in', t: 'Log in', d: 'Create your account, then pick a theme, and a coding agent if you want one. Apps keep installing in the background for a while.' },
 ];
 
 // Broken after the verb, so the short first line leaves the Copy button its
@@ -125,8 +125,8 @@ const VERIFY = [
         <summary>Can I keep Windows?</summary>
         <div class="fold-body">
           <p>
-            Yes. Shrink the Windows partition to make room and install Pulsar next to it. The boot menu
-            asks which one to start.
+            Yes. Shrink Windows to free at least 36&nbsp;GB and the installer puts Pulsar beside it. The
+            boot menu asks which one to start.
           </p>
           <p class="hint"><a href="/docs/coming-from#dual-boot">Making room, step by step →</a></p>
         </div>

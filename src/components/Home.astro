@@ -105,8 +105,9 @@ const MODES = [
             gamescale
           </h3>
           <p class="gs-p">
-            With GNOME’s fractional scaling on, a lot of games get the wrong resolution and look soft. gamescale
-            drops the display to 100% while the game runs and puts your scaling back when it quits.
+            Your screen has 2560×1600 pixels, but at 133% scaling, GNOME treats it as 1920×1200. Games render at
+            twice that, 3840×2400, and get shrunk to fit. gamescale sets scaling to 100% while a game runs,
+            so it renders at the real 2560×1600, and puts it back when the game quits.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="Steam launch options" code="gamescale %command%"></arc-code-block>
           <p class="more"><a href="/docs/gamescale">How gamescale works →</a></p>
