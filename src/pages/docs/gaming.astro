@@ -110,15 +110,15 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="launch options" code={LAUNCH}></arc-code-block>
   <p>
-    The Steam Flatpak needs no setup. At every boot <code>pulsar-steam-grants.service</code> lets
-    Steam’s sandbox run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so they
+    The Steam and Faugus Flatpaks need no setup. At every boot <code>pulsar-steam-grants.service</code>
+    lets their sandboxes run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so they
     update with the image.
   </p>
   <p>
     Other Flatpak launchers need <code>pulsar setup gamescale --platform &lt;name&gt;</code> once. It
     puts <code>gg</code> and <code>ggm</code> in <code>~/.local/bin</code> beside gamescale, and
     leaves alone any <code>gg</code> or <code>ggm</code> of your own already there. If you ran it for
-    Steam on an older image, run <code>pulsar setup gamescale</code> again: it points Steam at the
+    Steam or Faugus on an older image, run <code>pulsar setup gamescale</code> again: it points them at the
     image’s copies and removes old copies that match them.
   </p>
 
@@ -150,8 +150,10 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    The scheduler is <code>scx_bpfland</code> where the kernel can load it (it places threads better
-    on hybrid P/E-core CPUs). Otherwise stock EEVDF runs and <code>pulsar doctor</code> says so.
+    The scheduler is the kernel’s own, EEVDF. <code>scx_bpfland</code> shipped as the default until
+    26.11.1, but on hybrid Intel CPUs it kept GNOME Shell on the efficiency cores and animations
+    stuttered. It’s an opt-in now: <code>sudo systemctl enable --now scx.service</code>, and{' '}
+    <code>pulsar doctor</code> tells you whether it attached.
   </p>
 
   <h2 id="nvidia">NVIDIA and Flatpak games</h2>
