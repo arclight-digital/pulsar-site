@@ -41,12 +41,14 @@ const LOOP = [
 
 // gamescale's argument is arithmetic, so it is drawn: on a 2560x1600 laptop
 // at 133%, each row's box is the size an X11 game renders at, against the
-// screen's outline. Too small gets stretched, too big gets shrunk.
+// screen's outline. Too small gets stretched, too big gets shrunk. That
+// laptop is the example the page is built with; the script after the figure
+// swaps in the visitor's own screen when it can tell what that is.
 const SCREEN = 2560;
 const MODES = [
-  { what: 'GNOME default', res: [1920, 1200], you: 'Stretched to fit, blurry' },
-  { what: 'GNOME, XWayland native scaling', res: [3840, 2400], you: 'Shrunk to fit, 2.25× the GPU work' },
-  { what: 'With gamescale', res: [2560, 1600], you: 'Native, pixel for pixel', native: true },
+  { key: 'small', what: 'XWayland at 1×', res: [1920, 1200], you: 'Stretched to fit, blurry' },
+  { key: 'big', what: 'GNOME’s default', res: [3840, 2400], you: 'Shrunk to fit, ', cost: 2.25 },
+  { key: 'native', what: 'With gamescale', res: [2560, 1600], you: 'Native, pixel for pixel', native: true },
 ];
 ---
 
@@ -105,16 +107,18 @@ const MODES = [
             gamescale
           </h3>
           <p class="gs-p">
-            Your screen has 2560×1600 pixels, but at 133% scaling, GNOME treats it as 1920×1200. Games render at
-            twice that, 3840×2400, and get shrunk to fit. gamescale sets scaling to 100% while a game runs,
-            so it renders at the real 2560×1600, and puts it back when the game quits.
+            <span data-gs="open">Take a screen with</span> <span data-gs="panel">2560×1600</span> pixels<span data-gs="join">. At</span>
+            <span data-gs="pct">133%</span> scaling, GNOME treats it as <span data-gs="logical">1920×1200</span>.
+            Games render at <span data-gs="times">twice</span> that, <span data-gs="xw">3840×2400</span>, and get
+            shrunk to fit. gamescale sets scaling to 100% while a game runs, so it renders at the real
+            <span data-gs="panel">2560×1600</span>, and puts it back when the game quits.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="Steam launch options" code="gamescale %command%"></arc-code-block>
           <p class="more"><a href="/docs/gamescale">How gamescale works →</a></p>
         </div>
         <figure class="modes">
           <figcaption>
-            <span class="m-cap">A 2560×1600 display at 133% scaling</span>
+            <span class="m-cap"><span data-gs="a">A</span> <span data-gs="panel">2560×1600</span> display at <span data-gs="pct">133%</span> scaling</span>
             <span class="legend">
               <span><i class="key key-screen" aria-hidden="true"></i>Your screen</span>
               <span><i class="key key-render" aria-hidden="true"></i>What the game renders</span>
@@ -125,7 +129,7 @@ const MODES = [
               MODES.map((m, i) => {
                 const k = m.res[0] / SCREEN;
                 return (
-                  <li class={m.native ? 'native' : k < 1 ? 'small' : 'big'} style={`--k:${k};--slot:${Math.max(1, k)};--i:${i}`}>
+                  <li class={m.key} data-gs-row={m.key} style={`--k:${k};--slot:${Math.max(1, k)};--i:${i}`}>
                     <div class="slot" aria-hidden="true">
                       <span class="render" />
                       <span class="screen" />
@@ -133,8 +137,11 @@ const MODES = [
                     </div>
                     <div class="m-x" data-no-widont>
                       <p class="m-what">{m.what}</p>
-                      <p class="m-res mono">{m.res[0]}×{m.res[1]}</p>
-                      <p class="m-you">{m.you}</p>
+                      <p class="m-res mono" data-gs={m.native ? 'panel' : m.key === 'big' ? 'xw' : 'logical'}>{m.res[0]}×{m.res[1]}</p>
+                      <p class="m-you">
+                        {m.you}
+                        {m.cost && <><span data-gs="cost">{m.cost}</span>× the GPU work</>}
+                      </p>
                     </div>
                   </li>
                 );
@@ -142,6 +149,60 @@ const MODES = [
             }
           </ul>
         </figure>
+        {/* Inline, right after the figure, so the swap lands before first
+            paint and before widont joins the last words. */}
+        <script is:inline>
+          (() => {
+            // The visitor's own screen, when the browser tells us honestly.
+            // On Wayland, Firefox and Chrome report the logical size as
+            // screen.width/height and the fractional scale as
+            // devicePixelRatio, so their product is the panel. Kept to the
+            // 2560x1600 example: a whole-number scale (nothing to show), a
+            // panel not on the list below (Chrome's page zoom changes the
+            // ratio but not the size, so it invents panels), or a scale
+            // GNOME doesn't offer (Firefox's zoom scales both, so the panel
+            // comes out right and the scale doesn't).
+            const PANELS = [
+              [1920, 1080], [1920, 1200], [2160, 1440], [2256, 1504], [2400, 1600],
+              [2496, 1664], [2560, 1440], [2560, 1600], [2560, 1664], [2880, 1620],
+              [2880, 1800], [2880, 1864], [2880, 1920], [3000, 2000], [3024, 1964],
+              [3072, 1920], [3200, 1800], [3200, 2000], [3456, 2234], [3840, 2160],
+              [3840, 2400], [5120, 2880], [6016, 3384],
+            ];
+            const lw = screen.width, lh = screen.height, dpr = devicePixelRatio;
+            if (!(lw > lh) || !(dpr > 1.05) || Math.abs(dpr - Math.round(dpr)) < 0.02) return;
+            const panel = PANELS.find(([w, h]) => Math.abs(w - lw * dpr) <= w * 0.01 && Math.abs(h - lh * dpr) <= h * 0.01);
+            if (!panel) return;
+            const [pw, ph] = panel;
+            const s = pw / lw;
+            const SCALES = [1.25, 4 / 3, 1.5, 5 / 3, 1.75, 16 / 9, 2.25, 2.5, 2.75, 3.25, 3.5, 3.75];
+            if (!SCALES.some((x) => Math.abs(x - s) < 0.015)) return;
+            const n = Math.ceil(s);
+            const x = (w, h) => `${w}×${h}`;
+            const cost = Math.round((n / s) ** 2 * 100) / 100;
+            const text = {
+              open: 'Your screen has',
+              join: ', but at',
+              a: 'Your',
+              panel: x(pw, ph),
+              pct: `${Math.round(s * 100)}%`,
+              logical: x(lw, lh),
+              xw: x(lw * n, lh * n),
+              times: n === 2 ? 'twice' : 'three times',
+              cost: String(cost),
+            };
+            for (const el of document.querySelectorAll('#games [data-gs]')) el.textContent = text[el.dataset.gs];
+            const fig = document.querySelector('#games .modes');
+            fig.style.setProperty('--aw', pw);
+            fig.style.setProperty('--ah', ph);
+            fig.style.setProperty('--kmax', Math.max(1.5, n / s));
+            for (const [row, k] of [['small', 1 / s], ['big', n / s], ['native', 1]]) {
+              const li = fig.querySelector(`[data-gs-row="${row}"]`);
+              li.style.setProperty('--k', k);
+              li.style.setProperty('--slot', Math.max(1, k));
+            }
+          })();
+        </script>
       </section>
 
       <section class="chapter" id="rot" aria-labelledby="rot-h">
@@ -285,6 +346,11 @@ const MODES = [
      shrink with the viewport (never past 9rem), so the words keep a column. */
   .modes {
     --fw: clamp(5rem, 22vw, 9rem);
+    /* the screen's shape and the widest render; the inline script resets
+       all three to the visitor's own screen */
+    --aw: 16;
+    --ah: 10;
+    --kmax: 1.5;
     margin: 0;
   }
   .modes figcaption {
@@ -325,7 +391,7 @@ const MODES = [
   }
   .modes li {
     display: grid;
-    grid-template-columns: calc(var(--fw) * 1.5 + var(--space-md)) minmax(0, 1fr);
+    grid-template-columns: calc(var(--fw) * var(--kmax) + var(--space-md)) minmax(0, 1fr);
     gap: var(--space-lg);
     align-items: center;
     padding: var(--space-lg) 0;
@@ -333,7 +399,7 @@ const MODES = [
   }
   .slot {
     position: relative;
-    height: calc(var(--fw) * 10 / 16 * var(--slot));
+    height: calc(var(--fw) * var(--ah) / var(--aw) * var(--slot));
   }
   .screen,
   .render {
@@ -341,7 +407,7 @@ const MODES = [
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    aspect-ratio: 16 / 10;
+    aspect-ratio: var(--aw) / var(--ah);
   }
   .screen {
     width: var(--fw);
