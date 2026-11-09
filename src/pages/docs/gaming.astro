@@ -11,7 +11,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'What Pulsar does for games: the launchers, gamemode set up for two GPUs, ntsync for Proton, kernel tuning, and the NVIDIA driver for Flatpak games.';
+  'Pulsar installs Steam, Heroic and the other launchers on first boot. This page covers gamemode on two-GPU laptops, ntsync, kernel tuning and NVIDIA in Flatpak.';
 
 const DOCTOR = [
   '$ pulsar doctor ntsync gamemode mangohud flatpak-gl',
@@ -48,8 +48,8 @@ const TUNING: [string, string][] = [
   ['kernel.split_lock_mitigate = 0', 'The kernel stalls a process about 10 ms for every split lock, as a deterrent. Several Windows games split-lock constantly and turn into a slideshow under it.'],
   ['vm.max_map_count = 2147483642', 'Proton games with huge address-space appetites exhaust Fedora’s default and crash.'],
   ['transparent_hugepage/defrag = defer+madvise', 'Hugepage defragmentation is deferred to the background instead of stalling the thread that faulted, which may be the one drawing your frame. Only memory a program explicitly asked to be hugepage-backed still waits for it.'],
-  ['vm.compaction_proactiveness = 0', 'No compaction on a timer. Compaction when memory is actually wanted is untouched.'],
-  ['vm.min_free_kbytes = 524288', '512 MB of headroom, so a game that allocates hard gets background reclaim instead of reclaiming mid-frame itself.'],
+  ['vm.compaction_proactiveness = 0', 'Turns off compaction on a timer. The kernel still compacts when memory is actually needed.'],
+  ['vm.min_free_kbytes = 524288', 'Keeps 512 MB free. When a game allocates a lot, the kernel reclaims memory in the background and the game doesn’t have to do it mid-frame.'],
 ];
 
 const JSONLD = [
@@ -83,12 +83,12 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>Gaming</h1>
-  <p class="intro">What’s set up for games, and how to check it.</p>
+  <p class="intro">What the image already does for games. The doctor checks at the bottom show whether it’s all working.</p>
 
   <h2 id="launchers">The launchers</h2>
   <p>
-    Installed from Flathub on the first boot with a network. Ordinary Flatpaks: removed ones stay
-    removed.
+    These install from Flathub on the first boot with a network. They’re ordinary Flatpaks, so one
+    you remove stays removed.
   </p>
   <table>
     <thead><tr><th>App</th><th>Flatpak ID</th></tr></thead>
@@ -99,8 +99,8 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    In the image: gamescope, gamemode, MangoHud, and controller/headset udev rules
-    (<code>steam-devices</code>).
+    The image itself has gamescope, gamemode, MangoHud and the <code>steam-devices</code> udev
+    rules for controllers and headsets.
   </p>
 
   <h2 id="launch-options">Launch options</h2>
@@ -123,17 +123,12 @@ const TOC = [
   </p>
 
   <h2 id="gamemode">gamemode</h2>
-  <p><code>/etc/gamemode.ini</code> differs from the defaults in two ways:</p>
-  <ul>
-    <li>
-      <strong><code>igpu_power_threshold=-1</code>:</strong> stops gamemode dropping the CPU to{' '}
-      <code>powersave</code> mid-game on dual-GPU laptops (it misreads the integrated GPU’s power).
-    </li>
-    <li>
-      <strong><code>renice=10</code>:</strong> needs the <code>gamemode</code> group; the first
-      boot adds every existing account.
-    </li>
-  </ul>
+  <p>
+    <code>/etc/gamemode.ini</code> changes two defaults. <code>igpu_power_threshold=-1</code> stops
+    gamemode dropping the CPU to <code>powersave</code> mid-game on dual-GPU laptops, where it
+    misreads the integrated GPU’s power. <code>renice=10</code> only works for members of the{' '}
+    <code>gamemode</code> group, and the first boot adds every account that exists by then.
+  </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="gamemode" code={GAMEMODE}></arc-code-block>
   <p>
     Group changes apply at your next login; <code>pulsar doctor gamemode</code> tells you if you
@@ -168,8 +163,8 @@ const TOC = [
     </li>
     <li>
       An app started before its extension arrived renders on the integrated GPU (often a black
-      window). Pulsar notifies: <strong>Restart Steam to use the NVIDIA GPU</strong>. Quit Steam
-      fully and reopen it.
+      window). When that happens Pulsar shows <strong>Restart Steam to use the NVIDIA GPU</strong>.
+      Quit Steam completely and open it again.
     </li>
     <li>
       The Steam client’s own window runs with the NVIDIA driver’s vsync off, through a driver

@@ -31,9 +31,9 @@ const shown = [
 
 <div class="iso">
   <p class="lede">
-    A weekly installer ISO for each variant, built from the published image itself: the same
-    Anaconda installer stock Silverblue uses, landing directly in Pulsar.{' '}
-    <span class="sent">Checksummed, and signed with Pulsar's release&nbsp;key.</span>
+    Each variant gets an installer ISO every week, built from the published image. It uses the
+    same Anaconda installer as stock Silverblue and installs Pulsar directly.{' '}
+    <span class="sent">The checksums are signed with Pulsar's release&nbsp;key.</span>
   </p>
 
   <div class="grid">
@@ -43,14 +43,14 @@ const shown = [
         <DownloadRow which="nvidia" file={ISOS.nvidia} sums={SUMS} />
       </ul>
       <p class="hint">
-        Write it to a USB&nbsp;stick with GNOME&nbsp;Disks or <code>dd</code>, boot,&nbsp;install.
-        The <code>.json</code> sidecar records exactly which image digest the installer carries.
+        Write it to a USB&nbsp;stick with GNOME&nbsp;Disks or <code>dd</code> and boot from&nbsp;it.
+        The <code>.json</code> file next to each ISO has the digest of the image it installs.
       </p>
     </div>
 
     <div>
       <p class="cap">
-        <span>Signed with the release key, which never leaves the signing&nbsp;host.</span>
+        <span>The private half of the release key never leaves the signing&nbsp;host.</span>
       </p>
       <arc-code-block
         class="theme-fixed-dark"
@@ -61,9 +61,9 @@ const shown = [
         data-copy={VERIFY}
       ></arc-code-block>
       <p class="hint">
-        The public half of that key is published beside the ISOs and committed to the repo as{' '}
-        <code>keys/cosign.pub</code>; the build verifies every signature against the committed copy
-        before publishing.
+        The public half is published next to the ISOs and committed to the repo as{' '}
+        <code>keys/cosign.pub</code>. Every signature is checked against the committed copy before
+        anything is published.
       </p>
       <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
     </div>

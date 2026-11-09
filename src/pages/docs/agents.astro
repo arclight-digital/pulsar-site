@@ -9,7 +9,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, hand it a crash, give it a local model, and sandbox it to one project.';
+  'How to install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, point one at a crash, run it on a local model, or keep it to one project.';
 
 const LIST = [
   '$ pulsar agent list',
@@ -93,7 +93,7 @@ const TOOLS: [string, string][] = [
   ['update_check', 'whether a newer image is out'],
   ['agent_status', 'the guide, the agents, guard, the pin and the sandbox setting'],
   ['theme_list, theme_current', 'the desktop themes'],
-  ['theme_set', 'the one tool that changes anything: your desktop theme, undone by pulsar theme revert'],
+  ['theme_set', 'sets your desktop theme (pulsar theme revert undoes it). The only tool here that changes anything'],
 ];
 
 const JSONLD = [
@@ -127,8 +127,8 @@ const TOC = [
 >
   <h1>Coding agents</h1>
   <p class="intro">
-    Pulsar ships no agent. Add one and it gets a briefing on this machine, health tools, and an
-    optional sandbox that shows it one project.
+    Pulsar doesn’t come with an agent. When you add one, it gets a briefing on this machine and
+    the health tools, and you can sandbox it so it sees one project.
   </p>
 
   <h2 id="install">Install one</h2>
@@ -138,20 +138,20 @@ const TOC = [
   <p>
     <code>add</code> creates an <code>agents</code> toolbox, installs the agent with its vendor’s npm
     or uv method into <code>~/.local/share/pulsar/agents</code>, and adds a command to{' '}
-    <code>~/.local/bin</code>. No root, nothing layered. An agent you installed yourself is left in
+    <code>~/.local/bin</code>. None of that needs root or layers a package. An agent you installed yourself is left in
     place (listed as <code>native</code>) and still gets the setup below.
   </p>
-  <arc-alert variant="info" heading="The toolbox is for tidiness, not safety">
+  <arc-alert variant="info" heading="The toolbox doesn’t isolate anything">
     It keeps Node, Python and the agent off the host (<code>toolbox rm -f agents</code> removes
-    it all), but shares your home folder and session. For isolation, use{' '}
-    <a href="#sandbox">the sandbox</a>.
+    the lot). It still shares your home folder and your session. If you want the agent walled off,
+    use <a href="#sandbox">the sandbox</a>.
   </arc-alert>
 
   <h2 id="briefing">What it knows about the machine</h2>
   <p>
-    <code>/usr/share/pulsar/AGENTS.md</code> briefs agents on this system: read-only{' '}
-    <code>/usr</code>, toolboxes, Flatpaks, what rollback covers, and what never to do.{' '}
-    <code>pulsar agent guide</code> prints it; any agent can start there.
+    The briefing is <code>/usr/share/pulsar/AGENTS.md</code>. It tells an agent that{' '}
+    <code>/usr</code> is read-only, where toolboxes and Flatpaks fit, what a rollback covers, and
+    what it must never do. <code>pulsar agent guide</code> prints it, so any agent can read it.
   </p>
   <p>
     <code>add</code> also links it into the agent’s own instructions if none exist (Claude Code:{' '}
@@ -167,8 +167,8 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    No tool needs root, and no root command is exposed: update, rollback, checkpoint, guard and pin
-    stay yours. <code>pulsar agent</code> shows the setup:
+    Nothing in it needs root, and there’s no way through it to update, roll back, checkpoint,
+    change the guard or pin. Those are still yours to run. <code>pulsar agent</code> shows how it’s set up:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent" code={STATUS}></arc-code-block>
 
@@ -184,8 +184,8 @@ const TOC = [
   <p>
     A crash notification’s <strong>Ask</strong> button runs <code>pulsar agent ask --crash</code>{' '}
     in a new terminal. The report has the stack trace and logs, never the core file{' '}
-    (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). What the agent reads goes to its
-    provider; clicking is consent.
+    (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). Whatever the agent reads is sent
+    to its provider, so only click it if you’re fine with that.
   </p>
 
   <h2 id="model">A model on your own GPU</h2>
@@ -258,7 +258,8 @@ const TOC = [
     ungated. <code>sudo pulsar agent guard off</code> restores Fedora’s default.
   </p>
   <p>
-    Before a long session: <code>sudo pulsar checkpoint "before the agent"</code>; afterwards{' '}
-    <code>diff</code> and <code>restore</code>. <a href="/docs/updates#checkpoint">Checkpoints</a>.
+    Take a checkpoint before a long session with <code>sudo pulsar checkpoint "before the agent"</code>.
+    Afterwards, <code>diff</code> shows what changed and <code>restore</code> puts it back. More in{' '}
+    <a href="/docs/updates#checkpoint">Checkpoints</a>.
   </p>
 </Docs>

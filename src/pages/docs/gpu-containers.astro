@@ -7,7 +7,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'On Pulsar’s NVIDIA image, any podman container can ask for the GPU by name. Run local models and CUDA work in containers, with nothing layered onto the host.';
+  'On Pulsar’s NVIDIA image a podman container gets the GPU with --device nvidia.com/gpu=all, so CUDA and local models run in containers and nothing is layered.';
 
 const SMOKE = 'podman run --rm --device nvidia.com/gpu=all registry.fedoraproject.org/fedora nvidia-smi';
 
@@ -32,8 +32,8 @@ const DOCTOR = [
 
 const FINDINGS: [string, string][] = [
   ['no CDI spec, so containers cannot be given the GPU', 'sudo systemctl restart nvidia-cdi-refresh.service, then read journalctl -b -u nvidia-cdi-refresh.service'],
-  ['stale CDI spec for driver …', 'Delete the spec it names. It is one somebody wrote by hand into /etc/cdi, and it went stale at the last driver update.'],
-  ['CDI spec matches …, but SELinux blocks containers from the GPU', 'systemctl status pulsar-gpu-containers.service: the unit that turns the boolean on did not run.'],
+  ['stale CDI spec for driver …', 'Delete the spec it names. Someone wrote it into /etc/cdi by hand and it went stale at the last driver update.'],
+  ['CDI spec matches …, but SELinux blocks containers from the GPU', 'The unit that turns the boolean on didn’t run. Look at systemctl status pulsar-gpu-containers.service.'],
 ];
 
 const JSONLD = [
@@ -65,8 +65,8 @@ const TOC = [
 >
   <h1>GPU containers</h1>
   <p class="intro">
-    CUDA and local models run in containers, not on the host. On the NVIDIA image a container can
-    request the GPU by name.
+    Run CUDA and local models in a container. On the NVIDIA image, podman can give a container the
+    GPU by name.
   </p>
 
   <h2 id="run">Give a container the GPU</h2>
@@ -75,8 +75,8 @@ const TOC = [
   <p>For example, ollama:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="ollama" code={OLLAMA}></arc-code-block>
   <p>
-    The image provides the driver and <code>libcuda</code>; the container brings the CUDA runtime.
-    As a <a href="/docs/where-things-go#services">quadlet</a>:
+    The driver and <code>libcuda</code> come from the image, and the container brings its own CUDA
+    runtime. The same thing as a <a href="/docs/where-things-go#services">quadlet</a>:
   </p>
   <arc-code-block class="theme-fixed-dark" filename="~/.config/containers/systemd/ollama.container" code={QUADLET}></arc-code-block>
   <p class="hint">NVIDIA image only. On the standard image, pass <code>/dev/dri</code> for Vulkan.</p>
@@ -84,16 +84,16 @@ const TOC = [
   <h2 id="how">What makes it work</h2>
   <p>
     Podman uses CDI specs, which map <code>nvidia.com/gpu=all</code> to device nodes and driver
-    libraries. Two units maintain it:
+    libraries. Two units keep that working:
   </p>
   <ul>
     <li>
-      <strong><code>nvidia-cdi-refresh.service</code></strong> writes the spec for the running
-      driver to <code>/var/run/cdi/nvidia.yaml</code> each boot (cleared at shutdown, so never
-      stale).
+      <code>nvidia-cdi-refresh.service</code> writes the spec for the running driver to{' '}
+      <code>/var/run/cdi/nvidia.yaml</code> at each boot. The file is cleared at shutdown, so it
+      can’t go stale.
     </li>
     <li>
-      <strong><code>pulsar-gpu-containers.service</code></strong> enables the SELinux boolean{' '}
+      <code>pulsar-gpu-containers.service</code> turns on the SELinux boolean{' '}
       <code>container_use_xserver_devices</code> each boot. Without it, <code>nvidia-smi</code> fails
       with “Failed to initialize NVML: Insufficient Permissions”. It only affects containers given
       a GPU with <code>--device</code>.
@@ -122,7 +122,7 @@ const TOC = [
   <h2 id="models">A model for your agents</h2>
   <p>
     <code>pulsar agent model on</code> runs llama.cpp’s server as a rootless quadlet (CUDA, Vulkan
-    or CPU) on <code>127.0.0.1</code> behind a key, for opencode and aider.{' '}
+    or CPU) on <code>127.0.0.1</code> behind a key, for opencode and aider. See{' '}
     <a href="/docs/agents#model">Coding agents</a>.
   </p>
 </Docs>

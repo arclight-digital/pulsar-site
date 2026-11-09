@@ -12,7 +12,7 @@ const DOWNLOADS = [
     key: 'standard',
     icon: 'laptop',
     name: 'Intel or AMD',
-    who: 'Most laptops and desktops.\nNot sure what’s inside yours? Start here.',
+    who: 'Most laptops and desktops.\nIf you don’t know what’s in yours, it’s this one.',
     button: 'Download for Intel or AMD',
     file: ISOS.vanilla,
     note: null,
@@ -21,17 +21,17 @@ const DOWNLOADS = [
     key: 'nvidia',
     icon: 'graphics-card',
     name: 'NVIDIA GeForce',
-    who: 'RTX cards, with the driver built in.',
+    who: 'RTX cards. The NVIDIA driver is in the image.',
     button: 'Download for NVIDIA',
     file: ISOS.nvidia,
-    note: 'With Secure Boot on, you’ll enroll one key after installing.',
+    note: 'If Secure Boot is on, there’s a key to enroll after installing.',
   },
 ];
 
 const STOPS = [
-  { i: 'usb', t: 'Write the ISO to a USB stick', d: 'Any stick of 8 GB or more. GNOME Disks does it, or Fedora Media Writer on Windows and macOS.' },
-  { i: 'hard-drives', t: 'Boot it and install', d: 'You pick the disk and the layout. The installer asks before it changes anything.' },
-  { i: 'sign-in', t: 'Log in', d: 'Choose a theme and, if you want one, a coding agent. Your apps finish installing in the background.' },
+  { i: 'usb', t: 'Write the ISO to a USB stick', d: '8 GB or bigger. GNOME Disks can write it, or Fedora Media Writer on Windows and macOS.' },
+  { i: 'hard-drives', t: 'Boot it and install', d: 'You pick the disk and layout. Nothing is written until you confirm.' },
+  { i: 'sign-in', t: 'Log in', d: 'Pick a theme, and a coding agent if you want one. Apps keep installing in the background for a while after.' },
 ];
 
 // Broken after the verb, so the short first line leaves the Copy button its
@@ -53,10 +53,9 @@ const VERIFY = [
     <div class="stage-head">
       <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Download Pulsar</h2>
       <p class="stage-sub">
-        Pulsar is free, today and always, and its source is open under the MIT license. Choose the download
-        that matches your system, write it to any USB stick of 8&nbsp;GB or more, and you’re one
-        restart away from your new desktop. The installer ISO is refreshed weekly; once installed,
-        Pulsar updates from the nightly build.
+        Pulsar is free and MIT-licensed. There are two ISOs, one for Intel or AMD graphics and one
+        with the NVIDIA driver. The ISO is rebuilt once a week; after you install, updates come from the nightly
+        build.
       </p>
     </div>
     <div class="doors">
@@ -102,12 +101,12 @@ const VERIFY = [
   <section class="faq" aria-labelledby="faq-h">
     <div class="faq-head">
       <h3 id="faq-h">Questions</h3>
-      <p>Before you install, and the two things only some computers need.</p>
+      <p>The last two only matter on some machines.</p>
       <a class="from" href="/docs/coming-from">
         <arc-icon name="arrows-left-right" size="md" aria-hidden="true"></arc-icon>
         <span>
           <strong>Coming from Windows or a Mac?</strong>
-          <span class="from-d">Check your computer can run it, make the stick, and keep Windows alongside.</span>
+          <span class="from-d">Whether your computer can run it, and how to keep Windows next to it.</span>
         </span>
         <span class="from-go" aria-hidden="true">→</span>
       </a>
@@ -117,8 +116,8 @@ const VERIFY = [
         <summary>Is it really free?</summary>
         <div class="fold-body">
           <p>
-            Yes, always. No account, no subscription, no trial, and nothing held back for a paid
-            version. Pulsar is open source, and every nightly build is public.
+            Yes. There’s no account to make and no paid edition. The source is MIT-licensed and every
+            nightly build is public.
           </p>
         </div>
       </details>
@@ -126,8 +125,8 @@ const VERIFY = [
         <summary>Can I keep Windows?</summary>
         <div class="fold-body">
           <p>
-            Yes. Shrink Windows to make room, install Pulsar beside it, and choose one each time you
-            turn the computer on.
+            Yes. Shrink the Windows partition to make room and install Pulsar next to it. The boot menu
+            asks which one to start.
           </p>
           <p class="hint"><a href="/docs/coming-from#dual-boot">Making room, step by step →</a></p>
         </div>
@@ -136,8 +135,9 @@ const VERIFY = [
         <summary>How do updates work?</summary>
         <div class="fold-body">
           <p>
-            A new build is made every night, downloads in the background, and is used from your next
-            restart. Nothing restarts on its own, and the build you had stays in the boot menu.
+            There’s a new build every night. Pulsar downloads it in the background and switches to it
+            the next time you restart; it never restarts the computer itself. The build you had stays
+            in the boot menu.
           </p>
           <p class="hint"><a href="/docs/updates">How updates work →</a></p>
         </div>
@@ -146,9 +146,9 @@ const VERIFY = [
         <summary>What if an update goes wrong?</summary>
         <div class="fold-body">
           <p>
-            Choose the previous build in the boot menu, or run <code>sudo pulsar rollback</code>. If a
-            new build fails its health checks while it starts, Pulsar goes back to the last good one
-            by itself. Your files and apps stay as they are either way.
+            Pick the previous build in the boot menu, or run <code>sudo pulsar rollback</code>. A build
+            that fails its health checks at boot is rolled back automatically. Rollback only changes the
+            OS, so your files and apps aren’t touched.
           </p>
           <p class="hint"><a href="/docs/updates#rollback">Rolling back →</a></p>
         </div>
@@ -157,14 +157,13 @@ const VERIFY = [
         <summary>Will my games run?</summary>
         <div class="fold-body">
           <p>
-            Most will. Steam and Heroic come with it and finish installing in the background after your
-            first login, with Proton, gamemode, and on the NVIDIA image the driver for Flatpak games
-            already set up.
+            Most will. Steam and Heroic install in the background after your first login. Proton and
+            gamemode are already set up, and the NVIDIA image has the driver Flatpak games need.
           </p>
           <p>
-            Some online games use anti-cheat that refuses to run on Linux at
-            all. That is the publisher’s choice, and no Linux system can get around it. Check the games
-            you play on <a href="https://areweanticheatyet.com">Are We Anti-Cheat Yet?</a> and
+            Some online games won’t start on Linux at all because their anti-cheat blocks it. The
+            publisher decides that, and no distro can get around it. Look your games up on
+            <a href="https://areweanticheatyet.com">Are We Anti-Cheat Yet?</a> and
             <a href="https://www.protondb.com">ProtonDB</a> before you switch.
           </p>
           <p class="hint"><a href="/docs/gaming">What’s set up for games →</a></p>
@@ -174,17 +173,18 @@ const VERIFY = [
         <summary>I have NVIDIA and Secure Boot on. What do I do?</summary>
         <div class="fold-body">
           <p>
-            Enroll Pulsar’s driver key once, and Secure Boot stays on. Either way works:
+            You enroll Pulsar’s driver key once and leave Secure Boot on. There are two ways to do it.
           </p>
           <p>
-            <strong>Right away.</strong> Run this, choose a one-time password, and restart. A blue screen
-            asks you to <arc-kbd>Enroll MOK</arc-kbd> and for that password. The NVIDIA driver loads from
-            then on.
+            <strong>From a terminal.</strong> Run this and set a one-time password when it asks. After the
+            restart a blue screen comes up: pick <arc-kbd>Enroll MOK</arc-kbd> and type the password. The
+            NVIDIA driver loads from then on.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="enroll the key" code={ENROL}></arc-code-block>
           <p>
-            <strong>Or just log in.</strong> The desktop starts on the open-source driver, and a moment later
-            GNOME Software offers to enroll the key. Follow its prompts, restart, and you’re on NVIDIA.
+            <strong>From GNOME Software.</strong> Until the key is enrolled the desktop runs on the
+            open-source driver, and GNOME Software asks to enroll it shortly after you log in. Follow its
+            prompts and restart.
           </p>
           <p class="hint"><a href="/docs/install#secure-boot">Every screen, step by step →</a></p>
         </div>
@@ -193,8 +193,8 @@ const VERIFY = [
         <summary>How do I check the download is really yours?</summary>
         <div class="fold-body">
           <p>
-            Each ISO’s checksum is signed with Pulsar’s release key. This checks the signature, then
-            the ISO against the checksum.
+            Each ISO’s checksum file is signed with Pulsar’s release key. This checks the signature
+            first, then the ISO against the checksum.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
           <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
@@ -207,8 +207,8 @@ const VERIFY = [
     <div class="switch-copy">
       <h3>Already on Silverblue or Kinoite?</h3>
       <p>
-        Switch in place with one command and a restart. Your files, apps and settings are kept, and
-        the system you had is still in the boot menu.
+        You can switch in place with <code>bootc switch</code> and one restart. Files, apps and
+        settings carry over, and the old system stays in the boot menu.
       </p>
     </div>
     <div class="switch-cmds">
@@ -219,7 +219,7 @@ const VERIFY = [
 
   <aside class="learn" aria-label="Documentation">
     <arc-icon name="book-open" size="md" aria-hidden="true"></arc-icon>
-    <p><strong>Looking to learn more?</strong> Install, themes, updates, agents: every detail is in the docs.</p>
+    <p>The <strong>docs</strong> go further on installing, themes, updates and agents.</p>
     <arc-button href="/docs" variant="secondary" size="sm">Read the docs</arc-button>
   </aside>
 </section>

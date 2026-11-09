@@ -45,30 +45,27 @@ const TOC = [
 >
   <h1>Install</h1>
   <p class="intro">
-    A new machine: one download and a USB stick. A machine on Silverblue, Kinoite or another atomic
-    Fedora: one command.
+    On a new machine you need the ISO and a USB stick. If you’re already on Silverblue, Kinoite or
+    another atomic Fedora, it’s one command.
   </p>
 
   <h2 id="iso">A fresh install</h2>
   <Iso />
   <p class="hint">
-    From Windows or a Mac, and keeping Windows: <a href="/docs/coming-from">From Windows or macOS</a>.
+    Dual-booting with Windows, or coming from a Mac: see <a href="/docs/coming-from">From Windows or macOS</a>.
   </p>
   <p>Boot from the stick and start the installer.</p>
   <ul>
+    <li>You pick the disk and the partitioning. Nothing is erased until you confirm, but back up first.</li>
     <li>
-      <strong>You choose the disk and partitioning.</strong> Nothing is erased until you confirm;
-      back up first.
+      Set up your account and Wi-Fi in the installer’s accounts step, or in GNOME’s setup on the
+      first boot.
     </li>
-    <li>
-      <strong>Account and Wi-Fi:</strong> the installer’s accounts step, or GNOME’s setup on first
-      boot.
-    </li>
-    <li>It waits on its last screen. Remove the stick and restart.</li>
+    <li>When it finishes it waits on its last screen. Remove the stick and restart.</li>
   </ul>
-  <arc-alert variant="warning" heading="Use the current ISO, not an old download">
+  <arc-alert variant="warning" heading="ISOs from before August 17 erase disks without asking">
     ISOs published before August 17, 2026 erased every disk they could see (under Ventoy, the stick too)
-    without asking. The <code>-latest</code> links above are always the current, safe build.
+    without asking. The <code>-latest</code> links above always point at the current build, which asks.
   </arc-alert>
 
   <h2 id="secure-boot">NVIDIA: enroll the key, once</h2>
@@ -77,10 +74,10 @@ const TOC = [
     once, through MokManager on the next boot. The standard image doesn’t need this.
   </p>
   <p>
-    Two ways to get there. Enroll it right away with the steps below, and the NVIDIA driver loads
-    from the next boot. Or just log in: until the key is enrolled the desktop runs on the
-    open-source driver, and a moment after you log in GNOME Software offers to enroll the key
-    for you. Follow its prompts, restart, answer MokManager as in step 2, and you’re on NVIDIA.
+    You can enroll it now with the steps below, and the NVIDIA driver loads from the next boot. Or
+    log in first: the desktop runs on the open-source driver until the key is enrolled, and shortly
+    after login GNOME Software offers to enroll it. Follow its prompts, restart, and answer
+    MokManager as in step 2.
   </p>
   <ol class="steps">
     <li>
@@ -99,11 +96,11 @@ const TOC = [
           </>
         ))}
       </p>
-      <p class="hint">Missed it? Nothing breaks; run the import again.</p>
+      <p class="hint">If you miss the screen, run the import again.</p>
     </li>
     <li>
-      <h3>Switching, not installing? Take the NVIDIA image</h3>
-      <p>Installed from the NVIDIA ISO? Skip this. Otherwise, once the key is in:</p>
+      <h3>If you switched, move to the NVIDIA image</h3>
+      <p>Skip this if you installed from the NVIDIA ISO. Otherwise, once the key is in:</p>
       <arc-code-block class="theme-fixed-dark" language="bash" filename="switch" code={TAKE}></arc-code-block>
     </li>
     <li>
@@ -112,7 +109,7 @@ const TOC = [
     </li>
   </ol>
 
-  <arc-alert variant="warning" heading="Lost the key later?">
+  <arc-alert variant="warning" heading="If the key gets cleared">
     A BIOS update can clear the MOK list. Accept GNOME Software’s Secure Boot prompt: it enrolls{' '}
     <code>/etc/pki/akmods/certs/public_key.der</code>, which Pulsar keeps identical to{' '}
     <code>MOK.der</code>. Or run the import above again.
@@ -132,9 +129,9 @@ const TOC = [
 
   <h2 id="first-login">When you log in</h2>
   <p>
-    New accounts start in Pulsar’s theme with a welcome window: pick a look, learn the basics,
-    optionally add a coding agent. Reopen it from <strong>Welcome to Pulsar</strong> in the app
-    grid. A customized account you switched keeps its look.
+    New accounts start in Pulsar’s theme, and a welcome window opens. It goes over the basics and
+    lets you pick a look or add a coding agent. To reopen it, find <strong>Welcome to Pulsar</strong>
+    in the app grid. A customized account you switched keeps its look.
   </p>
   <p>
     Default apps (Steam, Heroic, video and music players, the GNOME set and more) install on the

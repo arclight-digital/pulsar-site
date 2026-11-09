@@ -8,17 +8,17 @@
 // (rollback covers the system, never the home folder) is linked, not buried.
 
 const CAN = [
-  'Read crash reports and logs',
-  'Check system health and updates',
-  'Create and apply themes',
+  'Read a crash report and the journal around it',
+  'Run pulsar doctor, or check for an update',
+  'Make a theme and switch to it',
   'Use a local model on your GPU',
 ];
 
 const CANT = [
-  'Modify the read-only system image',
+  'Write to /usr: the image is read-only',
   'Install system packages without your password (guard on)',
   'Read files outside the project (sandbox on)',
-  'Change system config without a record (checkpoint taken)',
+  'Edit /etc with no snapshot to go back to (checkpoint taken)',
 ];
 ---
 
@@ -27,9 +27,9 @@ const CANT = [
     <div>
       <h2 id="agents-h">Coding agents, if you want them</h2>
       <p class="lede">
-        Pick Claude Code, Codex, Gemini CLI, opencode or aider at first login, or skip it and nothing
-        gets installed. The ones you pick know how Pulsar works, and a sandbox keeps them to one
-        project.
+        At first login you can pick Claude Code, Codex, Gemini CLI, opencode or aider. Skip the step
+        and none of them get installed. Whichever you pick reads Pulsar’s agent guide, and can run in a
+        sandbox that only sees one project.
       </p>
     </div>
 
@@ -62,7 +62,7 @@ const CANT = [
     </div>
   </div>
   <p class="hint">
-    Rollback restores the system, not your home folder. Keep backups.
+    Rollback covers the OS image. Your home folder isn’t part of it, so keep backups.
     {' '}<a href="/docs/agents-safety">What an agent can access&nbsp;→</a>
   </p>
 </section>

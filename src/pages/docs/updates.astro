@@ -9,7 +9,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, BUILD_STATUS, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'How Pulsar updates: new builds download in the background and wait for your next restart, or one click on the notification does it. Then the ways back: rollback, pinning, and checkpoints for /etc and your settings.';
+  'Pulsar downloads each night’s build in the background and boots it at your next restart. The ways back: rollback, pins, and checkpoints for /etc and your settings.';
 
 const CHECK = [
   '$ pulsar update --check',
@@ -111,9 +111,9 @@ const TOC = [
 >
   <h1>Updates and rollback</h1>
   <p class="intro">
-    A new image is built every night, downloaded in the background, and used from your next restart.
-    The previous one stays in the boot menu. Nothing restarts on its own.
-    Each night's build is public while it runs, at <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
+    Pulsar builds a new image every night. Your machine downloads it in the background and boots it
+    the next time you restart. It never restarts by itself. The previous image stays in the boot
+    menu. You can watch each night’s build run at <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
   </p>
 
   <h2 id="notice">How you hear about one</h2>
@@ -195,21 +195,21 @@ const TOC = [
 
   <h2 id="checkpoint">Checkpoints</h2>
   <p>
-    Rollback covers the OS image, not <code>/etc</code> or your home folder. A checkpoint covers
-    both. Take one before a risky session:
+    Rollback only covers the OS image. A checkpoint also saves <code>/etc</code> and your settings.
+    Take one before a risky session:
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="checkpoint" code={CHECKPOINT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="what a new checkpoint prints" code={CHECKPOINT_OUT}></arc-code-block>
-  <p>A checkpoint keeps three things:</p>
+  <p>What a checkpoint saves:</p>
   <ul>
-    <li><strong>All of <code>/etc</code></strong>, with owners, modes, ACLs and SELinux labels.</li>
+    <li>All of <code>/etc</code>, with owners, modes, ACLs and SELinux labels.</li>
     <li>
-      <strong>Your settings</strong> (the <code>sudo</code> user’s): home dotfiles,{' '}
-      <code>~/.config</code> minus caches, <code>~/.local/bin</code>, <code>~/.ssh</code>. Not
-      documents, projects or <code>~/.local/share</code>. Skipped over 512 MB, or with{' '}
-      <code>--no-home</code>.
+      The settings of whoever ran <code>sudo</code>: home dotfiles, <code>~/.config</code> minus
+      caches, <code>~/.local/bin</code> and <code>~/.ssh</code>. Documents, projects and{' '}
+      <code>~/.local/share</code> are left out, and the settings are skipped entirely if they come
+      to more than 512 MB or you pass <code>--no-home</code>.
     </li>
-    <li><strong>A pin</strong> on the booted deployment.</li>
+    <li>It also pins the booted deployment.</li>
   </ul>
   <ul>
     <li>
@@ -224,8 +224,8 @@ const TOC = [
     </li>
   </ul>
   <arc-alert variant="warning" heading="Read the diff before you restore">
-    Restore puts back <strong>everything</strong> changed since the checkpoint, not only what the
-    agent touched. Every subcommand needs root, even <code>list</code>: checkpoints hold{' '}
+    Restore puts back <strong>everything</strong> changed since the checkpoint, including changes
+    the agent didn’t make. Every subcommand needs root, even <code>list</code>: checkpoints hold{' '}
     <code>/etc/shadow</code> and your SSH keys.
   </arc-alert>
 

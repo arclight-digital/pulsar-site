@@ -13,7 +13,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Moving to Pulsar from Windows or macOS: whether your computer can run it, making the USB stick, keeping Windows, installing apps, updates, shortcuts and games.';
+  'For people moving from Windows or macOS: which computers can run Pulsar, how to make the USB stick and keep Windows, and where your apps and shortcuts went.';
 
 const BITLOCKER = [
   'manage-bde -status C:          # is BitLocker on?',
@@ -53,7 +53,7 @@ const HABITS: [string, string, string][] = [
   ['Windows Update', 'Software Update', 'Downloads in the background; a notification offers a restart. Never restarts on its own.'],
   ['File Explorer', 'Finder', 'Files. Your folders are under /home/you, called ~ for short.'],
   ['Task Manager', 'Activity Monitor', 'System Monitor, in the app grid.'],
-  ['Terminal, PowerShell', 'Terminal', 'Ptyxis. Themed along with everything else.'],
+  ['Terminal, PowerShell', 'Terminal', 'Ptyxis. Themes recolor it too.'],
   ['System Restore', 'Time Machine (the system half)', 'Rollback: the previous build is in the boot menu. Your files are yours to back up.'],
 ];
 
@@ -123,7 +123,8 @@ const TOC = [
 >
   <h1>From Windows or macOS</h1>
   <p class="intro">
-    What carries over, what changes, and what doesn’t come with you.
+    Start by checking that your computer can run Pulsar at all. The rest of the page is in the
+    order you’ll need it.
   </p>
 
   <h2 id="can-it">Will it run on your computer?</h2>
@@ -163,7 +164,7 @@ const TOC = [
       </tr>
     </tbody>
   </table>
-  <p>Which graphics? Windows: Task Manager → <strong>Performance</strong> lists each GPU.</p>
+  <p>Not sure which graphics you have? On Windows, Task Manager → <strong>Performance</strong> lists each GPU.</p>
 
   <h2 id="backup">Before you start</h2>
   <p>
@@ -178,18 +179,18 @@ const TOC = [
       it’s enabled.
     </li>
     <li>
-      <strong>FileVault (Mac).</strong> Only macOS can read your files. Copy them off first.
+      On a Mac with FileVault turned on, only macOS can read your files, so copy them off first.
     </li>
     <li>
-      <strong>Licenses and passwords.</strong> Deactivate anything that counts devices (Adobe,
-      Office, some games). Export or sync your browser’s passwords.
+      Deactivate anything that counts devices (Adobe, Office, some games), and export or sync your
+      browser’s passwords.
     </li>
   </ul>
   <arc-code-block class="theme-fixed-dark" filename="PowerShell (admin)" code={BITLOCKER}></arc-code-block>
 
   <h2 id="stick">Make the USB stick</h2>
   <p>
-    A USB stick of 8&nbsp;GB or more (it will be erased) and the ISO from{' '}
+    You need a USB stick of 8&nbsp;GB or more, which will be erased, and the ISO from{' '}
     <a href="/#install">Get Pulsar</a>.
   </p>
   <h3>From Windows or macOS: Fedora Media Writer</h3>
@@ -197,9 +198,9 @@ const TOC = [
     Install Fedora Media Writer from fedoraproject.org, choose <strong>Select .iso file</strong>,
     pick the Pulsar ISO and the stick, and write.
   </p>
-  <h3>Rufus, balenaEtcher and friends</h3>
+  <h3>Rufus, balenaEtcher or Ventoy</h3>
   <p>
-    They work. In Rufus, pick <strong>DD</strong> mode. Ventoy works with the current ISO; read the{' '}
+    These work too. In Rufus, pick <strong>DD</strong> mode. Ventoy works with the current ISO; read the{' '}
     <a href="/docs/install#iso">warning about old downloads</a> first.
   </p>
   <p class="hint">
@@ -254,8 +255,8 @@ const TOC = [
     down fully.
   </p>
   <p>
-    Clock off by your time zone after switching? Windows keeps the hardware clock in local time.
-    Make Pulsar do the same:
+    If the clock is off by your time zone after you’ve been in Windows, it’s because Windows keeps
+    the hardware clock in local time. Make Pulsar do the same:
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="clock" code={CLOCK}></arc-code-block>
 

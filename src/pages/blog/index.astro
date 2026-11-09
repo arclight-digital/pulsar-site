@@ -9,7 +9,7 @@ import { isoDay, longDate, postHref, posts, readingMinutes } from '../../data/bl
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'News from Pulsar: moves to a new Fedora or GNOME, new features, and how the nightly images are built and checked before they reach you.';
+  'Posts about Pulsar releases and Fedora or GNOME upgrades, and how the nightly images are built and checked before anyone gets them.';
 const [latest, ...earlier] = await posts();
 
 const years = new Map<number, typeof earlier>();

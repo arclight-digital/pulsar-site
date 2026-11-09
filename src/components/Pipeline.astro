@@ -15,11 +15,11 @@ interface Props {
 const { compact = false } = Astro.props;
 
 const STAGES = [
-  { name: 'commit', detail: 'a change lands in the public repo; that night’s build picks it up' },
-  { name: 'build', detail: 'both images, on a build machine created for the night and destroyed after' },
-  { name: 'sign', detail: 'the NVIDIA kernel module, with the key Secure Boot is told to trust, and each image, with Pulsar’s release key' },
-  { name: 'record', detail: 'a full package list (SPDX SBOM), attached to the image and diffed against last night’s' },
-  { name: 'boot', detail: 'your machine switches to the new image, and rolls back on its own if it fails its boot checks' },
+  { name: 'commit', detail: 'a change is merged in the public repo and goes into that night’s build' },
+  { name: 'build', detail: 'both images, on a fresh machine that is deleted once the build is done' },
+  { name: 'sign', detail: 'the NVIDIA kernel module with the key you enroll for Secure Boot, and each image with Pulsar’s release key' },
+  { name: 'record', detail: 'an SPDX SBOM of every package goes on the image and is diffed against last night’s' },
+  { name: 'boot', detail: 'your machine starts the new image, and goes back to the old one if the boot checks fail' },
 ];
 
 const shown = `oras discover ${IMAGES.nvidia}:latest`;
@@ -35,7 +35,7 @@ const shown = `oras discover ${IMAGES.nvidia}:latest`;
   </arc-timeline>
 
   <div class="check">
-    <p class="check-cap">Don’t take the page’s word for&nbsp;it.</p>
+    <p class="check-cap">To check it&nbsp;yourself:</p>
     <arc-code-block
       class="theme-fixed-dark"
       language="bash"
@@ -45,10 +45,9 @@ const shown = `oras discover ${IMAGES.nvidia}:latest`;
     {
       !compact && (
         <p class="hint">
-          The images and installer ISOs are signed with Pulsar’s cosign release key.{' '}
-          Running someone else’s images is a trust decision.{' '}
-          <a href={`${REPO}#two-variants-one-key`}>Fork it and build your own</a> if that’s not a
-          relationship you want.
+          The images and installer ISOs are signed with Pulsar’s cosign release key, so running them
+          means trusting that key. If you’d rather not,{' '}
+          <a href={`${REPO}#two-variants-one-key`}>fork the repo and build your own</a>.
         </p>
       )
     }

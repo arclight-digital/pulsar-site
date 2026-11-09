@@ -28,8 +28,8 @@ const empty = digest.bands.length === 0 && presence.length === 0 && digest.rebui
     empty && (
       <p class="lede">
         {digest.baseline
-          ? 'The first build has nothing to be diffed against. Tomorrow night, this is where the difference will be.'
-          : 'A real diff that found nothing. Every package is the version it was.'}
+          ? 'This is the first build, so there’s nothing to diff it against yet. The next build’s changes will show up here.'
+          : 'The diff ran and found nothing. Every package is at the version it was.'}
       </p>
     )
   }

@@ -95,7 +95,7 @@ const LOGS = [
 
 // id, what it looks at, and the severity that turns the exit code red
 const CHECKS: [string, string][] = [
-  ['scheduler', 'Whether the sched_ext scheduler actually attached, read from /sys, not from systemd. A kernel that cannot load one is fine: stock EEVDF.'],
+  ['scheduler', 'Whether the sched_ext scheduler actually attached. It reads /sys and ignores what systemd says. A kernel that can’t load one is fine and runs stock EEVDF.'],
   ['ntsync', 'Whether /dev/ntsync is there for Proton.'],
   ['gamemode', 'Whether you are in the gamemode group, and whether this session already knows it.'],
   ['mangohud', 'Whether the MangoHud Flatpak layer is on the same runtime branch Steam runs on.'],
@@ -105,7 +105,7 @@ const CHECKS: [string, string][] = [
   ['gpu-containers', 'NVIDIA image only. A CDI spec exists for the running driver, and SELinux lets containers open the GPU.'],
   ['flathub', 'Flathub is configured and unfiltered.'],
   ['fedora', 'Fedora’s Flatpak remote is there, for the stock GNOME apps.'],
-  ['origin', 'This system follows a tag, not one frozen digest. A digest never updates, so that is a fail.'],
+  ['origin', 'That this system follows a tag. One that follows a single frozen digest never updates, so that’s a fail.'],
   ['updates', 'Whether an update is staged, and how many packages you have layered.'],
   ['disk', 'Free space on /sysroot. Warns at 80% full, fails at 90%: staging an update needs several GB.'],
   ['crashes', 'Programs of yours that crashed since this boot.'],
@@ -165,7 +165,8 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
   <p>
-    Only <code>FAIL</code> exits 1. Warnings don’t mean broken. Checks that don’t apply are silent.
+    Only <code>FAIL</code> exits 1. A warning doesn’t mean anything is broken. Checks that don’t
+    apply print nothing.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="one check at a time" code={ONE}></arc-code-block>
 
@@ -180,7 +181,7 @@ const TOC = [
   </table>
 
   <h3 id="fixes">Common findings</h3>
-  <p>Most common:</p>
+  <p>The ones that come up most:</p>
   <table>
     <thead><tr><th>Check</th><th>It says</th><th>Do this</th></tr></thead>
     <tbody>
@@ -231,7 +232,7 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="crashes" code={CRASH}></arc-code-block>
   <p>
     A crash report adds the program, signal, package, unit, command line, the crashing thread’s
-    stack trace, and its log lines. <strong>Never the core file.</strong> Command lines can hold
+    stack trace, and its log lines. It never includes the core file. Command lines can hold
     unrecognized secrets: check <code>--text</code> first.{' '}
     <a href="/docs/agents#ask">What Ask sends</a>.
   </p>

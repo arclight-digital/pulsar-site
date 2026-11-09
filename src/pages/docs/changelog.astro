@@ -9,7 +9,7 @@ import { APP_ID, BUILD_STATUS, IMAGES } from '../../data/site';
 import { postHref, posts } from '../../data/blog';
 
 const DESCRIPTION =
-  'Every package added, removed or upgraded in last night’s Pulsar build, diffed from the SBOMs attached to the images themselves. None of it is written by hand.';
+  'Last night’s Pulsar build against the night before, package by package. The build diffs the SBOMs attached to both images and writes this page itself.';
 
 const lead = digest.lead;
 // The night Pulsar moved to a new Fedora release: nearly every package moved,
@@ -51,8 +51,8 @@ const TOC = move
 >
   <h1>What changed last night</h1>
   <p class="intro">
-    Each new image compared with the one before it, package by package, from the package list
-    attached to both. Generated, not written.
+    The build compares each new image with the one before it, using the package list attached to
+    both, and this page is generated from the result.
     {
       hasReleases && (
         <>
@@ -63,8 +63,8 @@ const TOC = move
     }
   </p>
   <p class="hint">
-    This page is written once a night's image is out. To watch tonight's build as it runs, or see
-    why a night skipped or failed, go to <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
+    The page updates once a night's image is published. Tonight's build as it runs, and the reason
+    a night skipped or failed, are on <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
   </p>
 
   <h2 id="last-night">Last night</h2>
@@ -74,12 +74,12 @@ const TOC = move
         <>
           <p class="lead-say">Moved to Fedora {move.to}.</p>
           <p class="lede">
-            Last night’s image is the first built on Fedora {move.to}, so nearly every package
-            changed: {moved.toLocaleString('en-US')} in all. That is a new release, not a night’s
-            changes, so they are not listed here.
+            Last night’s image is the first one built on Fedora {move.to}, so nearly every package
+            changed ({moved.toLocaleString('en-US')} of them). A list that long tells you nothing, so
+            this page leaves it out.
             {movePost && (
               <>
-                {' '}What it brings is in <a href={postHref(movePost)}>{movePost.data.title}</a>.
+                {' '}The post about the move: <a href={postHref(movePost)}>{movePost.data.title}</a>.
               </>
             )}
           </p>
@@ -135,7 +135,7 @@ const TOC = move
     )
   }
   <p class="hint">
-    Every row, unsummarized: <a href="/changelog.json">changelog.json</a>. The package list it was
+    The raw rows are in <a href="/changelog.json">changelog.json</a>. The package list it was
     computed from ships attached to the&nbsp;image:{' '}
     <code>oras discover {IMAGES.vanilla}:latest</code>. On a Pulsar machine,{' '}
     <code>pulsar changelog</code> prints the same&nbsp;list.

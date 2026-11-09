@@ -376,10 +376,10 @@ const plural = (count: number, one: string, many = `${one}s`) => (count === 1 ? 
 
 export function arithmetic(d: Digest = digest): string {
   if (d.baseline) {
-    return 'There is nothing on the other side of the diff yet — tomorrow night this image becomes the thing the next one is measured against.';
+    return 'There’s nothing to diff this image against yet. Tomorrow night’s build will be compared with it.';
   }
   if (d.quiet) {
-    return 'Every package in last night’s image is the version it was in the night before. The two digests differ; the contents, package for package, do not.';
+    return 'No package changed since the night before, though the image digest did.';
   }
   const parts: string[] = [];
   if (d.packages > 0) {
@@ -388,15 +388,16 @@ export function arithmetic(d: Digest = digest): string {
     if (d.transitions !== d.packages) {
       sentence += ` in ${d.transitions} distinct ${plural(d.transitions, 'update')}, because related packages move together`;
     }
+    parts.push(`${sentence}.`);
     if (d.rebuiltPackages > 0) {
-      sentence +=
+      parts.push(
         upstream === 0
           ? d.packages === 1
-            ? ' — rebuilt by Fedora with no new version'
-            : ' — all of them rebuilt by Fedora with no new version'
-          : ` — ${upstream} to a new version, ${d.rebuiltPackages} rebuilt by Fedora at the same one`;
+            ? 'Fedora rebuilt it at the same version.'
+            : 'Fedora rebuilt all of them at the versions they were already at.'
+          : `${upstream} ${plural(upstream, 'is a new version', 'are new versions')}, and Fedora rebuilt ${d.rebuiltPackages} at the same version.`,
+      );
     }
-    parts.push(`${sentence}.`);
   }
   const joined = d.added.length;
   const left = d.removed.length;

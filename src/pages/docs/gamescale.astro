@@ -4,7 +4,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'gamescale gives each game your screen’s real resolution under GNOME fractional scaling, and puts the scale back when it quits, even if the game dies.';
+  'gamescale runs each game at your screen’s real resolution while GNOME fractional scaling is on, and sets the scale back when the game exits or crashes.';
 
 const FLATPAK_ERR =
   '$ flatpak run --command=sh --filesystem=/usr/bin/gamescale:ro com.valvesoftware.Steam\nF: Not sharing "/usr/bin/gamescale" with sandbox: Path "/usr" is reserved by Flatpak';
@@ -38,7 +38,7 @@ const TOC = [
 >
   <p class="above"><img class="gs-icon" src="/assets/gamescale.svg" alt="" width="48" height="48" /></p>
   <h1>gamescale</h1>
-  <p class="intro">Your screen’s real resolution, for one game at a time.</p>
+  <p class="intro">While a game runs, gamescale sets the display to 100% so the game sees your screen’s real resolution.</p>
 
   <h2 id="how">How it works</h2>
   <Gamescale />
@@ -47,10 +47,10 @@ const TOC = [
   <p>
     <a href="https://github.com/arclight-digital/gamescale">gamescale</a> (pinned, hash-verified):{' '}
     <code>/usr/bin/gamescale</code>, its top-bar indicator, and a unit that restores your scale if
-    a game crashes. That’s all native launchers and terminal use need.
+    a game crashes. Native launchers and games started from a terminal need nothing more.
   </p>
 
-  <h2 id="steam">Flatpak Steam needs nothing</h2>
+  <h2 id="steam">Flatpak Steam</h2>
   <p>Flatpak apps can’t see the host’s <code>/usr</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK_ERR}></arc-code-block>
   <p>
@@ -62,8 +62,8 @@ const TOC = [
     old copies in <code>~/.local/bin</code> that match them.
   </p>
 
-  <h2 id="flatpak">Other Flatpak launchers need one step</h2>
-  <p>Heroic, Faugus, Bottles and other launchers get gamescale under <code>$HOME</code>:</p>
+  <h2 id="flatpak">Other Flatpak launchers</h2>
+  <p>Heroic, Faugus, Bottles and other launchers need their own copy under <code>$HOME</code>:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
   <p>
     This runs the image’s pinned installer, offline. (Upstream’s <code>curl | sh</code> installs
@@ -71,8 +71,8 @@ const TOC = [
     <a href="/docs/gaming#launch-options">launch options</a>.
   </p>
   <p>
-    The user install replaces the image copy: <code>~/.local/bin</code>, the user extension and the
-    user unit take precedence. <code>gamescale --version</code> shows which copy runs.
+    After that your copy is the one that runs, because <code>~/.local/bin</code>, the user extension
+    and the user unit come before the image’s. <code>gamescale --version</code> shows which copy runs.
   </p>
 </Docs>
 

@@ -9,7 +9,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Switch the whole Pulsar desktop to one of twenty-four themes with pulsar theme set or the Themes picker, import any base16 scheme, and put stock GNOME back exactly.';
+  'pulsar theme set (or the Themes picker) switches the whole desktop to one of twenty-four themes. You can import a base16 scheme, and revert puts stock GNOME back.';
 
 const LIST = [
   '$ pulsar theme list',
@@ -124,8 +124,8 @@ const TOC = [
 >
   <h1>Themes</h1>
   <p class="intro">
-    A theme recolors the accent, apps, terminal, text editor, top bar and wallpaper at once. Twenty-four
-    ship with the image; one command restores stock GNOME.
+    A theme recolors the accent, your apps, the terminal, Text Editor, the top bar and the wallpaper
+    in one go. The image has twenty-four of them, and one command puts stock GNOME back.
   </p>
 
   <h2 id="pick">Pick one</h2>
@@ -159,7 +159,7 @@ const TOC = [
     The login screen isn’t a target: it comes up before anyone logs in, so it wears Pulsar’s own
     colors, the same for everyone. So does the lock screen’s prompt.
   </p>
-  <p>Two targets reach outside the desktop and can be left out; the choice persists:</p>
+  <p>Two targets reach outside the desktop. You can leave either one out, and Pulsar remembers:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="opt out" code={OPTOUT}></arc-code-block>
 
   <h2 id="dark-light">Dark and light</h2>
@@ -174,8 +174,8 @@ const TOC = [
       switch.
     </li>
     <li>
-      Phosphor and Amber tint every ANSI color toward the phosphor while keeping red distinct from
-      green.
+      Phosphor and Amber tint every ANSI color toward the phosphor, but red and green still look
+      different.
     </li>
   </ul>
 
@@ -209,9 +209,9 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="import" code={IMPORT}></arc-code-block>
   <p>
-    Your themes: <code>~/.local/share/pulsar/themes/</code>; shipped ones:{' '}
-    <code>/usr/share/pulsar/themes/</code>. Each is a folder with a <code>theme.toml</code>; copy a
-    shipped one to start.
+    Your themes go in <code>~/.local/share/pulsar/themes/</code> and the shipped ones are in{' '}
+    <code>/usr/share/pulsar/themes/</code>. Each is a folder with a <code>theme.toml</code>. Copying a
+    shipped one is the easiest start.
   </p>
   <p>
     Or ask a coding agent: the image’s theme skill builds one from a scheme, photo or mood and

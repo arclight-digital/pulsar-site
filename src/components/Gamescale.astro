@@ -21,8 +21,8 @@ const MODES = [
 <div class="gs">
   <div class="gs-copy">
     <p class="gs-deck">
-      Games get the screen&rsquo;s real resolution. The desktop gets its scaling back when
-      they&nbsp;quit.
+      A game runs at the panel&rsquo;s real resolution, and your scaling comes back when
+      it&nbsp;quits.
     </p>
     <p class="lede">
       With GNOME&rsquo;s fractional scaling on, an X11 game is handed a whole-number multiple of
@@ -68,12 +68,12 @@ const MODES = [
       code={LAUNCH_OPTION}
     ></arc-code-block>
     <p>
-      Scaling drops to 100% for as long as that one game runs. Text and cursor sizes are bumped to
-      match, so the desktop stays usable behind it, and everything goes back when the game&nbsp;exits.
+      Scaling drops to 100% while that game runs. Text and cursor sizes go up to make up for it, and
+      all of it is put back when the game&nbsp;exits.
     </p>
     <p>
-      Even when it doesn&rsquo;t exit cleanly: a watchdog, a state file on disk and a check at
-      login mean a crash or a <code>SIGKILL</code> still gives you your desktop&nbsp;back.
+      That holds after a crash or a <code>SIGKILL</code> too. gamescale keeps a watchdog, a state
+      file on disk and a check at login for exactly that&nbsp;case.
     </p>
     {
       compact ? (
