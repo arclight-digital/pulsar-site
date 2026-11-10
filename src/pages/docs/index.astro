@@ -1,78 +1,61 @@
 ---
-// The docs front page: what is here, grouped the way the sidebar is.
+// The docs front page: a short overview that says what each page covers and
+// where to start. The sidebar already lists every page, so this doesn't.
 import { getCollection } from 'astro:content';
 import Docs from '../../layouts/Docs.astro';
-import { DOCS_NAV as ALL_NAV, hrefOf } from '../../data/docs';
-// Only the repo docs a published nightly has shipped (as the sidebar does):
-// releases.md arrives with the release it describes.
-const shipped = new Set((await getCollection('docs')).map((d) => d.id));
-const DOCS_NAV = ALL_NAV.map((g) => ({ ...g, links: g.links.filter((l) => !l.slug || shipped.has(l.slug)) })).filter((g) => g.links.length);
+// releases.md arrives with the release it describes, so it is linked only
+// once a published nightly has shipped it (as the sidebar does).
+const hasReleases = (await getCollection('docs')).some((d) => d.id === 'releases');
 ---
 
 <Docs
   title="Docs"
-  fullTitle="Pulsar docs — install, themes, agents, updates"
-  description="Install Pulsar, then find your way around it. Pages on themes, games, coding agents, updates and rollback, troubleshooting, and how each image is built and signed."
+  fullTitle="Pulsar docs"
+  description="How to install and use Pulsar, with pages on themes, games, coding agents, updates and rollback, troubleshooting, and how each image is built and signed."
   path="/docs"
 >
   <h1>Pulsar docs</h1>
-  <p class="intro">Where to start:</p>
-  <ul>
-    <li>New: <a href="/docs/install">Install</a>, then <a href="/docs/where-things-go">Where things go</a>.</li>
-    <li>From Windows or a Mac: <a href="/docs/coming-from">start here</a>.</li>
-    <li>Something broken: <code>pulsar doctor</code>, then <a href="/docs/troubleshooting">Troubleshooting</a>.</li>
-  </ul>
-  {
-    DOCS_NAV.map((g) => (
-      <section class="block">
-        <h2>{g.heading}</h2>
-        <ul class="links">
-          {g.links.filter((l) => l.href !== '/docs').map((l) => (
-            <li>
-              <a href={hrefOf(l)}>
-                <arc-icon name={l.icon} size="md"></arc-icon>
-                <span>{l.label}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    ))
-  }
+  <p class="intro">
+    If you’re new to Pulsar, start with <a href="/docs/install">Install</a>. If you’re moving from
+    Windows or a Mac, <a href="/docs/coming-from">From Windows or macOS</a> covers making the USB stick
+    on the system you have now, keeping Windows alongside, and where your apps and shortcuts went.
+  </p>
+  <p>
+    The system is one read-only image, so software goes in different places than on most Linux
+    systems. <a href="/docs/where-things-go">Where things go</a> says where apps, dev tools and
+    services belong. <a href="/docs/themes">Themes</a> and <a href="/docs/theming">How theming works</a>{' '}
+    cover the look. <a href="/docs/gaming">Gaming</a> covers Steam and the other launchers, and{' '}
+    <a href="/docs/gamescale">gamescale</a> runs games at your screen’s real resolution while
+    fractional scaling is on. On the NVIDIA image, <a href="/docs/gpu-containers">GPU containers</a>{' '}
+    shows how to run CUDA and local models in podman.
+  </p>
+  <p>
+    <a href="/docs/agents">Coding agents</a> shows how to install Claude Code, Codex and the others,
+    and <a href="/docs/agents-safety">Agents and safety</a> says what an agent can change without
+    asking.
+  </p>
+  <p>
+    Updates download in the background and apply when you restart.{' '}
+    <a href="/docs/updates">Updates and rollback</a> covers how that works and how to go back. When
+    something breaks, run <code>pulsar doctor</code> first, then read{' '}
+    <a href="/docs/troubleshooting">Troubleshooting</a>. <a href="/docs/cli">The pulsar command</a>{' '}
+    lists every subcommand.
+  </p>
+  <p>
+    <a href="/docs/signing">Signing</a> and <a href="/docs/provenance">Provenance</a> explain how each
+    image is built and signed, and how to check it yourself.
+    {hasReleases && (
+      <>
+        {' '}The <a href="/docs/releases">release notes</a> list what’s new in each Pulsar release.
+      </>
+    )}{' '}
+    <a href="/docs/changelog">Nightly builds</a> lists every package that changed in the latest build.
+  </p>
 </Docs>
 
 <style>
   .intro {
     font-size: var(--text-lg);
     max-width: 56ch;
-  }
-  .block h2 {
-    margin-top: var(--space-xl);
-  }
-  .links {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
-    gap: var(--space-sm);
-  }
-  .links a {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    padding: var(--space-md);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-subtle);
-    color: var(--text-primary);
-    text-decoration: none;
-    transition: border-color 0.2s var(--ease-out), box-shadow 0.2s var(--ease-out);
-  }
-  .links a:hover {
-    border-color: var(--border-bright);
-    box-shadow: var(--glow-hover);
-  }
-  .links arc-icon {
-    color: var(--accent-primary);
   }
 </style>
