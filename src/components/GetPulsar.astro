@@ -210,6 +210,7 @@ const VERIFY = [
 
   <aside class="learn" aria-label="Documentation">
     <arc-icon name="book-open" size="md" aria-hidden="true"></arc-icon>
+    <p><strong>Want the details?</strong> The docs walk through installing, every <code>pulsar</code> command, and what to do when something breaks.</p>
     <arc-button href="/docs" variant="secondary" size="sm">Read the docs</arc-button>
   </aside>
 </section>
@@ -576,6 +577,8 @@ const VERIFY = [
   .learn {
     display: flex;
     align-items: center;
+    width: fit-content;
+    max-width: 100%;
     gap: var(--space-md);
     margin: var(--space-2xl) 0 0;
     padding: var(--space-md) var(--space-lg);
@@ -588,7 +591,8 @@ const VERIFY = [
     color: var(--accent-primary);
   }
   .learn p {
-    flex: 1;
+    flex: 0 1 auto;
+    max-width: 52ch;
     margin: 0;
     color: var(--text-secondary);
   }
