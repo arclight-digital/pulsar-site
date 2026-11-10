@@ -1,21 +1,20 @@
 ---
 // Troubleshooting: doctor first, report when you need help, crashes, and the
 // logs. Every check id, message and flag here is cli/pulsar's own; the
-// transcripts are real runs on a Pulsar machine (doctor on 44.20261003.0,
-// report on 44.20260928.0, nvidia),
-// trimmed where a line said nothing new.
+// transcripts are real runs on a Pulsar machine (doctor and report on
+// 45.20261109.0, nvidia), the report trimmed where a line said nothing new.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
-  'Find out what is wrong with a Pulsar machine: pulsar doctor’s health checks, a redacted pulsar report to paste, crash reports, and the logs worth reading.';
+  'How to find what is wrong with a Pulsar machine using pulsar doctor, share a redacted pulsar report, read crash and GPU fault alerts, and check the logs.';
 
 const DOCTOR = [
   '$ pulsar doctor',
-  'Pulsar health  26.9.1 · build 44.20261003.0',
+  'Pulsar health  26.11.1 · build 45.20261109.0',
   '',
-  'ok    scheduler      sched_ext enabled',
-  '                     root scheduler: bpfland_1.1.3_x86_64_unknown_linux_gnu',
+  "ok    scheduler      EEVDF, Pulsar's default",
+  '                     a sched_ext scheduler is opt-in: sudo systemctl enable --now scx.service',
   'ok    ntsync         /dev/ntsync present',
   '                     crw-rw-r-- root:root',
   'ok    gamemode       proto is in gamemode; renice=10 available',
@@ -25,6 +24,7 @@ const DOCTOR = [
   '                     boot marked green',
   'ok    nvidia         nvidia-open 615.71.09 loaded',
   'ok    flatpak-gl     running Flatpak apps have the NVIDIA 615.71.09 driver',
+  'ok    gpu-faults     no GPU faults this boot',
   'ok    gpu-containers CDI spec matches driver 615.71.09',
   '                     podman run --rm --device nvidia.com/gpu=all IMAGE',
   'ok    flathub        flathub present and unfiltered',
@@ -32,8 +32,8 @@ const DOCTOR = [
   'ok    origin         not pinned to a digest',
   'ok    updates        no update staged',
   '                     2 deployment(s), 0 pinned, 2 layered -- updates go through rpm-ostree',
-  'ok    disk           /sysroot 77% used, 217G free',
-  'ok    crashes        no crashes of yours this boot (1 ignored: pulsar crashes ignore list)',
+  'warn  disk           /sysroot is 89% full (108G free)',
+  'ok    crashes        no crashes of yours this boot',
   "ok    cli            'pulsar' is this system's CLI",
   '',
   'no failures',
@@ -53,28 +53,30 @@ const REPORT = [
 
 const REPORT_OUT = [
   '$ pulsar report --text --lines 5',
-  'pulsar report  2026-09-28T19:31:21Z  (pulsar 26.9.1)',
+  'pulsar report  2026-11-10T02:54:45Z  (pulsar 26.11.1)',
   '',
   'doctor: no failures',
-  '  ok\tscheduler\tstock EEVDF: this kernel cannot load a BPF scheduler',
+  "  ok\tscheduler\tEEVDF, Pulsar's default",
   '  ok\tntsync\t/dev/ntsync present',
   '  ok\tgamemode\t<user> is in gamemode; renice=10 available',
   '  ...',
   '',
   'deployments',
-  '  booted\t44.20260928.0\t',
-  '  -\t44.20260927.0\t',
+  '  booted\t45.20261109.0\t',
+  '  -\t45.20261108.0\t',
   '',
-  'image: pulsar-nvidia nvidia-open 44.20260928.0',
-  'kernel: 7.2.7-200.fc44.x86_64  tainted: 4096  nvidia: 615.71.09',
+  'image: pulsar-nvidia nvidia-open 45.20261109.0',
+  'kernel: 7.2.15-300.fc45.x86_64  tainted: 4096  nvidia: 615.71.09',
   '  0000:00:02.0  0x8086:0x7d67  driver=i915',
   '  0000:02:00.0  0x10de:0x2c59  driver=nvidia',
   '',
   'failed units',
-  '  system  systemd-suspend.service',
+  '  (none)',
   '',
   'journal (warning+, this boot)',
-  "  2026-09-28T16:23:46Z  systemd-suspend.service  Failed to start systemd-suspend.service - System Suspend.",
+  '  (none)',
+  '',
+  'flatpak: 32 apps, 55 runtimes',
   '  ...',
 ].join('\n');
 
@@ -95,13 +97,14 @@ const LOGS = [
 
 // id, what it looks at, and the severity that turns the exit code red
 const CHECKS: [string, string][] = [
-  ['scheduler', 'Whether the sched_ext scheduler actually attached. It reads /sys and ignores what systemd says. A kernel that can’t load one is fine and runs stock EEVDF.'],
+  ['scheduler', 'EEVDF is the default and sched_ext is opt-in. It warns only when scx.service is enabled but no scheduler attached, read from /sys, since the unit can look fine when it isn’t. A kernel that can’t load one is ok.'],
   ['ntsync', 'Whether /dev/ntsync is there for Proton.'],
   ['gamemode', 'Whether you are in the gamemode group, and whether this session already knows it.'],
   ['mangohud', 'Whether the MangoHud Flatpak layer is on the same runtime branch Steam runs on.'],
   ['greenboot', 'Whether this boot passed its health checks. A red boot is a fail: greenboot is counting down to a rollback.'],
   ['nvidia', 'NVIDIA image only. The module is loaded and matches the driver the image expects. An NVIDIA GPU with no module is a fail.'],
   ['flatpak-gl', 'NVIDIA image only. Every running Flatpak app (Steam, mostly) has the GL extension for the running driver.'],
+  ['gpu-faults', 'NVIDIA image only. This boot’s GPU faults (Xid lines in the kernel log), by program. A game that froze or quit without a crash usually has one.'],
   ['gpu-containers', 'NVIDIA image only. A CDI spec exists for the running driver, and SELinux lets containers open the GPU.'],
   ['flathub', 'Flathub is configured and unfiltered.'],
   ['fedora', 'Fedora’s Flatpak remote is there, for the stock GNOME apps.'],
@@ -146,7 +149,7 @@ const TOC = [
 
 <Docs
   title="Troubleshooting"
-  fullTitle="Troubleshooting Pulsar — doctor, report and crashes"
+  fullTitle="Troubleshooting Pulsar"
   description={DESCRIPTION}
   path="/docs/troubleshooting"
   headings={TOC}
@@ -161,12 +164,12 @@ const TOC = [
   <h2 id="doctor">Start with doctor</h2>
   <p>
     Plain <code>pulsar</code> runs it too. Each check prints <code>ok</code>, <code>warn</code> or{' '}
-    <code>FAIL</code>, with detail where useful. On the NVIDIA image:
+    <code>FAIL</code>, and some add a line of detail. This run is on the NVIDIA image.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
   <p>
-    Only <code>FAIL</code> exits 1. A warning doesn’t mean anything is broken. Checks that don’t
-    apply print nothing.
+    Only <code>FAIL</code> exits 1. A <code>warn</code> can still need fixing, such as{' '}
+    <code>flatpak-gl</code> finding Steam on the wrong GPU. Checks that don’t apply print nothing.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="one check at a time" code={ONE}></arc-code-block>
 
@@ -181,7 +184,6 @@ const TOC = [
   </table>
 
   <h3 id="fixes">Common findings</h3>
-  <p>The ones that come up most:</p>
   <table>
     <thead><tr><th>Check</th><th>It says</th><th>Do this</th></tr></thead>
     <tbody>
@@ -197,7 +199,7 @@ const TOC = [
 
   <h2 id="report">Asking for help</h2>
   <p>
-    Paste <code>pulsar report</code> into an issue, forum post or agent. It includes doctor,
+    Paste <code>pulsar report</code> into an issue or hand it to a coding agent. It includes doctor,
     deployments, the image manifest, failed units, this boot’s warnings from Pulsar’s units and the
     failed ones, GPUs and their drivers, and Flatpak remotes and apps. JSON by default;{' '}
     <code>--text</code> for people.
@@ -205,36 +207,43 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="report" code={REPORT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="pulsar report --text" code={REPORT_OUT}></arc-code-block>
   <p>
-    <strong>Left out:</strong> the full journal, earlier boots, environment variables, the machine
-    ID, file contents from <code>$HOME</code> or <code>/etc</code>, Flatpak app data.
+    It leaves out the full journal, earlier boots, environment variables, the machine ID, file
+    contents from <code>$HOME</code> or <code>/etc</code>, and Flatpak app data.
   </p>
   <p>
-    <strong>Redacted (best effort; read it before posting):</strong> hostname, username, home path
-    (as <code>~</code>), MAC and IPv4 addresses, email addresses, values after{' '}
-    <code>token=</code>, <code>password:</code> or <code>Authorization: Bearer</code>, and prefixed
-    tokens: GitHub (<code>ghp_</code>, <code>github_pat_</code>), GitLab (<code>glpat-</code>),{' '}
-    <code>sk-</code> keys, Slack, AWS access keys, JWTs.
+    It redacts the hostname, your username, your home path (as <code>~</code>), MAC and IPv4
+    addresses, email addresses, values after <code>token=</code>, <code>password:</code>,{' '}
+    <code>api_key=</code> or <code>Authorization: Bearer</code>, and tokens with a known prefix
+    (GitHub <code>ghp_</code> and <code>github_pat_</code>, GitLab <code>glpat-</code>,{' '}
+    <code>sk-</code> keys, Slack, AWS access keys, JWTs). <strong>Redaction is best effort, so read
+    the report before you post it.</strong>
   </p>
-  <arc-alert variant="info" heading="Nothing in the journal?">
-    Reading the system journal needs the wheel, adm or systemd-journal group; otherwise the report
-    says so in a <code>note</code>.
+  <arc-alert variant="info" heading="The journal needs a group">
+    Reading the system journal needs the wheel, adm or systemd-journal group. Without one, the
+    report says so in a <code>note</code>.
   </arc-alert>
 
   <h2 id="crashes">Crashes</h2>
   <p>
-    systemd-coredump records every crash. With a default coding agent (the only one installed, or
-    set with <code>pulsar agent default</code>), a crash shows a notification (once per program per
-    boot) with an <strong>Ask</strong> button, which names your agent, and{' '}
+    systemd-coredump records crashes. With a default coding agent (the only one
+    installed, or set with <code>pulsar agent default</code>), a crash shows a notification, once
+    per program per boot, with an <strong>Ask</strong> button that names your agent and{' '}
     <strong>Ignore this</strong>, which stops announcing that program’s crashes. Nothing is sent
-    unless you click Ask. Without one,{' '}
-    <code>pulsar doctor</code> still lists crashes.
+    unless you click Ask. Without an agent, <code>pulsar doctor</code> still lists crashes.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="crashes" code={CRASH}></arc-code-block>
   <p>
     A crash report adds the program, signal, package, unit, command line, the crashing thread’s
     stack trace, and its log lines. It never includes the core file. Command lines can hold
-    unrecognized secrets: check <code>--text</code> first.{' '}
+    unrecognized secrets, so check <code>--text</code> first.{' '}
     <a href="/docs/agents#ask">What Ask sends</a>.
+  </p>
+  <p>
+    On the NVIDIA image, a game whose GPU work faults freezes or quits without a core dump, so
+    systemd-coredump never sees it. Pulsar watches the kernel log for these faults (Xid lines) and
+    shows a notification that names the game and what to try, usually turning off DLSS and frame
+    generation and undoing any GPU overclock. It has the same <strong>Ask</strong> and{' '}
+    <strong>Ignore this</strong> buttons. <code>pulsar doctor gpu-faults</code> lists this boot’s.
   </p>
 
   <h2 id="logs">The logs</h2>
@@ -243,14 +252,18 @@ const TOC = [
     <li>
       System units: <code>pulsar-flatpaks</code> (first-boot apps), <code>pulsar-gamemode-group</code>,{' '}
       <code>pulsar-update-auto.timer</code>, <code>pulsar-update-stage</code>, <code>scx</code>,{' '}
-      <code>greenboot-healthcheck</code>; on NVIDIA also <code>pulsar-gl-nvidia</code>,{' '}
+      <code>greenboot-healthcheck</code>, <code>pulsar-steam-grants</code>,{' '}
+      <code>pulsar-esp-fallback</code>. On NVIDIA also <code>pulsar-gl-nvidia</code>,{' '}
       <code>pulsar-akmods-cert</code>, <code>nvidia-cdi-refresh</code>,{' '}
       <code>pulsar-gpu-containers</code>.
     </li>
     <li>
       Session units (<code>journalctl --user -u &lt;unit&gt;</code>): <code>pulsar-update-check.timer</code>,{' '}
       <code>pulsar-gl-check.path</code>, <code>pulsar-crash-watch.path</code>,{' '}
-      <code>pulsar-theme-init</code>, <code>gamescale-reconcile</code>.
+      <code>pulsar-theme-init</code>, <code>gamescale-reconcile</code>,{' '}
+      <code>pulsar-doc-portal-watch.timer</code>, <code>pulsar-presence</code>. On NVIDIA also{' '}
+      <code>pulsar-gpu-fault-watch</code>, <code>pulsar-steam-gpu-watch</code>,{' '}
+      <code>pulsar-steam-gl-profile</code>.
     </li>
   </ul>
   <p class="hint">Checks are functions in <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>.</p>
