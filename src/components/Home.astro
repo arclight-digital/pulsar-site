@@ -14,7 +14,7 @@ import { shotSrcset } from '../data/shots';
 import { BUILD_STATUS, SUBLINE, TAGLINE } from '../data/site';
 import { THEMES, label, variant } from '../data/themes';
 
-const DESCRIPTION = `${SUBLINE} Fedora Silverblue with 24 desktop themes and Steam set up for you.`;
+const DESCRIPTION = `${SUBLINE} Fedora Silverblue with 24 desktop themes, and Steam installed on first boot.`;
 
 // The desktop, as the theme harness photographed it: Pulsar Holo, the house's
 // other theme, since the themes section below opens on Pulsar's own.
@@ -27,15 +27,15 @@ const READY = [
   'Steam, Faugus, Heroic and Bottles',
   'Glass menus and windows, which you can switch off',
   'Pulsar Settings, for the glass, updates and coding agents',
-  'A coding agent, if you pick one at first login',
+  'Claude Code, Codex, Gemini CLI, opencode or aider, offered at first login',
 ];
 
 // The nightly loop, left to right. The last station is the safety net.
 const LOOP = [
-  { i: 'moon', t: 'Built overnight', d: 'Skipped on nights when neither Fedora nor Pulsar has changed.' },
-  { i: 'download-simple', t: 'Downloaded', d: 'In the background, on AC power and an unmetered connection.' },
-  { i: 'arrow-clockwise', t: 'Staged for your next restart', d: 'The notification has a Restart button.' },
-  { i: 'shield-check', t: 'Rolled back if it won’t boot', d: 'If it fails its boot checks three times in a row, greenboot starts the previous build.' },
+  { i: 'moon', t: 'Built when something changed', d: 'Only on nights when Fedora Silverblue’s packages, Pulsar’s repo or the extra packages Pulsar installs have changed.' },
+  { i: 'download-simple', t: 'Downloaded on AC power', d: 'In the background, on an unmetered connection, 20 minutes after boot and about every 12 hours after that.' },
+  { i: 'arrow-clockwise', t: 'Applied at your next restart', d: 'The notification has a Restart button. Updates never restart the computer themselves.' },
+  { i: 'shield-check', t: 'Rolled back after three failed boots', d: 'greenboot checks each boot for a working desktop. After the third failure it restarts into the previous build.' },
 ];
 
 // gamescale's argument is arithmetic, so it is drawn: on a 2560x1600 laptop
@@ -208,8 +208,8 @@ const MODES = [
       <section class="chapter" id="rot" aria-labelledby="rot-h">
         <h2 id="rot-h">Nightly builds</h2>
         <p class="lede">
-          Each update is a whole new build of Pulsar, made overnight from that day’s Fedora packages.
-          Pulsar never restarts the computer itself, and the build you had stays in the boot menu.
+          Each update is a whole new build of Pulsar, made overnight on top of Fedora Silverblue’s
+          latest image. The build you had stays in the boot menu.
         </p>
         <ol class="loop" aria-label="What happens between one build and the next">
           {
