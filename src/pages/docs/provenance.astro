@@ -39,9 +39,9 @@ const TOC = [
 >
   <h1>Provenance</h1>
   <p class="intro">
-    Each image is built on a machine created for that night’s build and deleted afterwards, and
-    ships with its full package list attached. The signing keys are never on that machine. A
-    separate signing host holds them.
+    Each image is built on a machine created for that night’s build and deleted afterwards. That
+    machine holds only a bearer token. The signing keys stay on a separate signing host, which signs
+    what the builder sends it.
   </p>
 
   <h2 id="one-night">How an image is built</h2>
@@ -60,8 +60,8 @@ const TOC = [
     <code>pulsar changelog</code> all show that diff.
   </p>
   <arc-description-list class="endpoints" layout="horizontal">
-    <arc-description-item term="changelog.json"><a href="/changelog.json">the night’s diff, as the build wrote it</a></arc-description-item>
-    <arc-description-item term="manifest.json"><a href="/manifest.json">the image’s baked manifest</a></arc-description-item>
+    <arc-description-item term="changelog.json"><a href="/changelog.json">the latest build’s package diff</a></arc-description-item>
+    <arc-description-item term="manifest.json"><a href="/manifest.json">the manifest built into the image</a></arc-description-item>
     <arc-description-item term="cosign.pub"><a href={`${REPO}/blob/main/keys/cosign.pub`}>the release key that signs images and ISOs</a></arc-description-item>
   </arc-description-list>
   <p>Check an image’s signature and its log entry:</p>
@@ -76,8 +76,8 @@ const TOC = [
   <p>
     On a Pulsar machine, <code>pulsar verify</code> prints the same check for the exact image you
     booted, by digest, against the key the image ships, and runs it if <code>cosign</code> is
-    installed. It only checks. Updates are pulled without a signature policy, so a machine won’t
-    refuse an unsigned image on its own.
+    installed. Updates are pulled without a signature policy, and a machine doesn’t check
+    signatures on its own.
   </p>
   <p class="hint">
     <a href="/docs/install#iso">Verify an ISO</a> · <a href="/docs/signing">NVIDIA module signing</a>
@@ -88,16 +88,16 @@ const TOC = [
     <li>The NVIDIA variant builds <code>nvidia-open</code> for the image’s exact kernel and signs it.</li>
     <li>
       <code>Containerfile</code> needs no secrets. <code>Containerfile.nvidia</code> sends each
-      module to the signing host with a bearer token and attaches the returned signature. Neither
-      the key nor the token reaches an image layer.
+      module to the signing host with a bearer token and attaches the returned signature. The token
+      comes in through a build secret mount, which no image layer keeps.
     </li>
     <li>
       Both images ship the public cert, so it can be enrolled before switching to NVIDIA. The build
       fails if the module’s signer doesn’t match it.
     </li>
     <li>
-      If you build your own image, fork it and sign with your own key. Enrolling this cert means
-      trusting every module Pulsar signs. The standard image needs no keys.
+      If you build your own image, fork it and sign with your own key. Enrolling this cert lets any
+      kernel module signed with Pulsar’s key load on your machine. The standard image needs no keys.
     </li>
   </ul>
 
