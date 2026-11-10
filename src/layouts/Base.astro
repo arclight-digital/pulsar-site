@@ -23,7 +23,7 @@ interface Props {
   ogTitle?: string;
   /** the route, for canonical and the top bar's active item */
   path?: string;
-  /** the page's name in the breadcrumb trail; defaults to the title up to its dash */
+  /** the page's name in the breadcrumb trail; defaults to the title up to its " | " (or an old " — ") */
   crumb?: string;
   /** the home page opens on the shader; its bar is transparent until scrolled */
   immersive?: boolean;
@@ -38,7 +38,7 @@ const {
   description,
   ogTitle = title,
   path = '/',
-  crumb = title.split(' — ')[0],
+  crumb = title.split(/ [|—] /)[0],
   immersive = false,
   jsonLd = [],
   noindex = false,
@@ -86,14 +86,14 @@ const app = {
   processorRequirements: 'x86_64',
   softwareVersion: version,
   ...(manifest.built ? { dateModified: manifest.built } : {}),
-  description: `${SUBLINE} Twenty-four desktop themes and games that just run, rebuilt every night from Fedora.`,
+  description: `${SUBLINE} A Fedora Silverblue image with twenty-four desktop themes, rebuilt each night that its packages or source change.`,
   featureList: [
-    'Twenty-four desktop themes, switched in one command',
-    'Immutable, image-based base with rollback one reboot away',
-    'Coding agents set up in their own toolbox',
-    'Steam, Gamescope, GameMode and MangoHud built in',
-    'Open NVIDIA kernel module, signed for Secure Boot',
-    'Built every night, with automatic rollback of a bad update',
+    'Twenty-four desktop themes, switched with one command',
+    'Image-based updates that sudo pulsar rollback undoes',
+    'Rolls back to the previous image after three failed boots in a row',
+    'Coding agents installed on request into one shared toolbox',
+    'Gamescope, GameMode and MangoHud in the image, and Steam from Flathub on first boot',
+    'Open NVIDIA kernel module, signed for Secure Boot, in the NVIDIA image',
   ],
   url: home,
   image: ogImage,
