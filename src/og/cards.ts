@@ -14,7 +14,11 @@
 // No slogans, no set-up and pay-off. The visual is something the page actually
 // shows (a real command, a real screenshot, the real build), never an
 // illustration of a claim.
+import { createHash } from 'node:crypto';
 import { changelog, version } from '../data/build';
+// The renderer's own source, so a change to how cards are drawn changes
+// every card's version (see cardUrl).
+import RENDER_SRC from './render.ts?raw';
 import { AUTHORS, AUTHOR_KEYS, authorHref } from '../data/authors';
 import { postHref, posts } from '../data/blog';
 import { IMAGES, SUBLINE, TAGLINE } from '../data/site';
@@ -249,5 +253,13 @@ export async function cardFor(path: string): Promise<Card> {
   return card;
 }
 
-/** Where a card is served from, relative to the site root. */
-export const cardUrl = (card: Card) => `/og/${card.slug}.jpg`;
+/** Where a card is served from, relative to the site root, with a version:
+    /og/<slug>.jpg?v=<hash>. The file keeps its name, but Discord, Slack and
+    the rest cache a card by its URL and never ask again, so a card that is
+    redrawn has to arrive under a new one. The hash covers the card's data and
+    the renderer's source; a portrait or wallpaper replaced in place changes
+    the picture without changing it. */
+export const cardUrl = (card: Card) => {
+  const v = createHash('sha256').update(JSON.stringify(card)).update(RENDER_SRC).digest('hex').slice(0, 10);
+  return `/og/${card.slug}.jpg?v=${v}`;
+};
