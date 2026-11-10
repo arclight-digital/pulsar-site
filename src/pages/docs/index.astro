@@ -16,34 +16,39 @@ const hasReleases = (await getCollection('docs')).some((d) => d.id === 'releases
 >
   <h1>Pulsar docs</h1>
   <p class="intro">
-    If you’re new to Pulsar, start with <a href="/docs/install">Install</a>. If you’re moving from
-    Windows or a Mac, <a href="/docs/coming-from">From Windows or macOS</a> covers making the USB stick
-    on the system you have now, keeping Windows alongside, and where your apps and shortcuts went.
+    If you’re new to Pulsar, start with <a href="/docs/install">Install</a>. If you’re on Windows or
+    a Mac now, read <a href="/docs/coming-from">From Windows or macOS</a> first. It starts with which
+    computers can run Pulsar, then shows how to keep Windows on the same disk.
   </p>
   <p>
-    The system is one read-only image, so software goes in different places than on most Linux
-    systems. <a href="/docs/where-things-go">Where things go</a> says where apps, dev tools and
-    services belong. <a href="/docs/themes">Themes</a> and <a href="/docs/theming">How theming works</a>{' '}
-    cover the look. <a href="/docs/gaming">Gaming</a> covers Steam and the other launchers, and{' '}
-    <a href="/docs/gamescale">gamescale</a> runs games at your screen’s real resolution while
-    fractional scaling is on. On the NVIDIA image, <a href="/docs/gpu-containers">GPU containers</a>{' '}
-    shows how to run CUDA and local models in podman.
+    The system is a read-only image. Apps install as Flatpaks, dev tools go in a toolbox and services
+    run as quadlets. <a href="/docs/where-things-go">Where things go</a> has the commands for each.
   </p>
   <p>
-    <a href="/docs/agents">Coding agents</a> shows how to install Claude Code, Codex and the others,
-    and <a href="/docs/agents-safety">Agents and safety</a> says what an agent can change without
-    asking.
+    <code>pulsar theme set</code> switches the whole desktop to one of twenty-four{' '}
+    <a href="/docs/themes">themes</a>, and <a href="/docs/theming">How theming works</a> lists what
+    each piece of a theme writes. Steam, Heroic and the other{' '}
+    <a href="/docs/gaming">game launchers</a> install on first boot. <a href="/docs/gamescale">gamescale</a>{' '}
+    runs each game at your screen’s real resolution while fractional scaling is on. On the NVIDIA
+    image, a podman container gets the GPU with <code>--device nvidia.com/gpu=all</code>, which is how
+    you run <a href="/docs/gpu-containers">CUDA and local models</a> without layering anything.
   </p>
   <p>
-    Updates download in the background and apply when you restart.{' '}
-    <a href="/docs/updates">Updates and rollback</a> covers how that works and how to go back. When
-    something breaks, run <code>pulsar doctor</code> first, then read{' '}
-    <a href="/docs/troubleshooting">Troubleshooting</a>. <a href="/docs/cli">The pulsar command</a>{' '}
-    lists every subcommand.
+    To install Claude Code, Codex, Gemini CLI, opencode or aider, or run one on a local model, see{' '}
+    <a href="/docs/agents">Coding agents</a>. <a href="/docs/agents-safety">Agents and safety</a>{' '}
+    lists what an agent can change without asking you.
   </p>
   <p>
-    <a href="/docs/signing">Signing</a> and <a href="/docs/provenance">Provenance</a> explain how each
-    image is built and signed, and how to check it yourself.
+    Updates download in the background and apply when you restart. To go back to the previous build,
+    see <a href="/docs/updates">Updates and rollback</a>. When something breaks, run{' '}
+    <code>pulsar doctor</code>, then read <a href="/docs/troubleshooting">Troubleshooting</a>. Every
+    subcommand is in <a href="/docs/cli">The pulsar command</a>.
+  </p>
+  <p>
+    Each image carries an SPDX SBOM and is signed with Pulsar’s release key.{' '}
+    <a href="/docs/provenance">Provenance</a> shows how to check both, and{' '}
+    <a href="/docs/signing">Signing</a> lists both of Pulsar’s keys, including the one that signs the
+    NVIDIA kernel module.
     {hasReleases && (
       <>
         {' '}The <a href="/docs/releases">release notes</a> list what’s new in each Pulsar release.
