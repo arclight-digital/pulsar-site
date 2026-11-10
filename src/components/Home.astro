@@ -14,7 +14,7 @@ import { shotSrcset } from '../data/shots';
 import { BUILD_STATUS, SUBLINE, TAGLINE } from '../data/site';
 import { THEMES, label, variant } from '../data/themes';
 
-const DESCRIPTION = `${SUBLINE} Built from Fedora every night, with 24 desktop themes and Steam installed on first boot.`;
+const DESCRIPTION = `${SUBLINE} Pulsar is Fedora Silverblue with 24 desktop themes and Steam set up for you, updated from nightly builds.`;
 
 // The desktop, as the theme harness photographed it: Pulsar Holo, the house's
 // other theme, since the themes section below opens on Pulsar's own.
@@ -24,19 +24,18 @@ const DESKTOP = variant(HOLO, 'dark').desktop;
 // What a fresh install already has, one line each.
 const READY = [
   'Flathub, already set up in Software',
-  'Steam, Heroic and Bottles',
-  '24 themes',
+  'Steam, Faugus, Heroic and Bottles',
   'Glass menus and windows, which you can switch off',
-  'Pulsar Settings, with every glass switch and the update controls',
+  'Pulsar Settings, for the glass, updates and coding agents',
   'A coding agent, if you pick one at first login',
 ];
 
 // The nightly loop, left to right. The last station is the safety net.
 const LOOP = [
-  { i: 'moon', t: 'Built every night', d: 'From that day’s Fedora packages.' },
-  { i: 'download-simple', t: 'Downloaded', d: 'In the background, on AC power.' },
+  { i: 'moon', t: 'Built overnight', d: 'Skipped on nights when neither Fedora nor Pulsar has changed.' },
+  { i: 'download-simple', t: 'Downloaded', d: 'In the background, on AC power and an unmetered connection.' },
   { i: 'arrow-clockwise', t: 'Staged for your next restart', d: 'The notification has a Restart button.' },
-  { i: 'shield-check', t: 'Rolled back if it won’t boot', d: 'greenboot starts the old build instead.' },
+  { i: 'shield-check', t: 'Rolled back if it won’t boot', d: 'If it fails its boot checks three times in a row, greenboot starts the previous build.' },
 ];
 
 // gamescale's argument is arithmetic, so it is drawn: on a 2560x1600 laptop
@@ -68,8 +67,8 @@ const MODES = [
             Stock GNOME <span class="lift">and then some.</span>
           </h2>
           <p class="big">
-            First boot installs the default apps and Steam. After that it pulls a new build in the
-            background every night.
+            First boot installs the default apps and Steam once the computer is online. After that,
+            new builds download in the background.
           </p>
           <ul class="ready">
             {READY.map((r) => <li>{r}</li>)}
@@ -99,8 +98,9 @@ const MODES = [
         <div>
           <h2 id="games-h">Gaming</h2>
           <p class="lede">
-            Steam, Heroic and Bottles install on first boot, and the usual performance tools come
-            configured. NVIDIA cards get their own image with the driver built in.
+            Steam, Faugus, Heroic and Bottles install on first boot, and GameMode, MangoHud and
+            gamescope are in the image. NVIDIA cards (GTX 16 series, RTX 20 series and newer) get their
+            own image with the driver built in.
           </p>
           <h3 class="gs-h">
             <img src="/assets/gamescale.svg" alt="" width="32" height="32" loading="lazy" decoding="async" />
@@ -206,11 +206,10 @@ const MODES = [
       </section>
 
       <section class="chapter" id="rot" aria-labelledby="rot-h">
-        <h2 id="rot-h">A new build every night</h2>
+        <h2 id="rot-h">Nightly builds</h2>
         <p class="lede">
-          Each night’s build starts from that day’s Fedora packages. Pulsar downloads it while you’re
-          on AC power and an unmetered connection, and you boot into it the next time you restart. If
-          it fails its boot checks, you’re put back on the previous build.
+          Each update is a whole new build of Pulsar, made overnight from that day’s Fedora packages.
+          Pulsar never restarts the computer itself, and the build you had stays in the boot menu.
         </p>
         <ol class="loop" aria-label="What happens between one build and the next">
           {
@@ -234,7 +233,7 @@ const MODES = [
               </a>
             )}
             <a class="fact" href="/docs/changelog">
-              <span class="k">Last night’s build</span>
+              <span class="k">Latest build</span>
               <span class="v mono" id="build-version" data-build-version>{version}</span>
             </a>
             <a class="go" href="/docs/updates">How updates work <span aria-hidden="true">→</span></a>
