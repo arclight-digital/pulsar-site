@@ -40,7 +40,7 @@ export const DOCS_NAV: DocGroup[] = [
     ],
   },
   {
-    heading: 'Trust',
+    heading: 'Builds',
     links: [
       { label: 'Signing', slug: 'signing', icon: 'seal-check' },
       { label: 'Provenance', href: '/docs/provenance', icon: 'git-commit' },
