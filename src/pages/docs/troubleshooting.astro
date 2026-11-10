@@ -97,18 +97,18 @@ const LOGS = [
 
 // id, what it looks at, and the severity that turns the exit code red
 const CHECKS: [string, string][] = [
-  ['scheduler', 'EEVDF is the default and sched_ext is opt-in. It warns only when scx.service is enabled but no scheduler attached, read from /sys, since the unit can look fine when it isn’t. A kernel that can’t load one is ok.'],
+  ['scheduler', 'EEVDF is the default and sched_ext is opt-in. It warns only when scx.service is enabled and /sys/kernel/sched_ext shows no scheduler attached. A kernel that can’t load one is ok.'],
   ['ntsync', 'Whether /dev/ntsync is there for Proton.'],
   ['gamemode', 'Whether you are in the gamemode group, and whether this session already knows it.'],
   ['mangohud', 'Whether the MangoHud Flatpak layer is on the same runtime branch Steam runs on.'],
-  ['greenboot', 'Whether this boot passed its health checks. A red boot is a fail: greenboot is counting down to a rollback.'],
+  ['greenboot', 'Whether this boot passed its health checks. A red boot is a fail, because greenboot rolls back on its own after failed health checks.'],
   ['nvidia', 'NVIDIA image only. The module is loaded and matches the driver the image expects. An NVIDIA GPU with no module is a fail.'],
   ['flatpak-gl', 'NVIDIA image only. Every running Flatpak app (Steam, mostly) has the GL extension for the running driver.'],
   ['gpu-faults', 'NVIDIA image only. This boot’s GPU faults (Xid lines in the kernel log), by program. A game that froze or quit without a crash usually has one.'],
   ['gpu-containers', 'NVIDIA image only. A CDI spec exists for the running driver, and SELinux lets containers open the GPU.'],
   ['flathub', 'Flathub is configured and unfiltered.'],
   ['fedora', 'Fedora’s Flatpak remote is there, for the stock GNOME apps.'],
-  ['origin', 'That this system follows a tag. One that follows a single frozen digest never updates, so that’s a fail.'],
+  ['origin', 'Whether this system follows a tag. Following one image digest means it never updates, and that’s a fail.'],
   ['updates', 'Whether an update is staged, and how many packages you have layered.'],
   ['disk', 'Free space on /sysroot. Warns at 80% full, fails at 90%: staging an update needs several GB.'],
   ['crashes', 'Programs of yours that crashed since this boot.'],
@@ -122,7 +122,7 @@ const FIXES: [string, string, string][] = [
   ['gamemode', '… is not in the gamemode group', 'sudo pulsar setup gamemode, then log out and back in'],
   ['gamemode', '… enrolled in gamemode, but this session predates it', 'Log out and back in. Groups are fixed at login.'],
   ['nvidia', 'nvidia variant but no nvidia module is loaded', 'Usually Secure Boot refusing a module it does not trust: enroll the key (see Install).'],
-  ['gpu-containers', 'stale CDI spec for driver …', 'Delete the hand-written spec it names in /etc/cdi. The boot unit writes the right one to /var/run/cdi.'],
+  ['gpu-containers', 'stale CDI spec for driver …', 'If the spec it names is in /etc/cdi, delete it. If it is in /var/run/cdi, run sudo systemctl restart nvidia-cdi-refresh.service, which writes that folder.'],
   ['cli', 'another pulsar comes first on PATH', 'Call /usr/bin/pulsar, or rename the editor’s command.'],
 ];
 
@@ -157,8 +157,8 @@ const TOC = [
 >
   <h1>Troubleshooting</h1>
   <p class="intro">
-    <code>pulsar doctor</code> checks the machine; <code>pulsar report</code> packages the results
-    for someone else. Neither needs root.
+    <code>pulsar doctor</code> has sixteen health checks, and <code>pulsar report</code> bundles
+    their results with logs and system details for someone else. Neither needs root.
   </p>
 
   <h2 id="doctor">Start with doctor</h2>
@@ -200,14 +200,16 @@ const TOC = [
   <h2 id="report">Asking for help</h2>
   <p>
     Paste <code>pulsar report</code> into an issue or hand it to a coding agent. It includes doctor,
-    deployments, the image manifest, failed units, this boot’s warnings from Pulsar’s units and the
-    failed ones, GPUs and their drivers, and Flatpak remotes and apps. JSON by default;{' '}
-    <code>--text</code> for people.
+    deployments, the image manifest, failed units, this boot’s warnings from the pulsar, greenboot,
+    akmods and gamescale units and the failed ones, the kernel and its command line, Secure Boot
+    state, GPUs and their drivers, and Flatpak remotes and apps. It’s JSON by default, and{' '}
+    <code>--text</code> prints it for people.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="report" code={REPORT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="pulsar report --text" code={REPORT_OUT}></arc-code-block>
   <p>
-    It leaves out the full journal, earlier boots, environment variables, the machine ID, file
+    It leaves out the full journal, earlier boots (except a crash you name with{' '}
+    <code>--crash</code>), environment variables, the machine ID, file
     contents from <code>$HOME</code> or <code>/etc</code>, and Flatpak app data.
   </p>
   <p>
@@ -215,8 +217,8 @@ const TOC = [
     addresses, email addresses, values after <code>token=</code>, <code>password:</code>,{' '}
     <code>api_key=</code> or <code>Authorization: Bearer</code>, and tokens with a known prefix
     (GitHub <code>ghp_</code> and <code>github_pat_</code>, GitLab <code>glpat-</code>,{' '}
-    <code>sk-</code> keys, Slack, AWS access keys, JWTs). <strong>Redaction is best effort, so read
-    the report before you post it.</strong>
+    <code>sk-</code> keys, Slack, AWS access keys, JWTs). <strong>Redaction is best effort. Read the
+    report before you post it.</strong>
   </p>
   <arc-alert variant="info" heading="The journal needs a group">
     Reading the system journal needs the wheel, adm or systemd-journal group. Without one, the
@@ -228,22 +230,24 @@ const TOC = [
     systemd-coredump records crashes. With a default coding agent (the only one
     installed, or set with <code>pulsar agent default</code>), a crash shows a notification, once
     per program per boot, with an <strong>Ask</strong> button that names your agent and{' '}
-    <strong>Ignore this</strong>, which stops announcing that program’s crashes. Nothing is sent
-    unless you click Ask. Without an agent, <code>pulsar doctor</code> still lists crashes.
+    <strong>Ignore this</strong>, which stops announcing that program’s crashes. Nothing reaches
+    the agent until you click Ask.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="crashes" code={CRASH}></arc-code-block>
   <p>
     A crash report adds the program, signal, package, unit, command line, the crashing thread’s
-    stack trace, and its log lines. It never includes the core file. Command lines can hold
-    unrecognized secrets, so check <code>--text</code> first.{' '}
+    stack trace, and its log lines. It never includes the core file. A command line can hold a
+    secret the redaction doesn’t recognize. Read the <code>--text</code> version before you share
+    it.{' '}
     <a href="/docs/agents#ask">What Ask sends</a>.
   </p>
   <p>
     On the NVIDIA image, a game whose GPU work faults freezes or quits without a core dump, so
     systemd-coredump never sees it. Pulsar watches the kernel log for these faults (Xid lines) and
     shows a notification that names the game and what to try, usually turning off DLSS and frame
-    generation and undoing any GPU overclock. It has the same <strong>Ask</strong> and{' '}
-    <strong>Ignore this</strong> buttons. <code>pulsar doctor gpu-faults</code> lists this boot’s.
+    generation and undoing any GPU overclock. It has <strong>Ignore this</strong>, and{' '}
+    <strong>Ask</strong> when you have a default agent. <code>pulsar doctor gpu-faults</code> lists
+    this boot’s faults.
   </p>
 
   <h2 id="logs">The logs</h2>
