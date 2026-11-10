@@ -32,6 +32,8 @@ export const USAGE = [
   "  pulsar theme <command>   recolor the whole desktop: list | set <theme> |",
   "                           revert | ...",
   "  pulsar setup <recipe>    apps | devbox | gamemode | quadlet | gamescale",
+  "  pulsar screen text|qr    the text or QR code in an area of the screen,",
+  "                           onto the clipboard (Super+Print: text)",
   "",
   "Agents",
   "  pulsar agent             what this machine gives a coding agent:",
