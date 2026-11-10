@@ -5,20 +5,24 @@ Pulsar needs two unrelated signatures:
 | | signs | key | when |
 |---|---|---|---|
 | **kernel module** | `nvidia.ko` bytes | the MOK key shipped as `MOK.der` | during the image build |
-| **image** | a published image digest | a cosign key | after the push |
+| **image** | a published image digest | the release key (cosign) | on the build host, after the boot gate |
+| **ISO** | an ISO's checksum manifest | the release key (cosign) | at the end of the weekly ISO build (`scripts/build-iso.sh`) |
 
-Only the first is Secure Boot: get it wrong and machines black-screen, and its
-key can't be casually regenerated.
+Only the module signature involves Secure Boot. With Secure Boot on, a module
+signed by a key the machine hasn't enrolled doesn't load, and replacing that
+key means re-enrolling every machine (see "Rotating the module key").
 
-Both keys live on **halo** (the signing host, in `arclight-infra`). The builder
-holds only a bearer token. This is the contract halo's `signd` must meet; the
-client is `scripts/sign-file-oracle`.
+Both private keys live only on **halo** (the signing host, in
+`arclight-infra`). The builder holds a bearer token and asks halo's signer over
+the private network. This page is the contract halo's `signd` must meet; the
+module-signing client is `scripts/sign-file-oracle`.
 
 ## Why the builder never holds the module key
 
-A compromised builder is rebuilt from this repo. A compromised module key means
-a new `MOK.der` and re-enrolling **every machine, physically, at boot** through
-MokManager. An ephemeral builder is the wrong place for that key.
+Builders are short-lived VMs that download packages and run the
+Containerfile, and one is rebuilt from this repo if it's compromised. If the
+module key leaked from one, replacing it would mean a new `MOK.der` and
+re-enrolling **every machine, at its console, at boot** through MokManager.
 
 ## API
 
@@ -33,14 +37,14 @@ X-Pulsar-Hash-Algo: sha256          # sha256 | sha384 | sha512
 X-Pulsar-Module: nvidia.ko          # advisory, for the audit log
 <body: the uncompressed .ko>
 
-200 application/octet-stream        # detached DER signature (~408 bytes)
+200 application/octet-stream        # detached DER signature
 401                                 # bad or missing token
 413                                 # body over the limit
 400                                 # not an ELF object, or unsupported hash
 ```
 
 - Server: `sign-file -d <hash> <key> <cert> <module>` writes `<module>.p7s`;
-  the client attaches it with `sign-file -s`. No custom crypto on either side.
+  the client attaches it with `sign-file -s`.
 - `sign-file` comes from `kernel-devel` (any version) on halo.
 - Reject bodies not starting with `\x7fELF`.
 
@@ -48,17 +52,17 @@ X-Pulsar-Module: nvidia.ko          # advisory, for the audit log
 
 Returns halo's module-signing certificate, DER. Authenticated.
 
-Required, not a convenience: `sign-file` takes the signer identifier from the
-certificate it's given. Signing against the committed `MOK.der` would make
-phase 5 of `Containerfile.nvidia` compare the file with itself and pass even if
-halo held a different key. With `/cert`, phase 5 proves the signing key belongs
-to the certificate users enroll.
+`sign-file` takes the signer identifier from the certificate it's given.
+Signing against the committed `MOK.der` would make phase 5 of
+`Containerfile.nvidia` compare the file with itself and pass even if halo held
+a different key. With `/cert`, phase 5 proves the signing key belongs to the
+certificate users enroll.
 
 ### Transport trust
 
-Two unrelated certificates: `/cert` returns the **module-signing** cert; the
-API itself uses halo's self-signed **transport** cert (SAN = its VPC address,
-`10.x`, which no public CA issues for).
+`/cert` returns the **module-signing** cert. The API itself uses halo's
+self-signed **transport** cert (SAN = its VPC address, `10.x`, which no public
+CA issues for).
 
 - The builder gets the transport cert as `PULSAR_SIGNER_CA_FILE`
   (`/etc/pulsar/halo-ca.pem` on a build host), passed to `scripts/build.sh` as
@@ -66,17 +70,36 @@ API itself uses halo's self-signed **transport** cert (SAN = its VPC address,
   (keeps an absolute host path out of the context and the layers).
 - Installing it on the build host is **not enough**: `podman build` uses the
   base image's CA bundle. The symptom is `curl: (60) ... self-signed
-  certificate` about 40 minutes in, at phase 3. `build.sh` refuses up front if
-  the URL is `https:` and no readable CA file was given.
-- Never `curl -k`: the connection carries the token that buys signatures. Use
-  a plain-http test signer locally instead.
+  certificate` at phase 3. `build.sh` refuses up front if the URL is
+  `https:` and no readable CA file was given.
+- Never `curl -k`: the bearer token travels on that connection, and whoever
+  reads it can get modules signed until it expires or is revoked. Use a
+  plain-http test signer locally instead.
 
-### `POST /sign` and `GET /healthz`
+### `POST /sign-blob`
 
-Image signing over a digest, and liveness. Specified by `arclight-infra`; the
-image build doesn't call them.
+Signs a small file with the release key. `scripts/build-iso.sh`
+(`sign_manifest`) sends each ISO's checksum manifest:
 
-## Two easy mistakes
+```
+Authorization: Bearer <token>
+X-Pulsar-Name: <file name>
+<body: the file's bytes>
+
+200 application/json                # {"signature": "<base64>"}
+```
+
+`build-iso.sh` then verifies the signature against `keys/cosign.pub` and logs
+it in Rekor itself.
+
+### Endpoints this repo doesn't call
+
+`POST /sign-image` (the build host sends a repository and digest after the
+boot gate, and attaches the signature with `cosign attach signature`),
+`POST /revoke` (ends a build's tokens) and `GET /healthz` (liveness, no
+token) are specified in `arclight-infra`, `services/halo/signd`.
+
+## `kmodtool` and `sig_key`
 
 - **The signing macro fails silently.** `kmodtool`'s
   `%__kmodtool_modsign_install_post` skips signing, with no error, unless both
@@ -89,8 +112,8 @@ image build doesn't call them.
 
 `brp-kmodsign` signs every uncompressed `.ko` **before** the RPM compresses it
 to `.ko.xz`. `scripts/sign-file-oracle` replaces `scripts/sign-file` at that
-point; nothing else changes (no forked akmods, no RPM unpacking, no rpmdb
-drift).
+point. akmods isn't forked and the RPM isn't unpacked, so the rpmdb matches
+what's installed.
 
 ```
 builder                                  halo
@@ -105,14 +128,14 @@ builder                                  halo
 
 Fail closed: an unreachable, unauthorized or slow signer fails module signing,
 the RPM, the image and the whole nightly, vanilla image included. Otherwise an
-nvidia image with an unloadable module would ship and black-screen its
+NVIDIA image with an unloadable module would ship and black-screen its
 machines.
 
 ## Testing without halo
 
 `scripts/pulsar-signer.py` is a stdlib reference implementation of
 `/sign-module` and `/cert` (~200 lines), for testing the client without the
-real key or host, and for checking the Go implementation against.
+real key or host, and for checking halo's implementation against.
 
 ```
 # a throwaway key -- never the enrolled one
@@ -137,7 +160,7 @@ with `<fakesrcdir>/scripts/sign-file` the shim and
 
 ## Rotating the module key
 
-Requires a reboot per machine. In this order (reversed, nvidia machines lose
+Requires a reboot per machine. In this order (reversed, NVIDIA machines lose
 their display):
 
 1. Generate the new keypair on halo; keep the old one.
@@ -156,15 +179,31 @@ their display):
 (SHA1 `71:c0:a5:0c:d2:21:1a:bd:e4:dd:27:c6:15:44:c3:26:3b:18:86:eb`), replacing
 the akmods-generated `fedora_1784000352_fff45832`.
 
-Steps 1 and 4 are outstanding. Until then:
+halo holds this keypair and serves this cert at `/cert`; if it didn't, every
+NVIDIA build would fail at phase 5. halo was rebuilt on 2026-11-09 with the
+same module key, so nothing needs to be enrolled again. Build 45.20261109.1
+passed the boot gate in Secure Boot enforce mode on the NVIDIA image with
+modules signed by it.
 
-- **halo must hold this keypair and serve this cert at `/cert`**, or every
-  nvidia build fails at phase 5.
-- **No machine has enrolled it.** Firmware holds the old akmods cert, so an
-  image signed with the new key won't load its module (black screen). Do step
-  4 before booting anything built since.
+## The release key (cosign)
 
-For `bootstrap.md` in `arclight-infra`: until step 4 runs, both keys can be
-generated on halo, since neither is enrolled anywhere. After that, the module
-key is import-only again: replacing it means re-enrolling every machine in
-person.
+`keys/cosign.pub` and `system_files/etc/pki/containers/pulsar.pub` are the
+same key (`tests/signing-policy.bats` compares them). The release key has
+signed the published images (`pulsar`, `pulsar-nvidia` on ghcr.io) since
+2026-09-28, and signs each ISO's checksum manifest (through halo's `POST /sign-blob`). halo can't
+reach the internet, so the build host logs each signature in Rekor
+(rekor.sigstore.dev) before attaching it.
+
+`build-iso.sh` verifies every ISO signature against `keys/cosign.pub` and its
+Rekor entry and stops on a mismatch, so a new key on halo fails the weekly ISO
+until both files follow it. On an installed system, `pulsar verify` checks the
+booted image's digest against `/etc/pki/containers/pulsar.pub`: with the Rekor
+entry first, then key-only for signatures from before Rekor logging. Hosts
+don't enforce signatures; there is no `policy.json`.
+
+On 2026-11-09 halo was deleted, and its cosign private key had no copy, so
+the key was replaced with one generated on the rebuilt halo. On 2026-11-10
+every image the old key had signed was signed again with the new one, so
+`keys/cosign.pub` verifies every published image, and the old key, kept as
+`keys/cosign-before-2026-11-09.pub`, still verifies the old signatures. ISOs
+published before the change are signed with the old key only.
