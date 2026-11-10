@@ -51,8 +51,8 @@ const TOC = move
 >
   <h1>Latest nightly build</h1>
   <p class="intro">
-    The build compares each new image’s package list with the previous build’s and generates this
-    page from the result.
+    Each nightly build diffs its SPDX SBOM against the previous build’s and writes the result to{' '}
+    <a href="/changelog.json">changelog.json</a>, which this page is built from.
     {
       hasReleases && (
         <>
@@ -64,7 +64,7 @@ const TOC = move
   </p>
   <p class="hint">
     The page updates once a night’s image is published. <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>{' '}
-    shows tonight’s build as it runs, and why a night was skipped or failed.
+    shows each night’s build as it runs, including the reason a night was skipped or failed.
   </p>
 
   <h2 id="last-night">What changed</h2>
@@ -134,9 +134,8 @@ const TOC = move
     )
   }
   <p class="hint">
-    The raw rows are in <a href="/changelog.json">changelog.json</a>. The package list it was
-    computed from ships attached to the&nbsp;image:{' '}
-    <code>oras discover {IMAGES.vanilla}:latest</code>. On a Pulsar machine,{' '}
+    Each image’s SBOM is attached to it in the registry, and{' '}
+    <code>oras discover {IMAGES.vanilla}:latest</code> lists it. On a Pulsar machine,{' '}
     <code>pulsar changelog</code> prints the same&nbsp;list.
   </p>
 </Docs>
