@@ -16,21 +16,21 @@ const CAN = [
 
 // What a fresh install already stops, with guard and the sandbox both off
 // (their defaults: cli/pulsar agent_guard, setting_resolve). Source: the
-// table in the OS repo's docs/AGENTS-SAFETY.md.
+// table in the OS repo's docs/AGENTS-SAFETY.md; /etc is root-owned and no
+// polkit rule in system_files opens it.
 const CANT = [
   'Write to /usr, which is read-only even for root',
-  'Edit /etc without your password',
-  'Add a Flatpak remote without your password',
+  'Edit /etc without sudo',
 ];
 ---
 
 <section class="chapter" id="agents" aria-labelledby="agents-h">
   <div class="head">
     <div>
-      <h2 id="agents-h">Coding agents, if you want them</h2>
+      <h2 id="agents-h">Coding agents</h2>
       <p class="lede">
         At first login you can pick Claude Code, Codex, Gemini CLI, opencode or aider. Skip the step
-        and none of them get installed. All but Gemini CLI read Pulsar’s agent guide on their own. An
+        and none of them get installed. Installed this way, all but Gemini CLI start with Pulsar’s agent guide. An
         agent runs as you and can reach everything in your home folder, unless you turn on the
         sandbox, which shows it only the project it was started in.
       </p>
