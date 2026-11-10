@@ -31,8 +31,7 @@ npm run build:checked   # build, then check every page's title, description and 
 The marks, fonts, wallpaper shaders and docs the site uses are copies of
 the OS repo's files, kept in `upstream/`. The OS repo's `scripts/publish.sh`
 replaces them after each nightly it publishes, and the same commit writes
-that night's `src/data/changelog.json` and `src/data/manifest.json`. So a
-feature shows up on the site in the same commit as the image that has it.
+that night's `src/data/changelog.json` and `src/data/manifest.json`.
 
 `upstream.list` names every file the site takes, and you edit it here. Don't
 edit `upstream/`, `changelog.json` or `manifest.json` by hand. Fix the file in
@@ -77,9 +76,9 @@ portrait for the byline and the about page (`/blog/authors/nick`). Portraits
 are committed in color in `assets-static/authors/`; CSS tints them to the
 current theme.
 
-A live post's slug is a URL people have shared. Renaming one needs a 301 in
-`public/_redirects`, plus the old path in `redirects` and `MOVED` in
-`astro.config.mjs`.
+Renaming a live post's slug needs a 301 in `public/_redirects`, plus the old
+path in `redirects` and `MOVED` in `astro.config.mjs`. Without them, links
+people have shared to the old address 404.
 
 ### The rest
 
@@ -87,7 +86,8 @@ A live post's slug is a URL people have shared. Renaming one needs a 301 in
   satori, from the site's own lockup, fonts and screenshots. None of the
   cards are committed.
 - The search index is built with the site (`src/data/search.ts`) and ships
-  as JSON on each page; the browser builds results from it on first use.
+  as JSON on each page. The search palette builds its items from it when the
+  page goes idle, or when search is first opened (`SiteTopBar.astro`).
 - The theme picker recolors the site with the OS's palettes
   (`src/data/themes.json`), adjusted for contrast in `src/data/sitetheme.ts`.
 
@@ -102,8 +102,9 @@ A live post's slug is a URL people have shared. Renaming one needs a 301 in
   read or overflows.
 - `npm run seo`, which `npm run build:checked` runs after the build, checks
   each page's title and description length, its `h1` and its structured data.
-  It also reports the `/install.html`-style redirect stubs, which have none of
-  those, so a clean run isn't zero failures yet.
+  The redirect pages Astro writes for `redirects` (`/install.html` and the
+  rest) have no description, `h1` or structured data, so it reports them as
+  failures.
 
 ## Deploying
 
