@@ -66,7 +66,7 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>The pulsar command</h1>
-  <p class="intro"><code>pulsar</code> is one shell script that runs Pulsar’s themes, health checks, updates and coding agents.</p>
+  <p class="intro"><code>pulsar</code> manages a Pulsar system. It’s a shell script that hands <code>theme</code> and <code>mcp</code> to two Python tools in the image.</p>
 
   <h2 id="usage">Usage</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar --help" code={usage}></arc-code-block>
@@ -95,19 +95,20 @@ const TOC = [
 
   <h2 id="setup">setup recipes</h2>
   <p>
-    Each <code>setup</code> recipe handles what the image can’t ship because it belongs to one
-    machine or account, and tells you if it needs, or must not have, <code>sudo</code>.
+    <code>apps</code> and <code>gamemode</code> need <code>sudo</code>. <code>devbox</code>,{' '}
+    <code>quadlet</code> and <code>gamescale</code> set up your own account and refuse to run
+    under it.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
   <p class="hint">The gamescale recipe is explained in <a href="/docs/gamescale#flatpak">gamescale</a>.</p>
 
   <h2 id="doctor">How doctor checks</h2>
   <p>
-    The scheduler check reads <code>/sys/kernel/sched_ext/state</code>, so it catches an{' '}
-    <code>scx.service</code> that looks active but never attached a scheduler. <code>doctor</code>{' '}
-    needs no root because it reads through <code>rpm-ostree</code>, where <code>bootc status</code>{' '}
-    would need it. <code>pulsar sbom</code> builds its list from the live rpm database, with the
-    script that writes the published images’ SBOMs.
+    The scheduler check reads <code>/sys/kernel/sched_ext/state</code>, which shows whether a
+    sched_ext scheduler is attached even when <code>scx.service</code> reports active.{' '}
+    <code>doctor</code> reads deployments through <code>rpm-ostree</code>, which works without
+    root. <code>bootc status</code> needs root. <code>pulsar sbom</code> builds its list from the
+    live rpm database, with the script that writes the published images’ SBOMs.
   </p>
 
   <h2 id="update">update and layered packages</h2>
@@ -120,10 +121,11 @@ const TOC = [
 
   <h2 id="name">If a different pulsar runs</h2>
   <p>
-    The Pulsar code editor has a <code>pulsar</code> command too. Its AppImage, linked into{' '}
-    <code>~/.local/bin</code>, comes first on <code>PATH</code>, so call{' '}
-    <code>/usr/bin/pulsar</code>. Its RPM, layered, overwrites <code>/usr/bin/pulsar</code>, so
-    remove it. Its Flatpak doesn’t collide. doctor’s <code>cli</code> check catches both.
+    The Pulsar code editor has a <code>pulsar</code> command too. If its AppImage is linked into{' '}
+    <code>~/.local/bin</code>, that copy comes first on <code>PATH</code> and you need to type{' '}
+    <code>/usr/bin/pulsar</code>. A layered RPM of the editor overwrites{' '}
+    <code>/usr/bin/pulsar</code>, and the fix is removing the package. The editor’s Flatpak doesn’t
+    collide. doctor’s <code>cli</code> check reports both cases.
   </p>
   <p class="hint">The source is <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>.</p>
 </Docs>
