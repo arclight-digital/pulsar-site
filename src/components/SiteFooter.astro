@@ -10,7 +10,7 @@ import { BUILD_STATUS, REPO, SUPPORT_URL, TAGLINE } from '../data/site';
 const SITE = [
   { label: 'Install', href: '/docs/install' },
   { label: 'Docs', href: '/docs' },
-  { label: 'Themes', href: '/#themes' },
+  { label: 'Themes', href: '/docs/themes' },
   { label: 'gamescale', href: '/docs/gamescale' },
   { label: 'Provenance', href: '/docs/provenance' },
   // release notes once a nightly has shipped them (see Docs.astro)
@@ -23,7 +23,7 @@ const SITE = [
 const MACHINE = [
   { label: 'Source', href: REPO },
   { label: 'Build status', href: BUILD_STATUS },
-  { label: 'The shader', href: `${REPO}/blob/main/assets/shaders/pulsar.frag` },
+  { label: 'pulsar.frag', href: `${REPO}/blob/main/assets/shaders/pulsar.frag` },
   { label: 'changelog.json', href: '/changelog.json' },
   { label: 'manifest.json', href: '/manifest.json' },
   { label: 'MIT License', href: `${REPO}/blob/main/LICENSE` },
@@ -48,7 +48,7 @@ const MACHINE = [
       </ul>
     </div>
     <div>
-      <p class="col-title">Machine</p>
+      <p class="col-title">Source and data</p>
       <ul class="col">
         {MACHINE.map((link) => <li><a href={link.href}>{link.label}</a></li>)}
       </ul>
@@ -66,18 +66,12 @@ const MACHINE = [
       <div class="colophons">
       <p class="colophon made">
         Free to download and MIT licensed. Made by Arclight Digital&nbsp;LLC.
-        {
-          SUPPORT_URL ? (
-            <a href={SUPPORT_URL}>Like it? Support Pulsar&nbsp;→</a>
-          ) : (
-            <span class="soon">Support Pulsar: coming&nbsp;soon.</span>
-          )
-        }
+        {SUPPORT_URL && <a href={SUPPORT_URL}>Support Pulsar&nbsp;→</a>}
       </p>
       <p class="colophon">
-        Set in Host&nbsp;Grotesk and JetBrains&nbsp;Mono, on ARC&nbsp;UI. One fragment shader
-        renders the home page's sky live and the OS wallpapers in&nbsp;CI. The site has no
-        analytics and sets no&nbsp;cookies.
+        Set in Host&nbsp;Grotesk and JetBrains&nbsp;Mono, on ARC&nbsp;UI. The home page's sky is
+        drawn live by the two fragment shaders the build uses to render the OS wallpapers.
+        The site has no analytics and sets no&nbsp;cookies.
       </p>
       </div>
       <ByArclight />
