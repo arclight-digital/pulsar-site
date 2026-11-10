@@ -3,7 +3,7 @@
 // link for the post.
 import type { APIRoute } from 'astro';
 import { AUTHORS } from '../../data/authors';
-import { postHref, posts } from '../../data/blog';
+import { BLOG_DESCRIPTION, postHref, posts } from '../../data/blog';
 
 export const prerender = true;
 
@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ site }) => {
     <title>Pulsar blog</title>
     <link>${abs('/blog')}</link>
     <atom:link href="${abs('/blog/rss.xml')}" rel="self" type="application/rss+xml"/>
-    <description>News about Pulsar and the images it ships.</description>
+    <description>${esc(BLOG_DESCRIPTION)}</description>
     <language>en-us</language>
 ${items}
   </channel>
