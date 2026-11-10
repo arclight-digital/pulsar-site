@@ -8,7 +8,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'On Pulsar, apps are Flatpaks, dev tools live in a toolbox, services are quadlets, and layering a host package is the last resort. The commands for each are below.';
+  'On Pulsar, apps are Flatpaks, dev tools go in a toolbox, services run as quadlets, and layering a host package is the last resort, with the commands for each.';
 
 const FLATPAK = [
   'flatpak install --user flathub org.gimp.GIMP   # yours, no password',
@@ -74,7 +74,7 @@ const JSONLD = [
   },
 ];
 const TOC = [
-  { id: 'choose', label: 'Where does it go?', level: 2 },
+  { id: 'choose', label: 'Where each kind goes', level: 2 },
   { id: 'apps', label: 'Apps: Flatpak', level: 2 },
   { id: 'dev', label: 'Dev tools: a toolbox', level: 2 },
   { id: 'services', label: 'Services: quadlets', level: 2 },
@@ -86,7 +86,7 @@ const TOC = [
 
 <Docs
   title="Where things go"
-  fullTitle="Where things go on Pulsar — Flatpak, toolbox or layering"
+  fullTitle="Where things go on Pulsar"
   description={DESCRIPTION}
   path="/docs/where-things-go"
   headings={TOC}
@@ -94,16 +94,16 @@ const TOC = [
 >
   <h1>Where things go</h1>
   <p class="intro">
-    The system is one image that updates as a whole. Software goes in one of four places, by what
-    it is.
+    The system is one read-only image that updates as a whole, so where software goes depends on
+    what it is.
   </p>
 
-  <h2 id="choose">Where does it go?</h2>
+  <h2 id="choose">Where each kind goes</h2>
   <table>
     <thead><tr><th>You want</th><th>It goes in</th><th>How</th></tr></thead>
     <tbody>
       {WHERE.map(([want, where, how]) => (
-        <tr><td>{want}</td><td><strong>{where}</strong></td><td>{how}</td></tr>
+        <tr><td>{want}</td><td>{where}</td><td>{how}</td></tr>
       ))}
     </tbody>
   </table>
@@ -113,8 +113,7 @@ const TOC = [
     Desktop apps come as Flatpaks. GNOME Software can reach all of Flathub, unfiltered, plus
     Fedora’s own collection. First boot installs Steam, Heroic, Faugus, Bottles, ProtonPlus,
     protontricks, OBS Studio, Discord, EasyEffects, virt-manager, Flatseal, the Showtime video
-    player, the Decibels music player and the GNOME set. An app
-    you remove stays removed.
+    player, the Decibels music player and the GNOME set. An app you remove stays removed.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK}></arc-code-block>
   <p>
@@ -128,7 +127,7 @@ const TOC = [
     <code>sudo dnf install</code> inside it changes only the box.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="toolbox" code={TOOLBOX}></arc-code-block>
-  <p>A ready box with git, gcc, cmake, gdb, make, ripgrep, jq and Python headers:</p>
+  <p>For a ready-made box with git, gcc, cmake, gdb, make, ripgrep, jq and Python headers, run this.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="devbox" code={DEVBOX}></arc-code-block>
   <p>
     It is a distrobox, so <code>toolbox list</code> doesn’t show it. The recipe is{' '}
@@ -136,7 +135,7 @@ const TOC = [
   </p>
   <p>
     For per-project toolchains, <code>mise</code> and <code>direnv</code> are on the host and install
-    into <code>$HOME</code>:
+    into <code>$HOME</code>.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="mise" code={MISE}></arc-code-block>
   <p>
@@ -146,8 +145,8 @@ const TOC = [
 
   <h2 id="services">Services: quadlets</h2>
   <p>
-    A long-running container is a quadlet, a unit file systemd runs as a rootless service. The
-    template:
+    A long-running container is a quadlet, a unit file systemd runs as a rootless service.{' '}
+    <code>pulsar setup quadlet</code> copies a template to start from.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="quadlet" code={QUADLET}></arc-code-block>
   <ul>
@@ -158,30 +157,30 @@ const TOC = [
   <p class="hint">Containers that need the GPU: <a href="/docs/gpu-containers">GPU containers</a>.</p>
 
   <h2 id="layering">Layering, the last resort</h2>
-  <p>Layer a package onto the host only when it can’t run in a container, such as a kernel module, udev rule or host daemon:</p>
+  <p>Layer a package onto the host only when it can’t run in a container, such as a kernel module, udev rule or host daemon.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="layer" code={LAYER}></arc-code-block>
   <p>
-    A layered package applies at the next boot and stays through updates. Those then take
-    minutes instead of seconds. <code>pulsar update</code> handles it, and{' '}
+    A layered package applies at the next boot. <code>pulsar update</code> keeps it through updates
+    by using <code>rpm-ostree upgrade</code>, and every update gets slower.{' '}
     <code>pulsar doctor</code> counts your layers. Never layer dev tools.
   </p>
 
   <h2 id="dont">What not to do</h2>
   <ul>
     <li>
-      <strong>Installing anything into <code>/usr/local</code> or <code>/opt</code></strong>{' '}
-      (<code>sudo make install</code>, a vendor’s <code>install.sh</code>). It shadows the image on{' '}
-      <code>PATH</code> and survives every update and rollback. <code>rpm-ostree status</code>{' '}
-      doesn’t list it. Use a toolbox, <code>mise</code> or <code>~/.local/bin</code>.
+      Don’t install anything into <code>/usr/local</code> or <code>/opt</code> (<code>sudo make
+      install</code>, a vendor’s <code>install.sh</code>). It shadows the image on <code>PATH</code>,
+      survives every update and rollback, and <code>rpm-ostree status</code> doesn’t list it. Use a
+      toolbox, <code>mise</code> or <code>~/.local/bin</code>.
     </li>
     <li>
-      <strong><code>sudo pip install</code> or <code>sudo npm install -g</code> on the host.</strong>{' '}
-      It either fails, because <code>/usr</code> is read-only, or lands in <code>/usr/local</code>,
-      where no update or rollback will ever touch it. Use a venv or a toolbox.
+      Don’t run <code>sudo pip install</code> or <code>sudo npm install -g</code> on the host. It
+      either fails, because <code>/usr</code> is read-only, or lands in <code>/usr/local</code>. Use a
+      venv or a toolbox.
     </li>
     <li>
-      <strong>Editing <code>/etc</code> to fix something the image ships.</strong> The edit outlives
-      updates and hides the real fix. If you must, take a{' '}
+      Don’t edit <code>/etc</code> to fix something the image ships. The edit outlives updates and
+      hides the real fix. If you must, take a{' '}
       <a href="/docs/updates#checkpoint">checkpoint</a> first.
     </li>
   </ul>
