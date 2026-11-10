@@ -64,11 +64,12 @@ const MODES = [
       <section class="chapter intro" id="about" aria-labelledby="about-h">
         <div class="intro-copy">
           <h2 id="about-h" class="statement">
-            Stock GNOME <span class="lift">and then some.</span>
+            Every Pulsar computer <span class="lift">runs the same image.</span>
           </h2>
           <p class="big">
-            First boot installs the default apps and Steam once the computer is online. After that,
-            new builds download in the background.
+            Pulsar is GNOME on Fedora Silverblue with the setup already done. New builds download in
+            the background and take over when you restart, and <code>sudo pulsar rollback</code> puts
+            the previous one back.
           </p>
           <ul class="ready">
             {READY.map((r) => <li>{r}</li>)}
