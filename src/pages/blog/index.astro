@@ -5,11 +5,10 @@
 import Blog from '../../layouts/Blog.astro';
 import Portrait from '../../components/Portrait.astro';
 import { AUTHORS, authorHref } from '../../data/authors';
-import { isoDay, longDate, postHref, posts, readingMinutes } from '../../data/blog';
+import { BLOG_DESCRIPTION, isoDay, longDate, postHref, posts, readingMinutes } from '../../data/blog';
 import { APP_ID, ORG_ID } from '../../data/site';
 
-const DESCRIPTION =
-  'Posts about Pulsar releases and Fedora or GNOME upgrades, and how the nightly images are built and checked before anyone gets them.';
+const DESCRIPTION = BLOG_DESCRIPTION;
 const [latest, ...earlier] = await posts();
 
 const years = new Map<number, typeof earlier>();
@@ -32,7 +31,7 @@ const JSONLD = [
 ];
 ---
 
-<Blog title="Pulsar blog — news about the OS and its builds" crumb="Blog" description={DESCRIPTION} path="/blog" jsonLd={JSONLD} wide>
+<Blog title="Pulsar blog | releases and Fedora upgrades" crumb="Blog" description={DESCRIPTION} path="/blog" jsonLd={JSONLD} wide>
   <Fragment slot="head">
     <h1>Blog</h1>
     <p class="lede">{DESCRIPTION}</p>
