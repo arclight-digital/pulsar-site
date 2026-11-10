@@ -12,7 +12,7 @@ const DESCRIPTION =
 const SMOKE = 'podman run --rm --device nvidia.com/gpu=all registry.fedoraproject.org/fedora nvidia-smi';
 
 const OLLAMA = [
-  'podman run -d --device nvidia.com/gpu=all -p 11434:11434 \\',
+  'podman run -d --device nvidia.com/gpu=all -p 127.0.0.1:11434:11434 \\',
   '  -v ollama:/root/.ollama docker.io/ollama/ollama',
 ].join('\n');
 
@@ -50,14 +50,14 @@ const JSONLD = [
 const TOC = [
   { id: 'run', label: 'Give a container the GPU', level: 2 },
   { id: 'how', label: 'What makes it work', level: 2 },
-  { id: 'check', label: 'When it does not', level: 2 },
+  { id: 'check', label: 'What doctor reports', level: 2 },
   { id: 'models', label: 'A model for your agents', level: 2 },
 ];
 ---
 
 <Docs
   title="GPU containers"
-  fullTitle="GPU containers on Pulsar — CUDA in podman, via CDI"
+  fullTitle="GPU containers on Pulsar"
   description={DESCRIPTION}
   path="/docs/gpu-containers"
   headings={TOC}
@@ -65,8 +65,8 @@ const TOC = [
 >
   <h1>GPU containers</h1>
   <p class="intro">
-    Run CUDA and local models in a container. On the NVIDIA image, podman can give a container the
-    GPU by name.
+    Run CUDA and local models in a container. On the NVIDIA image, podman gives a container the GPU
+    with <code>--device nvidia.com/gpu=all</code>.
   </p>
 
   <h2 id="run">Give a container the GPU</h2>
@@ -101,10 +101,10 @@ const TOC = [
   </ul>
   <arc-alert variant="warning" heading="Don’t write your own spec to /etc/cdi">
     A spec from <code>nvidia-ctk cdi generate</code> in <code>/etc/cdi</code> survives driver
-    updates and goes stale. The boot unit already writes a fresh one.
+    updates and goes stale.
   </arc-alert>
 
-  <h2 id="check">When it does not</h2>
+  <h2 id="check">What doctor reports</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor gpu-containers" code={DOCTOR}></arc-code-block>
   <table>
     <thead><tr><th>doctor says</th><th>Do this</th></tr></thead>
@@ -115,7 +115,7 @@ const TOC = [
     </tbody>
   </table>
   <p class="hint">
-    No NVIDIA module loaded at all: see the <code>nvidia</code> check in{' '}
+    If no NVIDIA module is loaded at all, see the <code>nvidia</code> check in{' '}
     <a href="/docs/troubleshooting#fixes">Troubleshooting</a>.
   </p>
 
