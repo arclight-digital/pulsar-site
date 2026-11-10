@@ -27,7 +27,7 @@ export const AUTHORS = {
     name: 'Nick Duncan',
     role: 'Founder and engineer, Arclight Digital',
     description:
-      'Nick Duncan builds Pulsar: more than fifteen years of software, five of them in AI and computer vision, and a start in design that still shows in the desktop.',
+      'Nick Duncan builds Pulsar. He has written software for more than fifteen years, five of them in AI and computer vision, and started out in design.',
     bio: [
       'I’m Nick, and I build Pulsar. I’ve been writing software for more than fifteen years, five of them in AI and computer vision, and since I started out in design, I care about whether a desktop looks good just as much as whether it boots. I founded <a href="https://arclight.build">Arclight</a>, a small studio in Colorado Springs, so I could skip the layers and spend my time on hard problems and code that actually ships.',
       `Pulsar is the Linux I wanted for myself, and as a result it looks good from the first boot, gets rebuilt every night, and goes back to the previous build on its own if an update fails its boot checks. It’s MIT-licensed and built in the open, like the rest of Arclight’s work, including ARC UI, the design system this site runs on. If you find a bug or want something added, please <a href="${REPO}/issues">open an issue</a>.`,
