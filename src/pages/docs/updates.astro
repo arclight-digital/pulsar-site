@@ -4,16 +4,17 @@
 // flags and messages are cli/pulsar's; the timers and the GNOME Software
 // policy are system_files/usr/lib/systemd/user/pulsar-update-check.*,
 // system_files/usr/lib/systemd/system/pulsar-update-{auto,stage}.* and
-// zz0-pulsar.gschema.override. The status transcripts are real runs.
+// zz0-pulsar.gschema.override. The status transcripts are real runs, on
+// 45.20261109.0.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, BUILD_STATUS, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Pulsar downloads each night’s build in the background and boots it at your next restart. The ways back: rollback, pins, and checkpoints for /etc and your settings.';
+  'Pulsar downloads each new nightly build in the background and boots it at your next restart. Rollback, pins and checkpoints take you back to an earlier state.';
 
 const CHECK = [
   '$ pulsar update --check',
-  'up to date: 44.20260928.0 (ghcr.io/arclight-digital/pulsar-nvidia:latest)',
+  'up to date: 45.20261109.0 (ghcr.io/arclight-digital/pulsar-nvidia:latest)',
 ].join('\n');
 
 const CHECK_ANSWERS = [
@@ -33,8 +34,8 @@ const AUTO_OFF = 'sudo systemctl disable --now pulsar-update-auto.timer   # stop
 const STATUS = [
   '$ pulsar status',
   'STATE    VERSION       IMAGE                                         PINNED',
-  'booted   44.20260928.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
-  '-        44.20260927.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+  'booted   45.20261109.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+  '-        45.20261108.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
 ].join('\n');
 
 const ROLLBACK = [
@@ -63,7 +64,7 @@ const CHECKPOINT_OUT = [
   'checkpoint <id>',
   '  /etc      <n> paths saved',
   '  home      <n> paths saved from /var/home/you (dotfiles, ~/.config, ~/.local/bin, ~/.ssh)',
-  '  deployment 44.20260928.0 pinned',
+  '  deployment 45.20261109.0 pinned',
   'see what changed: sudo pulsar checkpoint diff <id>',
   'undo it:          sudo pulsar checkpoint restore <id>',
 ].join('\n');
@@ -90,7 +91,7 @@ const JSONLD = [
   },
 ];
 const TOC = [
-  { id: 'notice', label: 'How you hear about one', level: 2 },
+  { id: 'notice', label: 'Update notifications', level: 2 },
   { id: 'update', label: 'Taking an update', level: 2 },
   { id: 'background', label: 'In the background', level: 3 },
   { id: 'rollback', label: 'Going back', level: 2 },
@@ -111,32 +112,33 @@ const TOC = [
 >
   <h1>Updates and rollback</h1>
   <p class="intro">
-    Pulsar builds a new image every night. Your machine downloads it in the background and boots it
-    the next time you restart. It never restarts by itself. The previous image stays in the boot
-    menu. You can watch each night’s build run at <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
+    Pulsar builds a new image every night, unless nothing it’s built from has changed. Your machine
+    downloads it in the background and boots it the next time you restart. It never restarts on its
+    own, and the previous image stays in the boot menu. You can watch each night’s build run at{' '}
+    <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
   </p>
 
-  <h2 id="notice">How you hear about one</h2>
+  <h2 id="notice">Update notifications</h2>
   <p>
-    Your session checks for a newer build 10–40 minutes after login, then about every six hours.
-    Each build gets one notice:
+    Your session checks for a newer build 10 to 40 minutes after login, then about every six hours.
+    Each build gets one notification.
   </p>
   <ul>
     <li>
-      <strong>Pulsar &lt;version&gt; is ready</strong>: already downloaded. <strong>Restart</strong>{' '}
-      opens GNOME’s restart dialog.
+      <strong>Pulsar &lt;version&gt; is ready</strong> means it’s already downloaded.{' '}
+      <strong>Restart</strong> opens GNOME’s restart dialog.
     </li>
     <li>
-      <strong>Pulsar &lt;version&gt; is available</strong>: not downloaded a day after publishing
-      (on battery, metered), or at once if background downloads are off. <strong>Update</strong>{' '}
-      downloads it now.
+      <strong>Pulsar &lt;version&gt; is available</strong> means it still isn’t downloaded a day
+      after your machine first saw it (because it was on battery or a metered connection). With
+      background downloads off, this one comes at once. <strong>Update</strong> downloads it now.
     </li>
   </ul>
-  <p>Check yourself (no root):</p>
+  <p>You can check without root.</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar update --check" code={CHECK}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="the four answers" code={CHECK_ANSWERS}></arc-code-block>
   <p>
-    The exit status is the answer; <code>--json</code> gives{' '}
+    The exit status is the answer, and <code>--json</code> gives{' '}
     <code>{'{status, booted, latest, image, staged}'}</code>. GNOME Software’s update downloads and
     bootc’s auto-update timer (which reboots on its own) are off.
   </p>
@@ -144,25 +146,25 @@ const TOC = [
   <h2 id="update">Taking an update</h2>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE}></arc-code-block>
   <p>
-    <code>pulsar update</code> fetches and <strong>stages</strong> the new image; it becomes the
+    <code>pulsar update</code> fetches and <strong>stages</strong> the new image, which becomes the
     default at the next boot. On the NVIDIA image it also fetches the next driver’s Flatpak GL
     extension, so Steam has it on boot.
   </p>
   <h3 id="background">In the background</h3>
   <p>
-    <code>pulsar-update-auto.timer</code> runs <code>pulsar update --background</code> 20 minutes
-    after boot, then every 12 hours awake, at the lowest priority. It skips (and logs why) on
+    <code>pulsar-update-auto.timer</code> runs <code>pulsar update --background</code> 20 to 50
+    minutes after boot, then every 12 hours awake, at idle CPU priority. It skips (and logs why) on
     battery, on a metered connection, or when the newest build is already staged. It never
     restarts and never uses <code>--apply</code>.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="turn it off" code={AUTO_OFF}></arc-code-block>
   <p>
     The notification’s <strong>Update</strong> button starts the same download. A local admin isn’t
-    asked for a password; it can only stage the published image, never apply it.
+    asked for a password, because the button can only stage the published image, never apply it.
   </p>
   <p>
     With layered packages (<code>rpm-ostree install</code>), <code>pulsar update</code> uses{' '}
-    <code>rpm-ostree upgrade</code> to keep them; plain <code>bootc upgrade</code> would drop them.
+    <code>rpm-ostree upgrade</code> to keep them. Plain <code>bootc upgrade</code> would drop them.
   </p>
   <p><code>pulsar status</code> shows the booted, staged and previous deployments.</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar status" code={STATUS}></arc-code-block>
@@ -173,11 +175,11 @@ const TOC = [
   </arc-alert>
 
   <h2 id="rollback">Going back</h2>
-  <p>The previous deployment stays on disk. Make it the default and restart:</p>
+  <p>The previous deployment stays on disk. To make it the default and restart into it, run this.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="rollback" code={ROLLBACK}></arc-code-block>
   <p>
-    It doesn’t restart for you. For a one-off, pick the older version in the boot menu. To discard a
-    staged update you haven’t booted:
+    For a one-off, pick the older version in the boot menu instead. To discard a staged update you
+    haven’t booted yet, run this.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="discard" code={DISCARD}></arc-code-block>
 
@@ -195,38 +197,33 @@ const TOC = [
 
   <h2 id="checkpoint">Checkpoints</h2>
   <p>
-    Rollback only covers the OS image. A checkpoint also saves <code>/etc</code> and your settings.
-    Take one before a risky session:
+    Rollback only covers the OS image. A checkpoint also saves <code>/etc</code> and your settings,
+    so take one before you or a coding agent change either.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="checkpoint" code={CHECKPOINT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="what a new checkpoint prints" code={CHECKPOINT_OUT}></arc-code-block>
-  <p>What a checkpoint saves:</p>
-  <ul>
-    <li>All of <code>/etc</code>, with owners, modes, ACLs and SELinux labels.</li>
-    <li>
-      The settings of whoever ran <code>sudo</code>: home dotfiles, <code>~/.config</code> minus
-      caches, <code>~/.local/bin</code> and <code>~/.ssh</code>. Documents, projects and{' '}
-      <code>~/.local/share</code> are left out, and the settings are skipped entirely if they come
-      to more than 512 MB or you pass <code>--no-home</code>.
-    </li>
-    <li>It also pins the booted deployment.</li>
-  </ul>
+  <p>
+    A checkpoint saves all of <code>/etc</code> with owners, modes, ACLs and SELinux labels, and pins
+    the booted deployment. It also saves the settings of whoever ran <code>sudo</code> (home
+    dotfiles, <code>~/.config</code> minus caches, <code>~/.local/bin</code> and{' '}
+    <code>~/.ssh</code>), unless they come to more than 512 MB or you pass <code>--no-home</code>.
+  </p>
   <ul>
     <li>
-      <code>diff</code>: every path <code>changed</code>, <code>added</code> or{' '}
+      <code>diff</code> lists every path <code>changed</code>, <code>added</code> or{' '}
       <code>removed</code> in <code>/etc</code> and your settings, and any deployment staged or
       booted since.
     </li>
     <li>
-      <code>restore</code>: puts back changed and deleted files and discards a deployment staged
-      since. Added files are listed, not deleted. Nothing is restarted: restart affected services,
-      and log out for GNOME settings.
+      <code>restore</code> puts back changed and deleted files and discards a deployment staged
+      since. Added files are listed, not deleted. Nothing is restarted, so restart the affected
+      services yourself, and log out for GNOME settings to apply.
     </li>
   </ul>
   <arc-alert variant="warning" heading="Read the diff before you restore">
     Restore puts back <strong>everything</strong> changed since the checkpoint, including changes
-    the agent didn’t make. Every subcommand needs root, even <code>list</code>: checkpoints hold{' '}
-    <code>/etc/shadow</code> and your SSH keys.
+    you meant to keep. Every subcommand needs root, even <code>list</code>, because checkpoints
+    hold <code>/etc/shadow</code> and your SSH keys.
   </arc-alert>
 
   <h2 id="covers">What each one covers</h2>
