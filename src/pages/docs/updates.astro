@@ -112,16 +112,17 @@ const TOC = [
 >
   <h1>Updates and rollback</h1>
   <p class="intro">
-    Pulsar builds a new image every night, unless nothing it’s built from has changed. Your machine
-    downloads it in the background and boots it the next time you restart. It never restarts on its
-    own, and the previous image stays in the boot menu. You can watch each night’s build run at{' '}
-    <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
+    Pulsar builds a new image every night, unless nothing it’s built from has changed. You can watch
+    each night’s build run at <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>. Your machine
+    downloads the new image in the background and boots it the next time you restart. Updates never
+    restart the computer.
   </p>
 
   <h2 id="notice">Update notifications</h2>
   <p>
     Your session checks for a newer build 10 to 40 minutes after login, then about every six hours.
-    Each build gets one notification.
+    It posts each of these at most once per build. With background downloads on, you usually see
+    only the first.
   </p>
   <ul>
     <li>
@@ -138,7 +139,7 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" filename="pulsar update --check" code={CHECK}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="the four answers" code={CHECK_ANSWERS}></arc-code-block>
   <p>
-    The exit status is the answer, and <code>--json</code> gives{' '}
+    The exit status (0, 10 or 1) matches the answer, and <code>--json</code> prints{' '}
     <code>{'{status, booted, latest, image, staged}'}</code>. GNOME Software’s update downloads and
     bootc’s auto-update timer (which reboots on its own) are off.
   </p>
@@ -147,24 +148,27 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE}></arc-code-block>
   <p>
     <code>pulsar update</code> fetches and <strong>stages</strong> the new image, which becomes the
-    default at the next boot. On the NVIDIA image it also fetches the next driver’s Flatpak GL
-    extension, so Steam has it on boot.
+    default at the next boot. On the NVIDIA image, a staged update also starts{' '}
+    <code>pulsar-gl-nvidia.service</code>, which fetches the Flatpak GL extension for the new
+    driver. Steam then has it at the next boot.
   </p>
   <h3 id="background">In the background</h3>
   <p>
     <code>pulsar-update-auto.timer</code> runs <code>pulsar update --background</code> 20 to 50
     minutes after boot, then every 12 hours awake, at idle CPU priority. It skips (and logs why) on
-    battery, on a metered connection, or when the newest build is already staged. It never
-    restarts and never uses <code>--apply</code>.
+    battery, on a metered connection, or when the newest build is already staged. It stages the
+    update and leaves the restart to you.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="turn it off" code={AUTO_OFF}></arc-code-block>
   <p>
-    The notification’s <strong>Update</strong> button starts the same download. A local admin isn’t
-    asked for a password, because the button can only stage the published image, never apply it.
+    The notification’s <strong>Update</strong> button starts the same download through{' '}
+    <code>pulsar-update-stage.service</code>. A polkit rule lets a local admin start that one
+    service without a password.
   </p>
   <p>
-    With layered packages (<code>rpm-ostree install</code>), <code>pulsar update</code> uses{' '}
-    <code>rpm-ostree upgrade</code> to keep them. Plain <code>bootc upgrade</code> would drop them.
+    <code>pulsar update</code> normally runs <code>bootc upgrade</code>. If you’ve layered packages
+    with <code>rpm-ostree install</code>, it runs <code>rpm-ostree upgrade</code> instead, because{' '}
+    <code>bootc upgrade</code> would drop them.
   </p>
   <p><code>pulsar status</code> shows the booted, staged and previous deployments.</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar status" code={STATUS}></arc-code-block>
@@ -191,14 +195,14 @@ const TOC = [
   </p>
 
   <h2 id="pin">Pinning</h2>
-  <p>Updates clean up old deployments. A pin keeps the booted one on disk through any number of updates.</p>
+  <p>Updates garbage-collect old deployments. A pinned deployment stays on disk until you unpin it.</p>
   <arc-code-block class="theme-fixed-dark" filename="pin" code={PIN}></arc-code-block>
   <p><code>sudo pulsar pin off</code> lets it go again.</p>
 
   <h2 id="checkpoint">Checkpoints</h2>
   <p>
-    Rollback only covers the OS image. A checkpoint also saves <code>/etc</code> and your settings,
-    so take one before you or a coding agent change either.
+    <code>sudo pulsar checkpoint</code> saves <code>/etc</code> and your settings, which rollback
+    doesn’t restore. Take one before you, or a coding agent, change either.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="checkpoint" code={CHECKPOINT}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="what a new checkpoint prints" code={CHECKPOINT_OUT}></arc-code-block>
@@ -216,8 +220,8 @@ const TOC = [
     </li>
     <li>
       <code>restore</code> puts back changed and deleted files and discards a deployment staged
-      since. Added files are listed, not deleted. Nothing is restarted, so restart the affected
-      services yourself, and log out for GNOME settings to apply.
+      since. Added files are listed, not deleted. It restarts nothing. Restart the affected services
+      yourself, and log out for GNOME settings to apply.
     </li>
   </ul>
   <arc-alert variant="warning" heading="Read the diff before you restore">
