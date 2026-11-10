@@ -30,7 +30,7 @@ const TOC = [
 
 <Docs
   title="gamescale"
-  fullTitle="gamescale — native-resolution games with fractional scaling"
+  fullTitle="Native-resolution games with gamescale"
   description={DESCRIPTION}
   path="/docs/gamescale"
   headings={TOC}
@@ -51,15 +51,25 @@ const TOC = [
   </p>
 
   <h2 id="steam">Flatpak Steam and Faugus</h2>
-  <p>Flatpak apps can’t see the host’s <code>/usr</code>:</p>
+  <p>Flatpak apps can’t see the host’s <code>/usr</code>.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK_ERR}></arc-code-block>
   <p>
     At every boot <code>pulsar-steam-grants.service</code> gives Steam and Faugus a read-only view of
     the host OS and puts a directory holding only <code>gamescale</code>, <code>gg</code> and{' '}
     <code>ggm</code> on their <code>PATH</code>. Both run the image’s copies, which update with the
-    image. If you set gamescale up for either one on an older image, run{' '}
-    <code>pulsar setup gamescale</code> once: it points them back at the image’s copies and removes
-    old copies in <code>~/.local/bin</code> that match them.
+    image.
+  </p>
+  <p>
+    The same grant lets Steam and Faugus talk to <code>org.freedesktop.Flatpak</code>. From inside
+    the sandbox, that’s how gamescale reaches mutter to change the display scale, and gamescale’s
+    own installer grants it too. It also lets Steam, Faugus and the games they start run commands
+    on the host, outside the sandbox.
+  </p>
+  <p>
+    If you set gamescale up for either one on an older image, run{' '}
+    <code>pulsar setup gamescale --platform steam faugus</code> once to point them back at the
+    image’s copies and remove old copies in <code>~/.local/bin</code> that match them. Without{' '}
+    <code>--platform</code> it repoints Steam only.
   </p>
 
   <h2 id="flatpak">Other Flatpak launchers</h2>
@@ -72,7 +82,8 @@ const TOC = [
   </p>
   <p>
     After that your copy is the one that runs, because <code>~/.local/bin</code>, the user extension
-    and the user unit come before the image’s. <code>gamescale --version</code> shows which copy runs.
+    and the user unit come before the image’s. <code>gamescale --version</code> prints the version of
+    the copy that runs.
   </p>
 </Docs>
 
