@@ -1,14 +1,16 @@
 ---
 // Install, as a doc: the ISO first, because a fresh install is the common
-// case; the key enrollment the NVIDIA image needs; the switch for a machine
-// already on an atomic Fedora; and what the first login and updates are like.
+// case; the key enrollment the NVIDIA image needs (nouveau is blacklisted in
+// system_files.nvidia, so an unenrolled NVIDIA-only machine has no GPU
+// driver); the switch for a machine already on an atomic Fedora; and what the
+// first login and updates are like.
 // The home page's #install is the short version and links here for the rest.
 import Iso from '../../components/Iso.astro';
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, IMAGES, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Install Pulsar from the weekly ISO, or switch to it from Fedora Silverblue or Kinoite with one command. How to enroll the NVIDIA key, and how updates work.';
+  'Install Pulsar from the weekly ISO, or switch to it from Fedora Silverblue or Kinoite with bootc switch. How to enroll the NVIDIA key, and how updates work.';
 
 const ENROL = 'sudo mokutil --import /etc/pki/pulsar/MOK.der\nsudo systemctl reboot';
 const TAKE = `mokutil --test-key /etc/pki/pulsar/MOK.der   # ...is already enrolled\nsudo bootc switch ${IMAGES.nvidia}:latest\nsudo systemctl reboot`;
@@ -37,7 +39,7 @@ const TOC = [
 
 <Docs
   title="Install"
-  fullTitle="Install Pulsar — the weekly ISO, or one bootc switch"
+  fullTitle="Install Pulsar"
   description={DESCRIPTION}
   path="/docs/install"
   headings={TOC}
@@ -46,19 +48,20 @@ const TOC = [
   <h1>Install</h1>
   <p class="intro">
     On a new machine you need the ISO and a USB stick. If you’re already on Silverblue, Kinoite or
-    another atomic Fedora, it’s one command.
+    another atomic Fedora, you can switch in place with <code>bootc switch</code> and a restart.
   </p>
 
   <h2 id="iso">A fresh install</h2>
   <Iso />
   <p class="hint">
-    Dual-booting with Windows, or coming from a Mac: see <a href="/docs/coming-from">From Windows or macOS</a>.
+    If you’re keeping Windows alongside or coming from a Mac, read <a href="/docs/coming-from">From Windows or macOS</a>.
   </p>
   <p>Boot from the stick and start the installer.</p>
   <ul>
     <li>
       Pick a disk. If it already starts Windows or Linux, you can install alongside it in 36&nbsp;GB of
-      free space, or erase it. Nothing is written until the button on the last page, but back up first.
+      free space (the installer counts that as 39&nbsp;GB), or erase it. Nothing is written until the
+      button on the last page, but back up first.
     </li>
     <li>Disk encryption is on unless you turn it off. The passphrase unlocks the disk at every start.</li>
     <li>
@@ -73,14 +76,17 @@ const TOC = [
 
   <h2 id="secure-boot">NVIDIA: enroll the key, once</h2>
   <p>
-    The NVIDIA driver is signed with Pulsar’s key, so Secure&nbsp;Boot stays on. Enroll the key
-    once, through MokManager on the next boot. The standard image doesn’t need this.
+    The NVIDIA image ships only NVIDIA’s open kernel driver, which needs a GeForce GTX 16 or RTX 20
+    series card or newer. The driver is signed with Pulsar’s key, so you can leave Secure&nbsp;Boot on
+    after you enroll that key once, through MokManager. The standard image doesn’t need it.
   </p>
   <p>
-    You can enroll it now with the steps below, and the NVIDIA driver loads from the next boot. Or
-    log in first: the desktop runs on the open-source driver until the key is enrolled, and shortly
-    after login GNOME Software offers to enroll it. Follow its prompts, restart, and answer
-    MokManager as in step 2.
+    Until the key is enrolled, the NVIDIA driver doesn’t load, and the image blocks nouveau, the
+    community open-source driver. On a machine with integrated graphics the desktop runs on those, and
+    shortly after login GNOME Software offers to enroll the key. Follow its prompts, restart, and
+    answer MokManager as in step 2. Or enroll it with the steps below. TODO(copy): what does a
+    machine whose only GPU is NVIDIA show before the key is enrolled? The OS repo’s
+    docs/SIGNING.md says a black screen.
   </p>
   <ol class="steps">
     <li>
@@ -90,7 +96,7 @@ const TOC = [
     </li>
     <li>
       <h3>Answer MokManager</h3>
-      <p>The next boot stops in a blue firmware screen. The sequence is:</p>
+      <p>The next boot stops in MokManager, a blue firmware screen. Go through it in this order, and type the password from step 1 when it asks.</p>
       <p class="mok">
         {MOK.map((step, index) => (
           <>
@@ -120,8 +126,8 @@ const TOC = [
 
   <h2 id="switch">Switch from an atomic Fedora</h2>
   <p>
-    From Silverblue, Kinoite or another atomic Fedora 44+, switch in place. Files and accounts are
-    kept; the old image stays in the boot menu until the next update.
+    From Silverblue, Kinoite or another atomic Fedora, switch in place. Your files and accounts are
+    kept, and the old image stays in the boot menu until the next update.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="standard" code={switchTo(IMAGES.vanilla)}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="nvidia" code={switchTo(IMAGES.nvidia)}></arc-code-block>
@@ -132,15 +138,15 @@ const TOC = [
 
   <h2 id="first-login">When you log in</h2>
   <p>
-    New accounts start in Pulsar’s theme, and a welcome window opens. It goes over the basics and
-    lets you pick a look or add a coding agent. To reopen it, find <strong>Welcome to Pulsar</strong>
+    New accounts start in Pulsar’s theme, and a welcome window opens where you can pick a look or
+    add a coding agent. To reopen it, find <strong>Welcome to Pulsar</strong>
     in the app grid. A customized account you switched keeps its look.
   </p>
   <p>
     Default apps (Steam, Heroic, video and music players, the GNOME set and more) install on the
     first boot with a network. <code>sudo pulsar setup apps</code> reinstalls any that are missing.
   </p>
-  <p>If something looks wrong:</p>
+  <p>If something looks wrong, run a health check.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="health" code="pulsar doctor"></arc-code-block>
   <p class="hint">
     <a href="/docs/troubleshooting">Troubleshooting</a> · <a href="/docs/where-things-go">Where things go</a>
@@ -148,10 +154,9 @@ const TOC = [
 
   <h2 id="updates">Updates</h2>
   <p>
-    New builds download in the background (on AC power and an unmetered connection) and apply at your
-    next restart; a notification offers a Restart button. <code>sudo pulsar update</code> downloads
-    on demand; <code>sudo pulsar rollback</code> returns to the previous build.{' '}
-    <a href="/docs/updates">Updates and rollback</a>.
+    New builds download in the background and apply at your next restart. <code>sudo pulsar
+    update</code> downloads one now, and <code>sudo pulsar rollback</code> returns to the previous
+    build. <a href="/docs/updates">Updates and rollback</a> has the details.
   </p>
 </Docs>
 
