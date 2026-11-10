@@ -12,7 +12,8 @@ import { manifest } from '../data/build';
 
 const rows: Array<[string, string]> = [
   ['image', manifest.variant ? `${manifest.image} (${manifest.variant})` : manifest.image],
-  ['version', manifest.version],
+  ...(manifest.release ? [['release', manifest.release] as [string, string]] : []),
+  ['build', manifest.version],
   ['base', manifest.base],
   ['built', manifest.built],
   ['kernel', manifest.kernel],
@@ -29,7 +30,7 @@ const code = rows.map(([key, value]) => `${key}${' '.repeat(gutter - key.length)
 
 <figure class="manifest">
   <arc-code-block class="theme-fixed-dark" filename="pulsar manifest" code={code}></arc-code-block>
-  <figcaption class="hint">The manifest the image ships with, unedited.</figcaption>
+  <figcaption class="hint">What pulsar manifest prints for this build, without the rows that describe your own&nbsp;machine.</figcaption>
 </figure>
 
 <style>
