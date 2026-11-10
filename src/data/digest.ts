@@ -321,13 +321,11 @@ export function buildDigest(source: Changelog = changelog): Digest {
     {
       id: 'downgraded',
       title: 'Downgraded',
-      note: 'a version went backwards',
       groups: downgraded,
     },
     {
       id: 'declared',
       title: 'Components the manifest names',
-      note: 'the parts Pulsar is defined by',
       groups: declared,
     },
     { id: 'upstream', title: 'New upstream versions', groups: upstream },
@@ -369,14 +367,15 @@ export const digest = buildDigest();
 
 // The arithmetic of the night, as a sentence rather than a row of figures. The
 // counts that matter are how many packages moved, how few distinct moves that
-// really was, and how much of it was Fedora rebuilding something at a version
-// it was already at. Shared by the hero and /changelog so the two cannot
+// really was, and how much of it was a rebuild at a version it was already
+// at (the diff can't tell who rebuilt it: Fedora, an add-on repo or Pulsar).
+// Shared by the hero and /changelog so the two cannot
 // phrase the same night differently.
 const plural = (count: number, one: string, many = `${one}s`) => (count === 1 ? one : many);
 
 export function arithmetic(d: Digest = digest): string {
   if (d.baseline) {
-    return 'There’s nothing to diff this image against yet. Tomorrow night’s build will be compared with it.';
+    return 'There’s nothing to diff this image against yet. The next build will be compared with it.';
   }
   if (d.quiet) {
     return 'No package changed since the night before, though the image digest did.';
@@ -393,9 +392,9 @@ export function arithmetic(d: Digest = digest): string {
       parts.push(
         upstream === 0
           ? d.packages === 1
-            ? 'Fedora rebuilt it at the same version.'
-            : 'Fedora rebuilt all of them at the versions they were already at.'
-          : `${upstream} ${plural(upstream, 'is a new version', 'are new versions')}, and Fedora rebuilt ${d.rebuiltPackages} at the same version.`,
+            ? 'It was rebuilt at the same version.'
+            : 'All of them were rebuilt at the versions they were already at.'
+          : `${upstream} ${plural(upstream, 'is a new version', 'are new versions')}, and ${d.rebuiltPackages} ${plural(d.rebuiltPackages, 'was', 'were')} rebuilt at the same version.`,
       );
     }
   }
