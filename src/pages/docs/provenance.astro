@@ -1,7 +1,7 @@
 ---
 import Pipeline from '../../components/Pipeline.astro';
 import Docs from '../../layouts/Docs.astro';
-import { APP_ID, COSIGN_PUB, IMAGES, ORG_ID, REPO } from '../../data/site';
+import { APP_ID, IMAGE_KEY, IMAGES, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
   'Each Pulsar image carries an SPDX SBOM, diffed against the build before it. Images, ISOs and the NVIDIA module are signed, and Rekor logs image and ISO signatures.';
@@ -20,7 +20,7 @@ const JSONLD = [
 const SBOM = `oras discover ${IMAGES.vanilla}:latest`;
 // The signature is attached in the registry with its Rekor entry, so cosign
 // checks the log offline: no --insecure-ignore-tlog.
-const VERIFY = `cosign verify --key ${COSIGN_PUB} \\\n  ${IMAGES.vanilla}:latest`;
+const VERIFY = `cosign verify --key ${IMAGE_KEY} \\\n  ${IMAGES.vanilla}:latest`;
 const TOC = [
   { id: 'one-night', label: 'How an image is built', level: 2 },
   { id: 'verify', label: 'Check it yourself', level: 2 },
@@ -67,11 +67,12 @@ const TOC = [
   <p>Check an image’s signature and its log entry:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="verify" code={VERIFY}></arc-code-block>
   <p>
-    Images and ISOs from before November 9, 2026 were signed with an earlier key, kept as{' '}
+    The key was replaced on November 9, 2026, and every image signed with the earlier one has been
+    signed again with this one. ISOs published before then were not, and check only with the earlier
+    key, kept as{' '}
     <a href={`${REPO}/blob/main/keys/cosign-before-2026-11-09.pub`}><code>keys/cosign-before-2026-11-09.pub</code></a>.
-    Signatures made before Rekor logging began have no log entry and check only with{' '}
-    <code>--insecure-ignore-tlog=true</code>. That covers images signed from late September to early
-    October 2026, and ISOs from before September 30, 2026.
+    ISOs from before September 30, 2026 have no Rekor entry and check only with{' '}
+    <code>--insecure-ignore-tlog=true</code>.
   </p>
   <p>
     On a Pulsar machine, <code>pulsar verify</code> prints the same check for the exact image you

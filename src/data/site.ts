@@ -53,6 +53,13 @@ export const ISOS = {
 // every signature against the committed copy before publishing.
 export const COSIGN_PUB = `${ISO_BASE}/cosign.pub`;
 
+// The key image verification points at: the repo's keys/cosign.pub, raw, so
+// cosign can fetch it. Every image digest signed with the key retired on
+// 2026-11-09 has been signed again with this one, so it checks any image.
+// COSIGN_PUB on R2 is replaced only when a weekly ISO uploads, so it can lag
+// the repo by up to a week after a rotation.
+export const IMAGE_KEY = 'https://raw.githubusercontent.com/arclight-digital/pulsar/main/keys/cosign.pub';
+
 // Where "Support Pulsar" points. Pulsar is free to download; this is the tip
 // jar, run on Open Collective and hosted by Arclight Digital LLC. Tips are
 // that company's income, not a charitable gift, so the page says "support",
