@@ -9,7 +9,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'pulsar theme set (or the Themes picker) switches the whole desktop to one of twenty-four themes. You can import a base16 scheme, and revert puts stock GNOME back.';
+  'pulsar theme set, or the Themes picker, recolors GNOME, your apps and the terminal with one of twenty-four themes. Import a base16 scheme, or revert to stock GNOME.';
 
 const LIST = [
   '$ pulsar theme list',
@@ -116,7 +116,7 @@ const TOC = [
 
 <Docs
   title="Themes"
-  fullTitle="Pulsar themes — the whole desktop, one command"
+  fullTitle="Desktop themes on Pulsar"
   description={DESCRIPTION}
   path="/docs/themes"
   headings={TOC}
@@ -132,7 +132,7 @@ const TOC = [
   <p>
     Open <strong>Themes</strong> from the app grid (or <arc-kbd>Super</arc-kbd>&nbsp;+&nbsp;<arc-kbd>T</arc-kbd>{' '}
     on a new account, if free). Type to filter, <arc-kbd>Enter</arc-kbd> applies,{' '}
-    <arc-kbd>Esc</arc-kbd> closes. Or:
+    <arc-kbd>Esc</arc-kbd> closes.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar theme list" code={LIST}></arc-code-block>
   <p>
@@ -156,10 +156,13 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    The login screen isn’t a target: it comes up before anyone logs in, so it wears Pulsar’s own
-    colors, the same for everyone. So does the lock screen’s prompt.
+    The login screen comes up before anyone logs in, so it isn’t a target and has Pulsar’s own
+    colors. The lock screen follows the theme through <code>shell</code>.
   </p>
-  <p>Two targets reach outside the desktop. You can leave either one out, and Pulsar remembers:</p>
+  <p>
+    Pulsar remembers if you leave out <code>agents</code> or <code>flatpak</code>, the two targets
+    that change settings outside the desktop.
+  </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="opt out" code={OPTOUT}></arc-code-block>
 
   <h2 id="dark-light">Dark and light</h2>
@@ -210,8 +213,8 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="import" code={IMPORT}></arc-code-block>
   <p>
     Your themes go in <code>~/.local/share/pulsar/themes/</code> and the shipped ones are in{' '}
-    <code>/usr/share/pulsar/themes/</code>. Each is a folder with a <code>theme.toml</code>. Copying a
-    shipped one is the easiest start.
+    <code>/usr/share/pulsar/themes/</code>. Each is a folder with a <code>theme.toml</code>, so you
+    can start from a copy of a shipped one.
   </p>
   <p>
     Or ask a coding agent: the image’s theme skill builds one from a scheme, photo or mood and
@@ -224,5 +227,5 @@ const TOC = [
     or Shell theme, terminal palette) is left as is and told once that themes exist. This runs once
     per account, never after a revert.
   </p>
-  <p class="hint">Files written, revert rules, GNOME checks: <a href="/docs/theming">How theming works</a>.</p>
+  <p class="hint"><a href="/docs/theming">How theming works</a> lists every file a switch writes and what revert does with each.</p>
 </Docs>
