@@ -17,7 +17,7 @@ const STAGES = [
   { name: 'commit', detail: 'a change is merged in the public repo and goes into that night’s build' },
   { name: 'build', detail: 'both images, on a fresh machine that is deleted once the build is done' },
   { name: 'sign', detail: 'the NVIDIA kernel module with the key you enroll for Secure Boot, and each image with Pulsar’s release key' },
-  { name: 'record', detail: 'an SPDX SBOM of every package goes on the image and is diffed against last night’s' },
+  { name: 'record', detail: 'an SPDX SBOM of every package is attached to the image in the registry and diffed against the previous build’s' },
   { name: 'boot', detail: 'your machine starts the new image, and goes back to the old one after three failed boots in a row' },
 ];
 
