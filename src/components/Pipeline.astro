@@ -2,9 +2,8 @@
 // The supply chain, as a trail, and then the command that shows what is
 // attached to an image. Honest about where it stands: every image carries its
 // package list (an SPDX SBOM) and is diffed nightly; the NVIDIA module is
-// signed for Secure Boot and the installer ISOs with the cosign release key;
-// the images themselves are not signed yet. Image signing with that same key
-// is coming -- until it lands, nothing here claims it.
+// signed for Secure Boot; the gated nightly images (since 2026-09-28) and the
+// installer ISOs are signed with the cosign release key.
 import { IMAGES, REPO } from '../data/site';
 
 interface Props {
@@ -19,7 +18,7 @@ const STAGES = [
   { name: 'build', detail: 'both images, on a fresh machine that is deleted once the build is done' },
   { name: 'sign', detail: 'the NVIDIA kernel module with the key you enroll for Secure Boot, and each image with Pulsar’s release key' },
   { name: 'record', detail: 'an SPDX SBOM of every package goes on the image and is diffed against last night’s' },
-  { name: 'boot', detail: 'your machine starts the new image, and goes back to the old one if the boot checks fail' },
+  { name: 'boot', detail: 'your machine starts the new image, and goes back to the old one after three failed boots in a row' },
 ];
 
 const shown = `oras discover ${IMAGES.nvidia}:latest`;
@@ -47,7 +46,7 @@ const shown = `oras discover ${IMAGES.nvidia}:latest`;
         <p class="hint">
           The images and installer ISOs are signed with Pulsar’s cosign release key, so running them
           means trusting that key. If you’d rather not,{' '}
-          <a href={`${REPO}#two-variants-one-key`}>fork the repo and build your own</a>.
+          <a href={`${REPO}#signing-and-provenance`}>fork the repo and build your own</a>.
         </p>
       )
     }
