@@ -4,36 +4,34 @@
 import DownloadRow from './DownloadRow.astro';
 import { COSIGN_PUB, ISOS, REPO } from '../data/site';
 
-const SUMS = ['sha256', 'sha256.sig', 'json'];
+const SUMS = ['sha256', 'sha256.sigstore.json', 'sha256.sig', 'json'];
 
-// The signature covers the checksum manifest, not the 5GB ISO -- verifying
+// The signature covers the checksum manifest, not the 4GB ISO -- verifying
 // the manifest and then checking the ISO against it proves the same thing
-// without cosign reading five gigabytes. --insecure-ignore-tlog is the
-// documented flag for plain key-based verification: the trust anchor here is
-// the published key, not a transparency-log entry, and the name is cosign's,
-// not a warning about this page.
+// without cosign reading four gigabytes. The .sigstore.json bundle carries
+// the signature and its Rekor entry (scripts/build-iso.sh in the OS repo logs
+// every one, and verifies it this same way before publishing).
 const VERIFY = [
   `cosign verify-blob ${ISOS.vanilla}.sha256`,
   `--key ${COSIGN_PUB}`,
-  `--signature ${ISOS.vanilla}.sha256.sig`,
-  '--insecure-ignore-tlog=true',
+  `--bundle ${ISOS.vanilla}.sha256.sigstore.json`,
   `&& sha256sum -c ${ISOS.vanilla}.sha256`,
 ].join(' ');
 
 const shown = [
   `cosign verify-blob ${ISOS.vanilla}.sha256 \\`,
   `  --key ${COSIGN_PUB} \\`,
-  `  --signature ${ISOS.vanilla}.sha256.sig \\`,
-  '  --insecure-ignore-tlog=true \\',
+  `  --bundle ${ISOS.vanilla}.sha256.sigstore.json \\`,
   `&& sha256sum -c ${ISOS.vanilla}.sha256`,
 ].join('\n');
 ---
 
 <div class="iso">
   <p class="lede">
-    Each variant gets an installer ISO every week, built from the published image. It boots
-    into Pulsar's own installer: pick a disk, set a passphrase, and the next thing you see is
-    Pulsar's first boot. The checksums are signed with Pulsar's release&nbsp;key.
+    The standard image (Intel or AMD graphics) and the NVIDIA image each get a new installer ISO
+    every week, built from the published image. It boots into Pulsar's own installer, where you
+    pick a disk and set a passphrase, and the next thing you see is Pulsar's first boot. The
+    checksums are signed with Pulsar's release&nbsp;key.
   </p>
 
   <div class="grid">
@@ -67,7 +65,7 @@ const shown = [
         key, kept as{' '}
         <a href={`${REPO}/blob/main/keys/cosign-before-2026-11-09.pub`}><code>keys/cosign-before-2026-11-09.pub</code></a>.
       </p>
-      <p class="hint"><code>--insecure-ignore-tlog</code> skips Rekor, Sigstore’s public transparency log. The ISOs’ signatures aren’t logged there yet (the images’ are), so this check rests on the published key alone.</p>
+      <p class="hint">Each signature is also logged in Rekor, Sigstore’s public transparency log. The <code>.sigstore.json</code> file holds the log entry, and cosign checks it along with the&nbsp;key.</p>
     </div>
   </div>
 </div>
