@@ -8,146 +8,75 @@ card: pulsar agent run claude --tmux work
 author: nick
 ---
 
-Pulsar 26.11.1 is here. Coding agents can now keep working after you close
-their terminal, and they tell you when they need you. Super+Space opens a
-command menu that also does sums and conversions, and Super+Print copies the
-text out of any part of the screen.
+Pulsar 26.11.1 is here, and with it comes better coding agent session management and notifications when they need your intervention, a new Spotlight-inspired command menu at Super+Space, and much more consistent theming tweaks to GNOME and GTK apps, as well as glass that better adheres to theme colors.
 
-Unfortunately, this release wasn't in lockstep with Fedora 45 and GNOME 51.
-Those arrived with the November 3 build
-([more on that here](/blog/upgrade-to-fedora-45)), while Pulsar's own
-release number stayed at 26.10.1. So 26.11.1 is the first Pulsar release on
-them, a few days late.
-
-It arrives the way every Pulsar update does: it downloads in the background
-and is ready the next time you restart.
+Unfortunately, this release couldn't make it in time for the release of Fedora 45 and GNOME 51, which carry most of the improvements to Pulsar this month (those arrived with the [November 3 build](/blog/upgrade-to-fedora-45)) - but that doesn't stop us from shipping a few more of our own.
 
 ## Agents you can leave running
 
-Start an agent in a named session:
+tmux is now part of Pulsar's base image, and as a result, now you can add a `--tmux` flag to a `pulsar agent run` call which will handle all the intricacies of tmux session registration for you. They can still be named like a normal tmux session, and if an agent needs your intervention, it will notify you via system notifications.
+
+An example command to run a session with the name of `work`:
 
 ```bash
 pulsar agent run claude --tmux work
 ```
 
-Close the window and the agent keeps going. Run the same command again, from
-any terminal, to get back to it. With Claude Code, you're back in the same
-conversation. These sessions run on a tmux server of their own, set up for
-agents and kept apart from any tmux you use yourself. tmux is part of the
-image now.
+It opens a new tmux session named `work`. You can detach from it as normal, but since agent sessions run on their own tmux server apart from yours, use `pulsar agent attach` to attach to the last session. Of course `pulsar agent attach work` can be used for named sessions. You can also pass `--worktree` to have it use its own git worktree for its work.
 
-- When an agent in a session you aren't looking at finishes or needs an
-  answer, you get a notification. Its Open button takes you straight to that
-  session.
-- Add `--worktree` and the session gets its own git worktree and branch, so
-  several agents can work in one project without touching each other's
-  files. This works in the sandbox too.
-- `pulsar agent undo work` puts a project's files back the way they were
-  when the session started, as long as the project is a git repository.
-  `pulsar agent undo work --redo` takes the undo back. Undo never touches
-  files git ignores, and never moves a branch.
-- `pulsar agent sessions` lists your sessions and what each one is doing.
-  `pulsar agent usage work` shows how many tokens a Claude Code session has
-  used.
-- Pulsar Settings has a new Agents page with every session, its folder and
-  its usage, and buttons to open, undo or end it.
+It also supports being able to undo the work in a session, provided the agent's working folder is a git repository. Just run `pulsar agent undo <name>` to put a project’s files back the way they were when the session started. And you can go back to the modified state in one command by "redoing" it with `pulsar agent undo <name> --redo`.
 
-## A command menu
+Finally, you can view your sessions in the terminal with `pulsar agent sessions`, and see a Claude Code session's usage with `pulsar agent usage <name>`. If you're more inclined to see this visually, a new "Agents" section has been added to the Pulsar Settings app.
 
-If you've used Spotlight on a Mac, or Raycast, you'll recognize this one,
-because I borrowed the idea wholesale. Super+Space opens a search over what
-Pulsar does: copying text off the screen, themes, updates, agent sessions, a
-health check, a checkpoint before a risky change, and asking your agent.
+## A quick command menu
 
-If you use one keyboard layout, Super+Space switches layouts with nothing
-to switch to, so the menu takes it. Add a second layout later
-and Shift+Super+Space still switches between them. If you already use
-several layouts, the menu goes on Super+/ instead.
+To facilitate quicker operation of Pulsar settings, as well as opening apps and searching local files, a new command menu is available with Super+Space. It's similar in spirit to launchers like Spotlight or Raycast. Use it to:
 
-The menu also answers questions. Type any of these and press Enter to copy
-the answer:
+* Change themes, open Pulsar's updates, or open the Agents section in Pulsar Settings quickly
+* Search for and launch installed apps by filtering them by name
+* Search local files by filename
+* Do quick math and copy it to the clipboard, or any of these number operations:
+    * a sum: 2^10, 15% of 80
+    * a conversion: 5 mi in km, 100 f in c, 2 GiB in MB, 255 in hex
+    * money: 100 usd in eur
+    * a date: in 90 days, days until dec 25
 
-- a sum: `2^10`, `15% of 80`
-- a conversion: `5 mi in km`, `100 f in c`, `2 GiB in MB`, `255 in hex`
-- money: `100 usd in eur`
-- a date: `in 90 days`, `days until dec 25`
-
-Exchange rates are the European Central Bank's. The menu fetches them from
-frankfurter.dev only when you type a currency conversion, and keeps them for
-12 hours.
+If you use more than one keyboard layout, Super+Space keeps switching between them, and the command menu goes on Super+/ instead.
 
 ## Copy text and QR codes off the screen
 
-Press Super+Print, pick an area, and the text in it is on your clipboard.
-Text recognition is English only for now. `pulsar screen qr` reads a QR code
-the same way, and if the code holds a link, you can open it from the
-notification.
+Super+Print lets you pick any part of the screen and copies the text in it straight to your clipboard. It's English only for now. If you need to read a QR code instead, just run `pulsar screen qr` and pick the code the same way, and if it holds a link, you can open it right from the notification.
 
-Pulsar offers both shortcuts once. If your account already uses those keys
-for something else, they're left alone, and you can change either one in
-Settings > Keyboard.
+Both shortcuts are only offered once, so if your account already uses those keys for something else, they're left alone. Of course you can change either of them in Settings > Keyboard.
 
 ## Gaming
 
-- When a game hits a GPU fault on NVIDIA, a notification now names the game
-  and what to try. Before, the game just froze or disappeared. If it keeps
-  happening, turning off DLSS or frame generation usually fixes it.
-  `pulsar doctor gpu-faults` lists the faults since you last started your
-  computer.
-- Faugus games now use Pulsar's own `gamescale`, the same as Steam games. A
-  game with `gamescale` in its launch arguments no longer hangs on its
-  splash screen.
-- On NVIDIA, Steam's window comes back if it stops redrawing after your
-  computer wakes from sleep. 26.10.1 was supposed to fix this, but the fix
-  never actually ran. Now it does, and Steam running in the background is
-  no longer mistaken for stuck.
-- When the NVIDIA driver for Flatpak apps updates, Pulsar now waits until no
-  app is using it, instead of replacing it under a running Steam or Discord.
+* If a game hits a GPU fault on NVIDIA, a notification now tells you which game it was and what to try, where before the game would just freeze or vanish. If it keeps happening, turning off DLSS or frame generation is usually the fix, and `pulsar doctor gpu-faults` lists the faults since you last booted.
+* Faugus games now use Pulsar's own `gamescale`, just like Steam games do, so a game with `gamescale` in its launch arguments no longer hangs on its splash screen.
+* On NVIDIA, Steam's window now comes back when it stops redrawing after waking from sleep. This was supposed to be fixed in 26.10.1, but the fix never actually ran - now it does.
+* When the NVIDIA driver for Flatpak apps updates, Pulsar waits until nothing is using it instead of swapping it out from under a running Steam or Discord.
+* Super+F makes any window fullscreen, and pressing it again puts it back. This is handy for Windows games whose borderless fullscreen sits under the top bar.
+* Discord can now show the game you're playing, as it does on Windows. The Discord Flatpak's sandbox hides other programs from it, so Pulsar spots the game itself and tells Discord. Your Activity Privacy settings in Discord still decide who sees it.
 
 ## Desktop
 
-- Glass now stays closer to your theme's own color. A bright wallpaper or
-  page behind a menu, the top bar or a window still shows through as shape
-  and color, but no longer makes the glass much lighter than the theme.
-- Pulsar uses the Linux kernel's own scheduler by default again. The one
-  Pulsar shipped before kept GNOME Shell on the efficiency cores of hybrid
-  Intel CPUs, which made animations stutter. You can still turn it on with
-  `scx.service`.
-- Opening a file in a Flatpak app no longer hangs when the document portal,
-  the service that hands files to Flatpak apps, locks up. Pulsar restarts it
-  within a minute and offers to reopen the apps that lost their connection
-  to it.
-- The welcome app opens on a new account's first login again. On Fedora 45
-  it never did. And after an update to a new Pulsar release, a notification
-  now offers to show you what's new in it, in the Welcome to Pulsar app.
+Most of the theming work this month went into glass. Menus, Quick Settings, notifications and the on-screen displays have new glass, which redraws what's behind them in the theme's own colors, so a menu keeps its theme over any page or wallpaper. Windows and the top bar stay closer to the theme's color too, and the lock screen is now glass as well, toned so the clock and login text stay readable on any wallpaper. The Glass tint slider now sets how much of the color behind the glass comes through.
+
+A few other fixes:
+
+* The kernel's own scheduler is the default again. The one Pulsar shipped before kept GNOME Shell on the efficiency cores of hybrid Intel CPUs, which made animations stutter. If you want it back, it's still there as `scx.service`.
+* If the document portal locks up, opening a file in a Flatpak app no longer hangs. Pulsar restarts it within a minute and offers to reopen the apps it cut off.
+* AppImages run now. Most of them still need FUSE 2, which Fedora no longer installs, so they used to stop at "AppImages require FUSE to run".
+* The welcome app opens on a new account's first login again, which it never did on Fedora 45. And after updating to a new release, a notification offers to show you what's new.
 
 ## Installer
 
-- Erasing a disk is now impossible to miss: a warning, the disk and what's on
-  it shown in red, and a red Erase and Install button.
-- The disk step shows what it's doing while it works, and every install
-  keeps a log at `~/pulsar-install.log`. If an install fails, the failure
-  page tells you where it is.
-- The installer's boot menu is now Pulsar's own.
+* Erasing a disk is now impossible to miss: there's a warning, the disk and everything on it are shown in red, and so is the Erase and Install button.
+* The disk step shows what it's doing while it works. The install log is at `~/pulsar-install.log` while the installer runs, the failure page tells you where it is, and a finished install keeps it at `/var/log/pulsar-install.log`.
+* The ISO's boot menu is now Pulsar's own.
 
 ## Updating
 
-Don't want to wait for the background download? Run this and restart:
+26.11.1 arrives like any other Pulsar update: it downloads in the background and is ready the next time you restart. If you don't want to wait, just run `sudo pulsar update` and restart. If something isn't right, `sudo pulsar rollback` takes you back to your previous build at the next restart.
 
-```bash
-sudo pulsar update
-```
-
-If something isn't right, this takes you back to your previous build at the
-next restart:
-
-```bash
-sudo pulsar rollback
-```
-
----
-
-The full release notes are on the [releases page](/docs/releases). If
-anything breaks or looks off,
-[open an issue](https://github.com/arclight-digital/pulsar/issues) and let
-me know.
+The full list of changes is on the [releases page](/docs/releases), and if anything breaks, please [open an issue](https://github.com/arclight-digital/pulsar/issues).
