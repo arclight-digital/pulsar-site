@@ -49,8 +49,8 @@ const PATHS: [string, string][] = [
   ['/usr', 'The OS image. Read-only, even for root. Every update replaces it whole.'],
   ['/etc', 'Writable and local to this machine. Each deployment keeps its own copy. Updates merge your edits forward.'],
   ['/var', 'Writable, persistent, shared by every deployment. /home is /var/home.'],
-  ['/usr/local, /opt', 'Links into /var. Not part of the image. No update or rollback ever cleans them.'],
-  ['$HOME', 'Yours. Nothing on the system rolls it back.'],
+  ['/usr/local, /opt', 'Links into /var, outside the image. Updates and rollbacks leave them as they are.'],
+  ['$HOME', 'Your files and settings. A rollback doesn’t restore them.'],
 ];
 
 const WHERE: [string, string, string][] = [
@@ -94,8 +94,8 @@ const TOC = [
 >
   <h1>Where things go</h1>
   <p class="intro">
-    The system is one read-only image that updates as a whole, so where software goes depends on
-    what it is.
+    Every update replaces <code>/usr</code>, the read-only system image, as a whole. Software you add
+    goes outside it, in a place that depends on what kind of software it is.
   </p>
 
   <h2 id="choose">Where each kind goes</h2>
@@ -113,7 +113,7 @@ const TOC = [
     Desktop apps come as Flatpaks. GNOME Software can reach all of Flathub, unfiltered, plus
     Fedora’s own collection. First boot installs Steam, Heroic, Faugus, Bottles, ProtonPlus,
     protontricks, OBS Studio, Discord, EasyEffects, virt-manager, Flatseal, the Showtime video
-    player, the Decibels music player and the GNOME set. An app you remove stays removed.
+    player, the Decibels music player and the GNOME set, and doesn’t put back any you remove.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={FLATPAK}></arc-code-block>
   <p>
@@ -124,7 +124,6 @@ const TOC = [
   <h2 id="dev">Dev tools: a toolbox</h2>
   <p>
     Compilers, SDKs and runtimes go in a toolbox, a Fedora container that shares your home folder.
-    <code>sudo dnf install</code> inside it changes only the box.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="toolbox" code={TOOLBOX}></arc-code-block>
   <p>For a ready-made box with git, gcc, cmake, gdb, make, ripgrep, jq and Python headers, run this.</p>
@@ -161,17 +160,17 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="layer" code={LAYER}></arc-code-block>
   <p>
     A layered package applies at the next boot. <code>pulsar update</code> keeps it through updates
-    by using <code>rpm-ostree upgrade</code>, and every update gets slower.{' '}
-    <code>pulsar doctor</code> counts your layers. Never layer dev tools.
+    by running <code>rpm-ostree upgrade</code>, which is slower than the plain image update.{' '}
+    <code>pulsar doctor</code> reports how many packages you’ve layered.
   </p>
 
   <h2 id="dont">What not to do</h2>
   <ul>
     <li>
       Don’t install anything into <code>/usr/local</code> or <code>/opt</code> (<code>sudo make
-      install</code>, a vendor’s <code>install.sh</code>). It shadows the image on <code>PATH</code>,
-      survives every update and rollback, and <code>rpm-ostree status</code> doesn’t list it. Use a
-      toolbox, <code>mise</code> or <code>~/.local/bin</code>.
+      install</code>, a vendor’s <code>install.sh</code>). Anything there comes before the image on{' '}
+      <code>PATH</code>. Updates and rollbacks never remove it, and <code>rpm-ostree status</code>{' '}
+      doesn’t list it. Use a toolbox, <code>mise</code> or <code>~/.local/bin</code>.
     </li>
     <li>
       Don’t run <code>sudo pip install</code> or <code>sudo npm install -g</code> on the host. It
@@ -179,8 +178,8 @@ const TOC = [
       venv or a toolbox.
     </li>
     <li>
-      Don’t edit <code>/etc</code> to fix something the image ships. The edit outlives updates and
-      hides the real fix. If you must, take a{' '}
+      Don’t edit <code>/etc</code> to fix something the image ships. Updates keep your edited copy,
+      and it goes on overriding the image’s version after a real fix ships. If you must, take a{' '}
       <a href="/docs/updates#checkpoint">checkpoint</a> first.
     </li>
   </ul>
