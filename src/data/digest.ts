@@ -385,7 +385,7 @@ export function arithmetic(d: Digest = digest): string {
     const upstream = d.packages - d.rebuiltPackages;
     let sentence = `${d.packages} ${plural(d.packages, 'package')} changed`;
     if (d.transitions !== d.packages) {
-      sentence += ` in ${d.transitions} distinct ${plural(d.transitions, 'update')}, because related packages move together`;
+      sentence += ` in ${d.transitions} distinct version ${plural(d.transitions, 'move')} (packages that went between the same two versions count as one)`;
     }
     parts.push(`${sentence}.`);
     if (d.rebuiltPackages > 0) {
