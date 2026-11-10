@@ -60,8 +60,8 @@ const TOC = [
   <ul>
     <li>
       Pick a disk. If it already starts Windows or Linux, you can install alongside it in 36&nbsp;GB of
-      free space (the installer counts that as 39&nbsp;GB), or erase it. Nothing is written until the
-      button on the last page, but back up first.
+      free space (the installer counts that as 39&nbsp;GB), or erase it. No disk changes until you press
+      the last page’s button, which reads <strong>Erase and Install</strong> if it will delete anything.
     </li>
     <li>Disk encryption is on unless you turn it off. The passphrase unlocks the disk at every start.</li>
     <li>
@@ -77,12 +77,12 @@ const TOC = [
   <h2 id="secure-boot">NVIDIA: enroll the key, once</h2>
   <p>
     The NVIDIA image ships only NVIDIA’s open kernel driver, which needs a GeForce GTX 16 or RTX 20
-    series card or newer. The driver is signed with Pulsar’s key, so you can leave Secure&nbsp;Boot on
-    after you enroll that key once, through MokManager. The standard image doesn’t need it.
+    series card or newer. Pulsar signs that driver with its own key. Enroll the key once, through
+    MokManager, and the driver loads with Secure&nbsp;Boot on. The standard image has no NVIDIA
+    driver and needs no key.
   </p>
   <p>
-    Until the key is enrolled, the NVIDIA driver doesn’t load, and the image blocks nouveau, the
-    community open-source driver. On a machine with integrated graphics the desktop runs on those, and
+    Until the key is enrolled, the NVIDIA driver doesn’t load, and the image also blocks nouveau. On a machine with integrated graphics the desktop runs on those, and
     shortly after login GNOME Software offers to enroll the key. Follow its prompts, restart, and
     answer MokManager as in step 2. Or enroll it with the steps below. TODO(copy): what does a
     machine whose only GPU is NVIDIA show before the key is enrolled? The OS repo’s
@@ -96,7 +96,7 @@ const TOC = [
     </li>
     <li>
       <h3>Answer MokManager</h3>
-      <p>The next boot stops in MokManager, a blue firmware screen. Go through it in this order, and type the password from step 1 when it asks.</p>
+      <p>The next boot stops in MokManager’s blue screen. Choose these in order, and type the password from step 1 when it asks for it.</p>
       <p class="mok">
         {MOK.map((step, index) => (
           <>
@@ -126,8 +126,8 @@ const TOC = [
 
   <h2 id="switch">Switch from an atomic Fedora</h2>
   <p>
-    From Silverblue, Kinoite or another atomic Fedora, switch in place. Your files and accounts are
-    kept, and the old image stays in the boot menu until the next update.
+    From Silverblue, Kinoite or another atomic Fedora, switch in place. Switching keeps your home
+    folder and accounts, and the image you switched from stays in the boot menu until the next update.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="standard" code={switchTo(IMAGES.vanilla)}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="nvidia" code={switchTo(IMAGES.nvidia)}></arc-code-block>
@@ -140,7 +140,8 @@ const TOC = [
   <p>
     New accounts start in Pulsar’s theme, and a welcome window opens where you can pick a look or
     add a coding agent. To reopen it, find <strong>Welcome to Pulsar</strong>
-    in the app grid. A customized account you switched keeps its look.
+    in the app grid. If you switched from another atomic Fedora and had already set your own theme,
+    wallpaper or accent color, Pulsar leaves them as they are.
   </p>
   <p>
     Default apps (Steam, Heroic, video and music players, the GNOME set and more) install on the
