@@ -11,7 +11,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'Pulsar installs Steam, Heroic and the other launchers on first boot. This page covers gamemode on two-GPU laptops, ntsync, kernel tuning and NVIDIA in Flatpak.';
+  'Pulsar installs Steam, Heroic and other game launchers on the first boot with a network, and sets up gamemode, ntsync, the kernel and NVIDIA for Flatpak games.';
 
 const DOCTOR = [
   '$ pulsar doctor ntsync gamemode mangohud flatpak-gl',
@@ -45,8 +45,8 @@ const LAUNCHERS: [string, string][] = [
 ];
 
 const TUNING: [string, string][] = [
-  ['kernel.split_lock_mitigate = 0', 'The kernel stalls a process about 10 ms for every split lock, as a deterrent. Several Windows games split-lock constantly and turn into a slideshow under it.'],
-  ['vm.max_map_count = 2147483642', 'Proton games with huge address-space appetites exhaust Fedora’s default and crash.'],
+  ['kernel.split_lock_mitigate = 0', 'The kernel stalls a process about 10 ms for every split lock, as a deterrent. Some Windows games, God of War and THPS 1+2 among them, split-lock constantly and their frame rate collapses under it.'],
+  ['vm.max_map_count = 2147483642', 'Proton games that make a lot of memory mappings, such as Star Citizen and some UE5 games, run past Fedora’s 1M default and crash.'],
   ['transparent_hugepage/defrag = defer+madvise', 'Hugepage defragmentation is deferred to the background instead of stalling the thread that faulted, which may be the one drawing your frame. Only memory a program explicitly asked to be hugepage-backed still waits for it.'],
   ['vm.compaction_proactiveness = 0', 'Turns off compaction on a timer. The kernel still compacts when memory is actually needed.'],
   ['vm.min_free_kbytes = 524288', 'Keeps 512 MB free. When a game allocates a lot, the kernel reclaims memory in the background and the game doesn’t have to do it mid-frame.'],
@@ -76,14 +76,14 @@ const TOC = [
 
 <Docs
   title="Gaming"
-  fullTitle="Gaming on Pulsar — launchers, gamemode, Proton, NVIDIA"
+  fullTitle="Gaming on Pulsar"
   description={DESCRIPTION}
   path="/docs/gaming"
   headings={TOC}
   jsonLd={JSONLD}
 >
   <h1>Gaming</h1>
-  <p class="intro">What the image already does for games. The doctor checks at the bottom show whether it’s all working.</p>
+  <p class="intro">Pulsar installs the game launchers on first boot and sets up gamemode, the kernel and the NVIDIA driver for games.</p>
 
   <h2 id="launchers">The launchers</h2>
   <p>
@@ -111,15 +111,15 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="launch options" code={LAUNCH}></arc-code-block>
   <p>
     The Steam and Faugus Flatpaks need no setup. At every boot <code>pulsar-steam-grants.service</code>
-    lets their sandboxes run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so they
-    update with the image.
+    lets their sandboxes run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so those
+    update with the image (<a href="/docs/gamescale#steam">what the grant allows</a>).
   </p>
   <p>
     Other Flatpak launchers need <code>pulsar setup gamescale --platform &lt;name&gt;</code> once. It
     puts <code>gg</code> and <code>ggm</code> in <code>~/.local/bin</code> beside gamescale, and
     leaves alone any <code>gg</code> or <code>ggm</code> of your own already there. If you ran it for
-    Steam or Faugus on an older image, run <code>pulsar setup gamescale</code> again: it points them at the
-    image’s copies and removes old copies that match them.
+    Steam or Faugus on an older image, run <code>pulsar setup gamescale --platform steam faugus</code>{' '}
+    to point them at the image’s copies and remove old copies that match them.
   </p>
 
   <h2 id="gamemode">gamemode</h2>
@@ -131,14 +131,15 @@ const TOC = [
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="gamemode" code={GAMEMODE}></arc-code-block>
   <p>
-    Group changes apply at your next login; <code>pulsar doctor gamemode</code> tells you if you
-    need to log out.
+    Group changes apply at your next login, and <code>pulsar doctor gamemode</code> tells you if
+    you need to log out.
   </p>
 
   <h2 id="proton">Proton and the kernel</h2>
   <p>
     <code>ntsync</code> loads at boot and <code>/dev/ntsync</code> is given to the seat user, so
-    Proton uses kernel sync instead of esync/fsync.
+    Proton can do Windows sync in the kernel instead of through esync or fsync. Newer Proton builds
+    use it by default. Older ones need <code>PROTON_USE_NTSYNC=1</code>.
   </p>
   <p>Kernel settings:</p>
   <table>
@@ -152,8 +153,8 @@ const TOC = [
   <p>
     The scheduler is the kernel’s own, EEVDF. <code>scx_bpfland</code> shipped as the default until
     26.11.1, but on hybrid Intel CPUs it kept GNOME Shell on the efficiency cores and animations
-    stuttered. It’s an opt-in now: <code>sudo systemctl enable --now scx.service</code>, and{' '}
-    <code>pulsar doctor</code> tells you whether it attached.
+    stuttered. It’s opt-in now. <code>sudo systemctl enable --now scx.service</code> turns it on,
+    and <code>pulsar doctor</code> tells you whether it attached.
   </p>
 
   <h2 id="nvidia">NVIDIA and Flatpak games</h2>
@@ -170,25 +171,22 @@ const TOC = [
     </li>
     <li>
       The Steam client’s own window runs with the NVIDIA driver’s vsync off, through a driver
-      profile matched on its process name, so it draws at the display’s refresh rate instead of
-      stalling. Games Steam starts keep their own vsync setting.
+      profile matched on its process name. With vsync on, it stuttered on every scroll. Games Steam
+      starts keep their own vsync setting.
     </li>
   </ul>
   <p>
     The MangoHud Flatpak layer only works on the matching runtime branch; when Steam changes runtime
-    the overlay silently disappears. <code>pulsar doctor mangohud</code> checks this.
+    the overlay stops showing, with no error. <code>pulsar doctor mangohud</code> checks this.
   </p>
 
   <h2 id="loading">Loading screens</h2>
   <p>
-    GNOME’s “not responding” check waits 20 seconds instead of 5, and is suspended entirely while a
-    game runs under gamemode, so loading screens don’t trigger it.
+    GNOME’s “not responding” check waits 20 seconds instead of 5, and is off while a game runs
+    under gamemode, so loading screens don’t trigger it.
   </p>
 
   <h2 id="check">Checking it</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar doctor" code={DOCTOR}></arc-code-block>
-  <p class="hint">
-    Native resolution under fractional scaling: <a href="/docs/gamescale">gamescale</a>. All checks:{' '}
-    <a href="/docs/troubleshooting">Troubleshooting</a>.
-  </p>
+  <p class="hint">Every doctor check is explained in <a href="/docs/troubleshooting#checks">Troubleshooting</a>.</p>
 </Docs>
