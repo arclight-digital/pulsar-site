@@ -9,7 +9,7 @@ import { APP_ID, BUILD_STATUS, IMAGES } from '../../data/site';
 import { postHref, posts } from '../../data/blog';
 
 const DESCRIPTION =
-  'Last night’s Pulsar build against the night before, package by package. The build diffs the SBOMs attached to both images and writes this page itself.';
+  'The latest Pulsar nightly build against the one before it, package by package. The build diffs its SBOM against the previous one and writes this page itself.';
 
 const lead = digest.lead;
 // The night Pulsar moved to a new Fedora release: nearly every package moved,
@@ -26,7 +26,7 @@ const extra = lead ? lead.members.length - 1 : 0;
 const JSONLD = [
   {
     '@type': 'WebPage',
-    name: `What changed in Pulsar ${version}`,
+    name: `Pulsar ${version} nightly build changes`,
     description: DESCRIPTION,
     dateModified: changelog.generated,
     about: { '@id': APP_ID },
@@ -34,25 +34,25 @@ const JSONLD = [
   },
 ];
 const TOC = move
-  ? [{ id: 'last-night', label: 'Last night', level: 2 }]
+  ? [{ id: 'last-night', label: 'What changed', level: 2 }]
   : [
-      { id: 'last-night', label: 'Last night', level: 2 },
+      { id: 'last-night', label: 'What changed', level: 2 },
       { id: 'every-package', label: 'Every package that moved', level: 2 },
     ];
 ---
 
 <Docs
   title="Nightly builds"
-  fullTitle={`Pulsar ${version} nightly changelog — every package that moved`}
+  fullTitle={`Pulsar ${version} nightly build changes`}
   description={DESCRIPTION}
   path="/docs/changelog"
   headings={TOC}
   jsonLd={JSONLD}
 >
-  <h1>What changed last night</h1>
+  <h1>Latest nightly build</h1>
   <p class="intro">
-    The build compares each new image with the one before it, using the package list attached to
-    both, and this page is generated from the result.
+    The build compares each new image’s package list with the previous build’s and generates this
+    page from the result.
     {
       hasReleases && (
         <>
@@ -63,20 +63,19 @@ const TOC = move
     }
   </p>
   <p class="hint">
-    The page updates once a night's image is published. Tonight's build as it runs, and the reason
-    a night skipped or failed, are on <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>.
+    The page updates once a night’s image is published. <a href={BUILD_STATUS}>beacon.getpulsar.dev</a>{' '}
+    shows tonight’s build as it runs, and why a night was skipped or failed.
   </p>
 
-  <h2 id="last-night">Last night</h2>
+  <h2 id="last-night">What changed</h2>
   <div class="lead">
     {
       move ? (
         <>
           <p class="lead-say">Moved to Fedora {move.to}.</p>
           <p class="lede">
-            Last night’s image is the first one built on Fedora {move.to}, so nearly every package
-            changed ({moved.toLocaleString('en-US')} of them). A list that long tells you nothing, so
-            this page leaves it out.
+            The latest image is the first one built on Fedora {move.to}, so nearly every package
+            changed ({moved.toLocaleString('en-US')} of them), and this page doesn’t list them.
             {movePost && (
               <>
                 {' '}The post about the move: <a href={postHref(movePost)}>{movePost.data.title}</a>.
