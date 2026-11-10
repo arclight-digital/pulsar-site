@@ -16,24 +16,14 @@ import { FOLD_LIMIT, digest } from '../data/digest';
 const plural = (count: number, one: string, many = `${one}s`) => (count === 1 ? one : many);
 
 const presence = [
-  { id: 'added', title: 'Added', note: 'in this image, not the one before it', rows: digest.added },
-  { id: 'removed', title: 'Removed', note: 'in the previous image, not this one', rows: digest.removed },
+  { id: 'added', title: 'Added', rows: digest.added },
+  { id: 'removed', title: 'Removed', rows: digest.removed },
 ].filter((band) => band.rows.length > 0);
-
-const empty = digest.bands.length === 0 && presence.length === 0 && digest.rebuilds.length === 0;
 ---
 
 <div class="ledger">
-  {
-    empty && (
-      <p class="lede">
-        {digest.baseline
-          ? 'This is the first build, so there’s nothing to diff it against yet. The next build’s changes will show up here.'
-          : 'The diff ran and found nothing. Every package is at the version it was.'}
-      </p>
-    )
-  }
-
+  {/* A night with nothing to list is said once, by digest.ts's arithmetic()
+      in the lede above this on /docs/changelog. */}
   {
     digest.bands.map((band) => (
       <section class="band">
@@ -58,10 +48,7 @@ const empty = digest.bands.length === 0 && presence.length === 0 && digest.rebui
   {
     presence.map((band) => (
       <section class="band">
-        <h3 class="band-h">
-          {band.title}
-          <span class="band-note">{band.note}</span>
-        </h3>
+        <h3 class="band-h">{band.title}</h3>
         <ul class="rows">
           {band.rows.slice(0, FOLD_LIMIT).map((row) => (
             <li class="prow">
