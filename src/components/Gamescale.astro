@@ -12,23 +12,23 @@ const { compact = false } = Astro.props;
 const LAUNCH_OPTION = 'gamescale %command%';
 
 const MODES = [
-  { what: 'The screen itself', res: '2560×1600', cost: 'what the hardware has' },
-  { what: 'Scaled, XWayland factor 1', res: '1920×1200', cost: 'stretched to fit, and soft' },
-  { what: 'Scaled, XWayland factor 2', res: '3840×2400', cost: '2.25× the pixels, then shrunk' },
+  { what: 'The screen itself', res: '2560×1600', cost: 'the size to aim for' },
+  { what: 'Scaled, XWayland at 1×', res: '1920×1200', cost: 'stretched to fit, and soft' },
+  { what: 'Scaled, XWayland at 2× (GNOME’s default)', res: '3840×2400', cost: '2.25× the pixels, then shrunk' },
 ];
 ---
 
 <div class="gs">
   <div class="gs-copy">
     <p class="gs-deck">
-      A game runs at the panel&rsquo;s real resolution, and your scaling comes back when
+      A game runs at the screen&rsquo;s real resolution, and your scaling comes back when
       it&nbsp;quits.
     </p>
     <p class="lede">
       With GNOME&rsquo;s fractional scaling on, an X11 game is handed a whole-number multiple of
-      your <em>scaled</em> resolution, never the screen&rsquo;s own. At 133% on a
-      2560&times;1600 laptop no multiple lands on the hardware, so a borderless game renders too
-      small and gets stretched, or too big and gets&nbsp;shrunk.
+      your <em>scaled</em> resolution. At 133% on a 2560&times;1600 laptop no multiple comes out
+      at 2560&times;1600, so a borderless game renders too small and gets stretched, or too big
+      and gets&nbsp;shrunk.
     </p>
 
     <table class="modes">
@@ -73,7 +73,7 @@ const MODES = [
     </p>
     <p>
       That holds after a crash or a <code>SIGKILL</code> too. gamescale keeps a watchdog, a state
-      file on disk and a check at login for exactly that&nbsp;case.
+      file on disk and a check at login for that&nbsp;case.
     </p>
     {
       compact ? (
@@ -81,9 +81,9 @@ const MODES = [
       ) : (
         <p class="hint">
           The script, its top-bar indicator, and the reconcile unit ship in the image at a
-          pinned&nbsp;tag. Flatpak Steam and Faugus run the image&rsquo;s copy with no setup; other
-          Flatpak launchers need one grant from{' '}
-          <a href="https://github.com/arclight-digital/gamescale">gamescale&rsquo;s installer</a>.
+          pinned&nbsp;tag. Flatpak Steam and Faugus run the image&rsquo;s copy with no setup. Other
+          Flatpak launchers need a copy of their own, which{' '}
+          <a href="#flatpak"><code>pulsar setup gamescale</code></a> installs from the image.
         </p>
       )
     }
