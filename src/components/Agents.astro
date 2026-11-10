@@ -14,11 +14,13 @@ const CAN = [
   'Use a local model on your GPU',
 ];
 
+// What a fresh install already stops, with guard and the sandbox both off
+// (their defaults: cli/pulsar agent_guard, setting_resolve). Source: the
+// table in the OS repo's docs/AGENTS-SAFETY.md.
 const CANT = [
-  'Write to /usr: the image is read-only',
-  'Install system packages without your password (guard on)',
-  'Read files outside the project (sandbox on)',
-  'Edit /etc with no snapshot to go back to (checkpoint taken)',
+  'Write to /usr, which is read-only even for root',
+  'Edit /etc without your password',
+  'Add a Flatpak remote without your password',
 ];
 ---
 
@@ -28,14 +30,15 @@ const CANT = [
       <h2 id="agents-h">Coding agents, if you want them</h2>
       <p class="lede">
         At first login you can pick Claude Code, Codex, Gemini CLI, opencode or aider. Skip the step
-        and none of them get installed. Whichever you pick reads Pulsar’s agent guide, and can run in a
-        sandbox that only sees one project.
+        and none of them get installed. All but Gemini CLI read Pulsar’s agent guide on their own. An
+        agent runs as you and can reach everything in your home folder, unless you turn on the
+        sandbox, which shows it only the project it was started in.
       </p>
     </div>
 
     {/* The real notification, drawn. Not a control: the page has nothing to
         hand an agent, so the buttons are a picture of them. */}
-    <figure class="notice" aria-label="The notification Pulsar shows when a program crashes">
+    <figure class="notice" aria-label="The notification Pulsar shows when a program crashes and you have a coding agent installed">
       <div class="note" aria-hidden="true">
         <p class="note-app"><arc-icon name="warning" size="sm"></arc-icon>Pulsar <span>· now</span></p>
         <p class="note-title">wireplumber crashed</p>
@@ -62,7 +65,9 @@ const CANT = [
     </div>
   </div>
   <p class="hint">
-    Rollback covers the OS image. Your home folder isn’t part of it, so keep backups.
+    By default an agent can layer system packages and install system Flatpaks without a password.
+    <code>sudo pulsar agent guard on</code> makes it ask. Rollback covers the OS image. Your home
+    folder isn’t part of it, so keep backups.
     {' '}<a href="/docs/agents-safety">What an agent can access&nbsp;→</a>
   </p>
 </section>
