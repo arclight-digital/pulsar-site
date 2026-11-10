@@ -17,7 +17,7 @@
 
 This repo is the website for [Pulsar](https://github.com/arclight-digital/pulsar).
 It is an Astro project built on [ARC UI](https://arcui.dev), rendered to
-static HTML and served by Cloudflare. Every push to `main` deploys.
+static HTML and served by Cloudflare.
 
 ```bash
 npm ci
@@ -28,16 +28,15 @@ npm run build:checked   # build, then check every page's title, description and 
 
 ## What comes from the OS repo
 
-The site keeps no copies of the OS's files. The marks, fonts, wallpaper
-shaders and docs it uses are in `upstream/`, and the OS repo's
-`scripts/publish.sh` replaces them after each nightly it publishes. The same
-commit writes that night's `src/data/changelog.json` and
-`src/data/manifest.json`. A feature shows up on the site in the same commit
-as the image that has it, and never a night early.
+The marks, fonts, wallpaper shaders and docs the site uses are copies of
+the OS repo's files, kept in `upstream/`. The OS repo's `scripts/publish.sh`
+replaces them after each nightly it publishes, and the same commit writes
+that night's `src/data/changelog.json` and `src/data/manifest.json`. So a
+feature shows up on the site in the same commit as the image that has it.
 
-`upstream.list` names every file the site takes. Edit it here. Don't edit `upstream/`, `changelog.json` or
-`manifest.json` by hand: fix the file in the OS repo and it arrives with the
-next published image.
+`upstream.list` names every file the site takes, and you edit it here. Don't
+edit `upstream/`, `changelog.json` or `manifest.json` by hand. Fix the file in
+the OS repo and it arrives with the next published image.
 
 The docs under `/docs` are the OS repo's `docs/*.md` plus the pages in
 `src/pages/docs/`. A repo doc is in the sidebar once a nightly has shipped it.
@@ -92,7 +91,7 @@ A live post's slug is a URL people have shared. Renaming one needs a 301 in
 - The theme picker recolors the site with the OS's palettes
   (`src/data/themes.json`), adjusted for contrast in `src/data/sitetheme.ts`.
 
-## Checks the build runs
+## Checks
 
 - `integrations/security-headers.mjs` writes `dist/_headers`, with a
   Content-Security-Policy that lists the hash of every inline script.
@@ -101,12 +100,13 @@ A live post's slug is a URL people have shared. Renaming one needs a 301 in
   which Astro drops.
 - The share-card renderer fails the build if a card's text is too small to
   read or overflows.
-- `npm run seo` checks each page's title and description length, its `h1` and
-  its structured data. It also reports the `/install.html`-style redirect
-  stubs, which have none of those, so a clean run isn't zero failures yet.
+- `npm run seo`, which `npm run build:checked` runs after the build, checks
+  each page's title and description length, its `h1` and its structured data.
+  It also reports the `/install.html`-style redirect stubs, which have none of
+  those, so a clean run isn't zero failures yet.
 
 ## Deploying
 
-Cloudflare's git integration builds `main` and serves `dist/` as static
-assets (`wrangler.jsonc`). Pages are cached with revalidation, so a deploy
-goes live as soon as it finishes.
+Every push to `main` deploys. Cloudflare's git integration builds `main` and
+serves `dist/` as static assets (`wrangler.jsonc`). Pages are cached with
+revalidation, so a deploy goes live as soon as it finishes.
