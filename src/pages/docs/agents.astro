@@ -63,7 +63,7 @@ const MODEL = [
   'pulsar agent model on                            # the default: Qwen2.5 Coder 7B',
   'pulsar agent model on --model <owner/repo[:quant]> --at-login',
   'pulsar agent model                               # state, endpoint, key, the aider line',
-  'pulsar agent model off --purge                   # stop, remove, delete the downloads',
+  'pulsar agent model off --purge                   # stop and remove it, and delete the models',
 ].join('\n');
 
 const SANDBOX = [
@@ -129,7 +129,7 @@ const TOC = [
   { id: 'sessions', label: 'Sessions you can leave running', level: 2 },
   { id: 'model', label: 'A model on your own GPU', level: 2 },
   { id: 'sandbox', label: 'The sandbox', level: 2 },
-  { id: 'guard', label: 'Guard, and checkpoints', level: 2 },
+  { id: 'guard', label: 'Guard and checkpoints', level: 2 },
 ];
 ---
 
@@ -143,8 +143,8 @@ const TOC = [
 >
   <h1>Coding agents</h1>
   <p class="intro">
-    Pulsar doesn’t come with an agent. When you add one, it gets a briefing on this machine and
-    the health tools, and you can sandbox it so it sees one project.
+    Pulsar doesn’t come with a coding agent. It can install Claude Code, Codex, Gemini CLI, opencode
+    or aider for you, each in a toolbox.
   </p>
 
   <h2 id="install">Install one</h2>
@@ -154,25 +154,28 @@ const TOC = [
   <p>
     <code>add</code> creates an <code>agents</code> toolbox, installs the agent with its vendor’s npm
     or uv method into <code>~/.local/share/pulsar/agents</code>, and adds a command to{' '}
-    <code>~/.local/bin</code>. None of that needs root or layers a package. An agent you installed yourself is left in
-    place (listed as <code>native</code>) and still gets the setup below.
+    <code>~/.local/bin</code>. It layers nothing on the host. Inside the toolbox it installs Node or
+    uv with the toolbox’s own sudo, which asks for no password. An agent you installed yourself is
+    left in place (listed as <code>native</code>) and still gets the setup below.
   </p>
-  <arc-alert variant="info" heading="The toolbox doesn’t isolate anything">
-    It keeps Node, Python and the agent off the host (<code>toolbox rm -f agents</code> removes
-    the lot). It still shares your home folder and your session. If you want the agent walled off,
-    use <a href="#sandbox">the sandbox</a>.
+  <arc-alert variant="info" heading="The toolbox shares your home folder">
+    <code>toolbox rm -f agents</code> removes Node, Python and the agent in one go. An agent in the
+    toolbox can read your whole home folder and use your desktop session, as you can. To keep it to
+    one project, use <a href="#sandbox">the sandbox</a>.
   </arc-alert>
 
   <h2 id="briefing">What it knows about the machine</h2>
   <p>
     The briefing is <code>/usr/share/pulsar/AGENTS.md</code>. It tells an agent that{' '}
     <code>/usr</code> is read-only, that dev tools go in a toolbox and apps in Flatpaks, what a
-    rollback covers, and what it must never do. <code>pulsar agent guide</code> prints it, so any agent can read it.
+    rollback covers, and what it must never do. <code>pulsar agent guide</code> prints it.
   </p>
   <p>
-    <code>add</code> also links it into the agent’s own instructions if none exist (Claude Code:{' '}
-    <code>~/.claude/rules/pulsar.md</code>), links the image’s skills (including one that makes
-    themes), and for MCP agents registers <code>pulsar mcp</code>:
+    For Claude Code, Codex and opencode, <code>add</code> links it into the agent’s own instructions
+    (Claude Code: <code>~/.claude/rules/pulsar.md</code>) unless a file is already there. For
+    Gemini CLI it prints a line to add to <code>~/.gemini/GEMINI.md</code>, and aider’s command
+    passes it with <code>--read</code>. <code>add</code> also links the image’s skills (including
+    one that makes themes), and for MCP agents registers <code>pulsar mcp</code>:
   </p>
   <table>
     <thead><tr><th>Tool</th><th>What it answers</th></tr></thead>
@@ -183,8 +186,7 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    Nothing in it needs root, and there’s no way through it to update, roll back, checkpoint,
-    change the guard or pin. <code>pulsar agent</code> on its own shows how it’s set up.
+    <code>pulsar agent</code> on its own shows how it’s set up.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent" code={STATUS}></arc-code-block>
 
@@ -200,8 +202,8 @@ const TOC = [
   <p>
     A crash notification’s <strong>Ask</strong> button runs <code>pulsar agent ask --crash</code>{' '}
     in a new terminal. The report has the stack trace and logs, never the core file{' '}
-    (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). Whatever the agent reads is sent
-    to its provider, so only click it if you’re fine with that.
+    (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). The agent sends what it reads to
+    its provider (Anthropic, OpenAI, Google, or the one you set up in opencode or aider).
   </p>
 
   <h2 id="sessions">Sessions you can leave running</h2>
@@ -215,9 +217,8 @@ const TOC = [
   <p>
     With Claude Code, coming back to a session picks up the same conversation. Other agents start a
     new one. A session that ended starts again with its agent, folder and sandbox setting.{' '}
-    <code>--worktree</code> gives the session its own branch, named after it, checked out in{' '}
-    <code>&lt;repo&gt;/.worktrees/&lt;name&gt;</code>, so several agents can work in one project
-    without touching each other’s files. It works in the sandbox too.
+    With <code>--worktree</code>, the session gets a branch named after it, checked out in{' '}
+    <code>&lt;repo&gt;/.worktrees/&lt;name&gt;</code>, and the sandbox accepts that checkout.
   </p>
   <p>
     When an agent in a session you aren’t looking at finishes or needs you, a notification says so,
@@ -228,19 +229,18 @@ const TOC = [
   <p>
     Undo works in git repositories. It puts the files back as they were when the session first
     started (or last started with <code>--new</code>), however often it restarted since, and deletes
-    files added since. It never touches files git ignores, never overwrites a file it couldn’t take
-    back (it names those), and never moves a branch, so commits made since stay. It won’t run while
-    a session is running in that checkout, so end the session first.
+    files added since. Files git ignores are left as they are, and so is any file the undo couldn’t
+    take back, which it names. Branches, and commits made since, stay where they are. End the
+    session first. Undo refuses to run while a session is running in that checkout.
   </p>
   <p>
     Pulsar Settings has an Agents page listing each session with its folder and usage, and{' '}
     <strong>Open</strong>, <strong>Undo</strong> and <strong>End</strong> buttons.
   </p>
   <p>
-    On a fresh install the sandbox and the guard are both off. A session you leave running can read
-    your whole home folder, and anything it runs can layer packages or roll back without a
-    password. <a href="#sandbox">The sandbox</a> limits what it can read, and{' '}
-    <a href="#guard">guard</a> makes those changes ask for a password.
+    On a fresh install <a href="#sandbox">the sandbox</a> and <a href="#guard">the guard</a> are
+    both off. A session you leave running can read your whole home folder, and anything it runs can
+    layer packages or roll back without a password.
   </p>
 
   <h2 id="model">A model on your own GPU</h2>
@@ -268,9 +268,9 @@ const TOC = [
 
   <h2 id="sandbox">The sandbox</h2>
   <p>
-    The agent runs in a rootless container that sees only the project you started it in: no SSH
-    keys, browser profiles or other projects. Pushes go through a host-side gate that uses your
-    credentials without exposing them and refuses force-pushes, deletions and tags.
+    The agent runs in a rootless container that sees only the project you started it in, its own
+    login and your git identity, with no SSH agent and no session bus. Pushes go through a gate on
+    the host that pushes with your credentials and refuses force-pushes, deletions and tags.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sandbox" code={SANDBOX}></arc-code-block>
   <ul>
@@ -307,7 +307,7 @@ const TOC = [
     <a href="/docs/agents-safety#the-sandbox-and-a-push-that-never-holds-your-key">Agents and safety</a>.
   </p>
 
-  <h2 id="guard">Guard, and checkpoints</h2>
+  <h2 id="guard">Guard and checkpoints</h2>
   <p>
     On stock Fedora, and on Pulsar until you turn the guard on, an admin’s session and anything it
     starts can layer packages, roll back, clean up deployments, and install or remove system
