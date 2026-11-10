@@ -4,12 +4,12 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, COSIGN_PUB, IMAGES, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
-  'Pulsar images carry their package list as an SPDX SBOM, diffed against the night before. Images, ISOs and the NVIDIA module are signed; Rekor logs image signatures.';
+  'Each Pulsar image carries an SPDX SBOM, diffed against the build before it. Images, ISOs and the NVIDIA module are signed, and Rekor logs image and ISO signatures.';
 
 const JSONLD = [
   {
     '@type': 'TechArticle',
-    headline: 'Every Pulsar image has a paper trail',
+    headline: 'Pulsar image provenance and signing',
     description: DESCRIPTION,
     about: { '@id': APP_ID },
     author: { '@id': ORG_ID },
@@ -22,35 +22,36 @@ const SBOM = `oras discover ${IMAGES.vanilla}:latest`;
 // checks the log offline: no --insecure-ignore-tlog.
 const VERIFY = `cosign verify --key ${COSIGN_PUB} \\\n  ${IMAGES.vanilla}:latest`;
 const TOC = [
-  { id: 'one-night', label: 'One night’s build', level: 2 },
+  { id: 'one-night', label: 'How an image is built', level: 2 },
   { id: 'verify', label: 'Check it yourself', level: 2 },
-  { id: 'keys', label: 'One key for both images', level: 2 },
+  { id: 'keys', label: 'The NVIDIA module key', level: 2 },
   { id: 'by-hand', label: 'Builds started by hand', level: 2 },
 ];
 ---
 
 <Docs
   title="Provenance"
-  fullTitle="Pulsar provenance — SBOMs and a nightly package diff"
+  fullTitle="Pulsar image provenance and signing"
   description={DESCRIPTION}
   path="/docs/provenance"
   headings={TOC}
   jsonLd={JSONLD}
 >
-  <h1>Every image has a paper trail</h1>
+  <h1>Provenance</h1>
   <p class="intro">
-    Each image is built on a single-night build machine and ships with its full package list
-    attached. The signing keys are never on that machine.
+    Each image is built on a machine created for that night’s build and deleted afterwards, and
+    ships with its full package list attached. The signing keys are never on that machine. A
+    separate signing host holds them.
   </p>
 
-  <h2 id="one-night">One night’s build</h2>
+  <h2 id="one-night">How an image is built</h2>
   <Pipeline compact />
 
   <h2 id="verify">Check it yourself</h2>
   <p>
-    Each image has an SPDX SBOM attached in the registry (<code>oras discover</code> lists it).
-    Images and ISOs are signed with Pulsar’s cosign release key. Image signatures are also logged
-    in Rekor, Sigstore’s public transparency log; ISO signatures are not logged yet.
+    Each image has an SPDX SBOM attached in the registry, and <code>oras discover</code> lists it.
+    Images and ISOs are signed with Pulsar’s cosign release key, and each signature is logged in
+    Rekor, Sigstore’s public transparency log.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sbom" code={SBOM}></arc-code-block>
   <p>
@@ -68,22 +69,27 @@ const TOC = [
   <p>
     Images and ISOs from before November 9, 2026 were signed with an earlier key, kept as{' '}
     <a href={`${REPO}/blob/main/keys/cosign-before-2026-11-09.pub`}><code>keys/cosign-before-2026-11-09.pub</code></a>.
+    Signatures made before Rekor logging began have no log entry and check only with{' '}
+    <code>--insecure-ignore-tlog=true</code>. That covers images signed from late September to early
+    October 2026, and ISOs from before September 30, 2026.
   </p>
   <p>
     On a Pulsar machine, <code>pulsar verify</code> prints the same check for the exact image you
-    booted, by digest, and runs it if <code>cosign</code> is installed.
+    booted, by digest, against the key the image ships, and runs it if <code>cosign</code> is
+    installed. It only checks. Updates are pulled without a signature policy, so a machine won’t
+    refuse an unsigned image on its own.
   </p>
   <p class="hint">
     <a href="/docs/install#iso">Verify an ISO</a> · <a href="/docs/signing">NVIDIA module signing</a>
   </p>
 
-  <h2 id="keys">One key for both images</h2>
+  <h2 id="keys">The NVIDIA module key</h2>
   <ul>
     <li>The NVIDIA variant builds <code>nvidia-open</code> for the image’s exact kernel and signs it.</li>
     <li>
       <code>Containerfile</code> needs no secrets. <code>Containerfile.nvidia</code> sends each
-      module to the signing host with a bearer token and attaches the returned signature; neither
-      key nor token reaches an image layer.
+      module to the signing host with a bearer token and attaches the returned signature. Neither
+      the key nor the token reaches an image layer.
     </li>
     <li>
       Both images ship the public cert, so it can be enrolled before switching to NVIDIA. The build
@@ -97,8 +103,9 @@ const TOC = [
 
   <h2 id="by-hand">Builds started by hand</h2>
   <p>
-    Only the scheduled nightly is published. Hand-started builds are tagged <code>-dev</code>: they
-    don’t move <code>:latest</code>, the SBOM baseline or the site, and the boot menu labels them.
+    A build started by hand runs the same pipeline, takes the next version number and is pushed
+    under it. It doesn’t move <code>:latest</code>, the SBOM baseline, the published changelog or
+    the site, so a machine gets it only if someone switches to that version.
   </p>
   <p class="hint">MIT-licensed. <a href={REPO}>Source</a>.</p>
 </Docs>
