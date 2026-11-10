@@ -2,26 +2,22 @@
 // GPU containers on the NVIDIA image: CDI, what the boot units do, and how
 // doctor checks it. Facts from Containerfile.nvidia phases 0 and 8,
 // system_files.nvidia/.../pulsar-gpu-containers.service, check_gpu_containers
-// and model_quadlet in cli/pulsar, and the README's examples.
+// and model_quadlet in cli/pulsar. The smoke test is the README's; the ollama
+// examples are only the image name and the device, the parts nothing here varies.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'On Pulsar’s NVIDIA image a podman container gets the GPU with --device nvidia.com/gpu=all, so CUDA and local models run in containers and nothing is layered.';
+  'On Pulsar’s NVIDIA image, podman gives a container the GPU with --device nvidia.com/gpu=all. CUDA and local models run in containers, with nothing layered.';
 
 const SMOKE = 'podman run --rm --device nvidia.com/gpu=all registry.fedoraproject.org/fedora nvidia-smi';
 
-const OLLAMA = [
-  'podman run -d --device nvidia.com/gpu=all -p 127.0.0.1:11434:11434 \\',
-  '  -v ollama:/root/.ollama docker.io/ollama/ollama',
-].join('\n');
+const OLLAMA = 'podman run -d --device nvidia.com/gpu=all docker.io/ollama/ollama';
 
 const QUADLET = [
   '[Container]',
   'Image=docker.io/ollama/ollama',
   'AddDevice=nvidia.com/gpu=all',
-  'PublishPort=127.0.0.1:11434:11434',
-  'Volume=ollama:/root/.ollama',
 ].join('\n');
 
 const DOCTOR = [
@@ -32,7 +28,7 @@ const DOCTOR = [
 
 const FINDINGS: [string, string][] = [
   ['no CDI spec, so containers cannot be given the GPU', 'sudo systemctl restart nvidia-cdi-refresh.service, then read journalctl -b -u nvidia-cdi-refresh.service'],
-  ['stale CDI spec for driver …', 'Delete the spec it names. Someone wrote it into /etc/cdi by hand and it went stale at the last driver update.'],
+  ['stale CDI spec for driver …', 'If the spec it names is in /etc/cdi, delete it. A hand-written spec there goes stale at every driver update. If it is in /var/run/cdi, run sudo systemctl restart nvidia-cdi-refresh.service, which writes that folder.'],
   ['CDI spec matches …, but SELinux blocks containers from the GPU', 'The unit that turns the boolean on didn’t run. Look at systemctl status pulsar-gpu-containers.service.'],
 ];
 
@@ -84,19 +80,19 @@ const TOC = [
   <h2 id="how">What makes it work</h2>
   <p>
     Podman uses CDI specs, which map <code>nvidia.com/gpu=all</code> to device nodes and driver
-    libraries. Two units keep that working:
+    libraries. Two units set this up at each boot.
   </p>
   <ul>
     <li>
       <code>nvidia-cdi-refresh.service</code> writes the spec for the running driver to{' '}
-      <code>/var/run/cdi/nvidia.yaml</code> at each boot. The file is cleared at shutdown, so it
-      can’t go stale.
+      <code>/var/run/cdi/nvidia.yaml</code>. That folder is a tmpfs, emptied at every shutdown.
     </li>
     <li>
       <code>pulsar-gpu-containers.service</code> turns on the SELinux boolean{' '}
       <code>container_use_xserver_devices</code> each boot. Without it, <code>nvidia-smi</code> fails
-      with “Failed to initialize NVML: Insufficient Permissions”. It only affects containers given
-      a GPU with <code>--device</code>.
+      with “Failed to initialize NVML: Insufficient Permissions”. The boolean lets a container use
+      a GPU device node it was given, and a container started without <code>--device</code> has no{' '}
+      <code>/dev/nvidia0</code> to open.
     </li>
   </ul>
   <arc-alert variant="warning" heading="Don’t write your own spec to /etc/cdi">
