@@ -47,9 +47,9 @@ const LAUNCHERS: [string, string][] = [
 const TUNING: [string, string][] = [
   ['kernel.split_lock_mitigate = 0', 'The kernel stalls a process about 10 ms for every split lock, as a deterrent. Some Windows games, God of War and THPS 1+2 among them, split-lock constantly and their frame rate collapses under it.'],
   ['vm.max_map_count = 2147483642', 'Proton games that make a lot of memory mappings, such as Star Citizen and some UE5 games, run past Fedora’s 1M default and crash.'],
-  ['transparent_hugepage/defrag = defer+madvise', 'Hugepage defragmentation is deferred to the background instead of stalling the thread that faulted, which may be the one drawing your frame. Only memory a program explicitly asked to be hugepage-backed still waits for it.'],
+  ['transparent_hugepage/defrag = defer+madvise', 'Fedora’s default is madvise, and with transparent_hugepage/enabled also at madvise (Fedora’s default) this behaves the same. It matters if you set enabled to always: the kernel then defragments for ordinary memory in the background instead of stalling the program that faulted.'],
   ['vm.compaction_proactiveness = 0', 'Turns off compaction on a timer. The kernel still compacts when memory is actually needed.'],
-  ['vm.min_free_kbytes = 524288', 'Keeps 512 MB free. When a game allocates a lot, the kernel reclaims memory in the background and the game doesn’t have to do it mid-frame.'],
+  ['vm.min_free_kbytes = 524288', 'Keeps 512 MB free. The kernel’s own formula gave 66 MB on a 62 GB machine, and a game that allocates faster than kswapd frees memory makes its own thread reclaim it.'],
 ];
 
 const JSONLD = [
@@ -83,12 +83,11 @@ const TOC = [
   jsonLd={JSONLD}
 >
   <h1>Gaming</h1>
-  <p class="intro">Pulsar installs the game launchers on first boot and sets up gamemode, the kernel and the NVIDIA driver for games.</p>
 
   <h2 id="launchers">The launchers</h2>
   <p>
-    These install from Flathub on the first boot with a network. They’re ordinary Flatpaks, so one
-    you remove stays removed.
+    Pulsar installs these from Flathub on the first boot with a network. That install runs once,
+    and a launcher you remove isn’t put back.
   </p>
   <table>
     <thead><tr><th>App</th><th>Flatpak ID</th></tr></thead>
@@ -111,8 +110,8 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="launch options" code={LAUNCH}></arc-code-block>
   <p>
     The Steam and Faugus Flatpaks need no setup. At every boot <code>pulsar-steam-grants.service</code>
-    lets their sandboxes run the image’s own <code>gg</code>, <code>ggm</code> and gamescale, so those
-    update with the image (<a href="/docs/gamescale#steam">what the grant allows</a>).
+    puts the image’s <code>gg</code>, <code>ggm</code> and gamescale on their sandboxes’{' '}
+    <code>PATH</code> (<a href="/docs/gamescale#steam">what the grant allows</a>).
   </p>
   <p>
     Other Flatpak launchers need <code>pulsar setup gamescale --platform &lt;name&gt;</code> once. It
@@ -124,10 +123,12 @@ const TOC = [
 
   <h2 id="gamemode">gamemode</h2>
   <p>
-    <code>/etc/gamemode.ini</code> changes two defaults. <code>igpu_power_threshold=-1</code> stops
+    <code>/etc/gamemode.ini</code> sets three things. <code>igpu_power_threshold=-1</code> stops
     gamemode dropping the CPU to <code>powersave</code> mid-game on dual-GPU laptops, where it
     misreads the integrated GPU’s power. <code>renice=10</code> only works for members of the{' '}
-    <code>gamemode</code> group, and the first boot adds every account that exists by then.
+    <code>gamemode</code> group, and the first boot adds every account that exists by then. Its
+    start and end hooks turn GNOME’s “not responding” check off and on (see{' '}
+    <a href="#loading">Loading screens</a>).
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="gamemode" code={GAMEMODE}></arc-code-block>
   <p>
@@ -137,8 +138,8 @@ const TOC = [
 
   <h2 id="proton">Proton and the kernel</h2>
   <p>
-    <code>ntsync</code> loads at boot and <code>/dev/ntsync</code> is given to the seat user, so
-    Proton can do Windows sync in the kernel instead of through esync or fsync. Newer Proton builds
+    <code>ntsync</code> loads at boot and <code>/dev/ntsync</code> is given to the seat user. Proton
+    can use it to do Windows sync in the kernel instead of through esync or fsync. Newer Proton builds
     use it by default. Older ones need <code>PROTON_USE_NTSYNC=1</code>.
   </p>
   <p>Kernel settings:</p>
@@ -182,8 +183,8 @@ const TOC = [
 
   <h2 id="loading">Loading screens</h2>
   <p>
-    GNOME’s “not responding” check waits 20 seconds instead of 5, and is off while a game runs
-    under gamemode, so loading screens don’t trigger it.
+    GNOME’s “not responding” check waits 20 seconds instead of 5. gamemode’s start hook turns it
+    off while a game runs, and the end hook turns it back on when the game exits or crashes.
   </p>
 
   <h2 id="check">Checking it</h2>
