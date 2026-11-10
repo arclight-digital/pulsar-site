@@ -69,9 +69,10 @@ const MACHINE = [
         {SUPPORT_URL && <a href={SUPPORT_URL}>Support Pulsar&nbsp;→</a>}
       </p>
       <p class="colophon">
-        Set in Host&nbsp;Grotesk and JetBrains&nbsp;Mono, on ARC&nbsp;UI. The home page's sky is
-        drawn live by the two fragment shaders the build uses to render the OS wallpapers.
-        The site has no analytics and sets no&nbsp;cookies.
+        Set in Host&nbsp;Grotesk and JetBrains&nbsp;Mono, on ARC&nbsp;UI. The home page's sky runs
+        the same shaders as the OS wallpapers, pulsar.frag and theme.frag. The site has no
+        analytics and sets no cookies. The home page and Nightly builds ask
+        beacon.getpulsar.dev for the latest build's&nbsp;status.
       </p>
       </div>
       <ByArclight />
