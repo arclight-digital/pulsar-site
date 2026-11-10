@@ -15,6 +15,11 @@ export type Post = CollectionEntry<'blog'>;
     every nightly publish, so it comes down within a day of this. */
 export const BANNER_DAYS = 30;
 
+/** The blog in one line: the index's lede and meta description and the RSS
+    channel read this; the share card says the first half of it. */
+export const BLOG_DESCRIPTION =
+  'Posts about Pulsar releases and Fedora or GNOME upgrades, each with what changed in the image and the commands that go with it.';
+
 // "fedora-silverblue:45" -> 45. NaN when the manifest says nothing usable,
 // which holds every gated post back rather than guessing.
 const shippedBase = Number(manifest.base.split(':')[1]);
