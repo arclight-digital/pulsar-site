@@ -51,11 +51,11 @@ const HABITS: [string, string, string][] = [
   ['Taskbar', 'Dock', 'The dash, in the overview. Right-click an app there to pin it.'],
   ['Settings, Control Panel', 'System Settings', 'Settings, in the app grid, or Super and type what you want.'],
   ['Microsoft Store, a .exe', 'App Store, a .dmg', 'GNOME Software, or flatpak install. Both install Flatpaks.'],
-  ['Windows Update', 'Software Update', 'Downloads in the background, and a notification offers a restart. It never restarts on its own.'],
+  ['Windows Update', 'Software Update', 'Downloads in the background and offers a restart in a notification. Updates never restart the computer.'],
   ['File Explorer', 'Finder', 'Files. Your folders are under /home/you, called ~ for short.'],
   ['Task Manager', 'Activity Monitor', 'System Monitor, in the app grid.'],
-  ['Terminal, PowerShell', 'Terminal', 'Ptyxis. Themes recolor it too.'],
-  ['System Restore', 'Time Machine (the system half)', 'Rollback. The previous build is in the boot menu. Your files are yours to back up.'],
+  ['Terminal, PowerShell', 'Terminal', 'Ptyxis, which Pulsar’s themes recolor along with the desktop.'],
+  ['System Restore', 'Time Machine (the system half)', 'Pick the previous build in the boot menu. That restores the system, not your files.'],
 ];
 
 const KEYS: [string, string, string, string][] = [
@@ -124,8 +124,9 @@ const TOC = [
 >
   <h1>From Windows or macOS</h1>
   <p class="intro">
-    This page is for people moving to Pulsar from Windows or macOS. Check the table below first,
-    because some computers can’t run Pulsar at all. The rest follows the order you’ll need it in.
+    You can make the Pulsar USB stick from Windows or macOS and keep Windows on the same disk. Check
+    your computer against the table below first. Apple silicon Macs and Intel Macs from 2018 to 2020
+    can’t run Pulsar.
   </p>
 
   <h2 id="can-it">Which computers can run it</h2>
@@ -169,8 +170,7 @@ const TOC = [
 
   <h2 id="backup">Before you start</h2>
   <p>
-    <strong>Back up everything you want to keep</strong> to an external drive or a cloud. The
-    installer erases only what you tell it to.
+    <strong>Back up everything you want to keep</strong> to an external drive or a cloud.
   </p>
   <ul>
     <li>
@@ -221,8 +221,7 @@ const TOC = [
   </ul>
   <p>
     <strong>Leave Secure Boot on.</strong> The NVIDIA image needs{' '}
-    <a href="/docs/install#secure-boot">its key enrolled</a> once after installing. Disk encryption
-    is on by default. On a laptop, leave it on.
+    <a href="/docs/install#secure-boot">its key enrolled</a> once after installing.
   </p>
 
   <h2 id="dual-boot">Keeping Windows</h2>
@@ -272,9 +271,9 @@ const TOC = [
     are on.
   </p>
   <p>
-    There is no <code>C:\</code>. Your files are in your home folder, and the system is a read-only
-    image, so an update can’t touch your documents and can be undone.{' '}
-    <a href="/docs/where-things-go">Where things go</a> explains the layout.
+    There is no <code>C:\</code>. Your files are in your home folder, <code>/home/you</code>, and the
+    system is a separate read-only image. An update replaces the image and leaves your home folder
+    alone. <a href="/docs/where-things-go">Where things go</a> has a table of the other folders.
   </p>
 
   <h2 id="apps">Installing apps</h2>
@@ -284,8 +283,8 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={APPS}></arc-code-block>
   <p>
     Firefox is built in. The first boot with a network installs a starting set (text editor,
-    calculator, image, PDF, video and music viewers, Steam, Heroic, Discord, OBS Studio and more).
-    Removed apps stay removed.
+    calculator, image, PDF, video and music viewers, Steam, Heroic, Discord, OBS Studio and more),
+    and Pulsar doesn’t put back any you remove.
   </p>
   <h3>Replacements for common apps</h3>
   <p>These are all on Flathub. Search for the name in Software.</p>
@@ -299,28 +298,28 @@ const TOC = [
   </table>
   <h3>Windows programs</h3>
   <p>
-    Bottles (installed) runs many Windows programs through Wine. Utilities and older software often
-    work. Suites with activation (Microsoft Office, Adobe Creative Cloud) mostly don’t, so use their
-    web versions. Mac-only apps can’t run.
+    Bottles (installed) runs many Windows programs through Wine. Mac-only apps have no equivalent.
+    Utilities and older software often work in Bottles. Suites with activation, such as Microsoft
+    Office and Adobe Creative Cloud, mostly don’t, and their web versions work in the browser instead.
   </p>
 
   <h2 id="updates">Updates</h2>
   <p>
-    The system updates as one image. It downloads in the background, and a notification
-    (<strong>Pulsar 45.x is ready</strong>, with a Restart button) says when it’s ready. Nothing
-    changes until you restart.
+    The system updates as one image. It downloads in the background, and when it’s ready a
+    notification says <strong>Pulsar 45.x is ready</strong> and offers a Restart button. The new build
+    starts at your next restart.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE_CMDS}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" filename="pulsar status" code={UPDATES}></arc-code-block>
   <p>
-    The second line in <code>pulsar status</code> is the previous build. If an update misbehaves,
-    pick it in the boot menu. <a href="/docs/updates">Updates and rollback</a> covers the rest.
+    In <code>pulsar status</code>, the row right after <code>booted</code> is the previous build. If
+    an update misbehaves, pick that build in the boot menu. <a href="/docs/updates">Updates and rollback</a> covers the rest.
   </p>
 
   <h2 id="keys">Keyboard shortcuts</h2>
   <p>
     <arc-kbd>Super</arc-kbd> is the Windows key (<arc-kbd>Cmd</arc-kbd> on a Mac keyboard). Tap it
-    and type to find any app, file or setting.
+    and type an app’s name to open it.
   </p>
   <table>
     <thead><tr><th>Keys</th><th>Does</th></tr></thead>
@@ -356,17 +355,18 @@ const TOC = [
   <h2 id="limits">What won’t work here</h2>
   <p>
     Apple has no Linux clients for iCloud Drive, iMessage or AirDrop (iCloud’s website works).
-    Windows-only apps for RGB lighting, fans and peripherals don’t run, but the hardware itself
-    usually works.
+    Windows-only apps for RGB lighting, fans and peripherals don’t run.
   </p>
 
   <h2 id="stuck">When you’re stuck</h2>
   <p>Open the terminal (Super, type <em>terminal</em>) and run:</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="health" code="pulsar doctor"></arc-code-block>
   <p>
-    Each check prints <code>ok</code>, <code>warn</code> or <code>FAIL</code>; warnings say what to do.
-    To ask for help, share <code>pulsar report --text</code> (personal details removed).{' '}
-    <a href="/docs/troubleshooting">Troubleshooting</a>.
+    Each check prints <code>ok</code>, <code>warn</code> or <code>FAIL</code>, and a warning or
+    failure can add a line saying what to do. To ask for help, share the output of{' '}
+    <code>pulsar report --text</code>, and read it before you post it. It removes your hostname,
+    username, MAC, IPv4 and email addresses and the tokens it recognizes, but it copies log messages
+    as written. <a href="/docs/troubleshooting">Troubleshooting</a> has more.
   </p>
 </Docs>
 
