@@ -12,7 +12,7 @@ const DOWNLOADS = [
     key: 'standard',
     icon: 'laptop',
     name: 'Intel or AMD',
-    who: 'Most laptops and desktops.\nIf you don’t know what’s in yours, it’s this one.',
+    who: 'If you don’t know what graphics you have, pick this one.',
     button: 'Download for Intel or AMD',
     file: ISOS.vanilla,
     note: null,
@@ -30,8 +30,8 @@ const DOWNLOADS = [
 
 const STOPS = [
   { i: 'usb', t: 'Write the ISO to a USB stick', d: '8 GB or bigger. GNOME Disks can write it, or Fedora Media Writer on Windows and macOS.' },
-  { i: 'hard-drives', t: 'Boot it and install', d: 'Pick a disk, whether to keep what’s on it, and the passphrase that unlocks it at every start. Nothing is written until the last page.' },
-  { i: 'sign-in', t: 'Log in', d: 'Create your account, pick a theme, and pick a coding agent if you want one. Apps keep installing in the background for a while.' },
+  { i: 'hard-drives', t: 'Boot it and install', d: 'Pick a disk, whether to keep what’s on it, and the passphrase that unlocks it at every start. The disk isn’t touched until you press Install (or Erase and Install) on the last page.' },
+  { i: 'sign-in', t: 'Log in', d: 'Create your account, then pick a theme and a coding agent (or none). Apps keep installing in the background for a while.' },
 ];
 
 // Broken after the verb, so the short first line leaves the Copy button its
@@ -52,9 +52,8 @@ const VERIFY = [
     <div class="stage-head">
       <h2 id="install-h"><span class="mark" aria-hidden="true"><arc-icon name="download-simple" size="xl"></arc-icon></span>Download Pulsar</h2>
       <p class="stage-sub">
-        Pulsar is free and MIT-licensed. There are two ISOs, one for Intel or AMD graphics and one
-        with the NVIDIA driver. Both are rebuilt every week, and once you’ve installed, updates come
-        from the nightly builds.
+        Pulsar is free and MIT-licensed. Both ISOs are rebuilt every week, one for Intel or AMD
+        graphics and one with the NVIDIA driver.
       </p>
     </div>
     <div class="doors">
@@ -114,8 +113,8 @@ const VERIFY = [
         <summary>Will my games run?</summary>
         <div class="fold-body">
           <p>
-            Some online games won’t start on Linux at all because their anti-cheat blocks it. The
-            publisher decides that, and no distro can get around it. Look your games up on
+            Some online games won’t start on Linux at all because their anti-cheat blocks it. Look
+            your games up on
             <a href="https://areweanticheatyet.com">Are We Anti-Cheat Yet?</a> and
             <a href="https://www.protondb.com">ProtonDB</a> before you switch.
           </p>
@@ -131,13 +130,14 @@ const VERIFY = [
             basic display if it has none.
           </p>
           <p>
-            From a terminal, run this and set a one-time password when it asks. After the restart a blue
-            screen comes up. Pick <arc-kbd>Enroll MOK</arc-kbd> and type the password, and the NVIDIA
-            driver loads from then on.
+            From a terminal, run this and set a one-time password when it asks. After the restart,
+            MokManager asks you to confirm. Choose <arc-kbd>Enroll MOK</arc-kbd>, then
+            <arc-kbd>View key 0</arc-kbd>, <arc-kbd>Continue</arc-kbd> and <arc-kbd>Yes</arc-kbd>, and
+            enter the password. The NVIDIA driver loads from then on.
           </p>
           <arc-code-block class="theme-fixed-dark" language="bash" filename="enroll the key" code={ENROL}></arc-code-block>
           <p>
-            Or let GNOME Software do it. It asks to enroll the key shortly after you log in. Follow its
+            Or use GNOME Software, which offers to enroll the key while it isn’t enrolled. Follow its
             prompts and restart.
           </p>
           <p class="hint"><a href="/docs/install#secure-boot">Every screen, step by step →</a></p>
@@ -162,8 +162,9 @@ const VERIFY = [
     <div class="switch-copy">
       <h3>Already on Silverblue or Kinoite?</h3>
       <p>
-        You can switch in place with <code>bootc switch</code> and one restart. Files, apps and
-        settings carry over, and the old system stays in the boot menu.
+        You can switch in place with <code>bootc switch</code> and one restart. It replaces the OS
+        image only, so your home folder and Flatpak apps aren’t touched, and the old system stays in
+        the boot menu.
       </p>
     </div>
     <div class="switch-cmds">
@@ -174,7 +175,6 @@ const VERIFY = [
 
   <aside class="learn" aria-label="Documentation">
     <arc-icon name="book-open" size="md" aria-hidden="true"></arc-icon>
-    <p>The docs cover installing, themes, updates and agents in more detail.</p>
     <arc-button href="/docs" variant="secondary" size="sm">Read the docs</arc-button>
   </aside>
 </section>
