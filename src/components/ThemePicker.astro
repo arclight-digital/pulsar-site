@@ -35,7 +35,7 @@ const { wallpaper = false } = Astro.props;
 const oneLook = (t: Theme) => !(t.variants.dark && t.variants.light);
 const GROUPS = [
   { id: 'pk-both', name: 'Light and dark', note: '', themes: THEMES.filter((t) => !oneLook(t)) },
-  { id: 'pk-one', name: 'One look', note: 'picks light or dark for you', themes: THEMES.filter(oneLook) },
+  { id: 'pk-one', name: 'Light or dark only', note: '', themes: THEMES.filter(oneLook) },
 ];
 
 // The card is a thumbnail of the theme itself: its ground, its text, its
@@ -137,7 +137,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     <div class="grp-top">
       <h2 class="grp-h" id="pk-wall">Wallpaper</h2>
     </div>
-    <p class="grp-note">The home page’s live sky, in the theme’s colors. Picking a theme switches to the look its own wallpaper uses.</p>
+    <p class="grp-note">The home page’s animated wallpaper, in the theme’s colors. Picking a theme also picks the look its own wallpaper uses.</p>
     <div class="looks" role="group" aria-label="Looks">
       {
         LOOKS.map((name, index) => (
@@ -163,7 +163,7 @@ const only = (t: Theme) => (t.variants.dark ? 'dark' : 'light');
     <span class="foot-note">Saved in this browser</span>
     <arc-button variant="ghost" size="sm" data-picker-reset>
       <arc-icon slot="prefix" name="arrow-counter-clockwise" size="sm"></arc-icon>
-      Back to Pulsar
+      Reset to the Pulsar theme
     </arc-button>
   </div>
 </arc-sheet>
