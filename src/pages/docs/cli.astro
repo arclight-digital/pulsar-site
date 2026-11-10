@@ -3,7 +3,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID, REPO } from '../../data/site';
 
 const DESCRIPTION =
-  'Every pulsar subcommand, from theme and doctor to update, rollback and agent, plus the JSON output and exit codes a script can rely on.';
+  'The pulsar command’s usage text, with the page that explains each subcommand, plus the --json output and exit codes a script can rely on.';
 
 // The CLI's own usage text, verbatim from cli/pulsar. A transcript, not a
 // retyping: if the help changes, this is the place that has to change with it.
@@ -28,7 +28,7 @@ const SETUP = [
   'pulsar setup devbox            # a dev distrobox, pulsar-dev, from /usr/share/pulsar/distrobox.ini',
   'sudo pulsar setup gamemode     # enroll accounts in the gamemode group',
   'pulsar setup quadlet           # the quadlet template, and container auto-update',
-  'pulsar setup gamescale --platform <name>  # gg and gamescale for a Flatpak launcher other than Steam',
+  'pulsar setup gamescale --platform <name>  # gg and gamescale for a Flatpak launcher other than Steam or Faugus',
 ].join('\n');
 
 const JSON_EXAMPLES = [
@@ -48,9 +48,9 @@ const WHERE: [string, string, string][] = [
 ];
 
 const TOC = [
-  { id: 'usage', label: 'Everything it does', level: 2 },
+  { id: 'usage', label: 'Usage', level: 2 },
   { id: 'json', label: 'For scripts', level: 2 },
-  { id: 'setup', label: 'setup', level: 2 },
+  { id: 'setup', label: 'setup recipes', level: 2 },
   { id: 'doctor', label: 'How doctor checks', level: 2 },
   { id: 'update', label: 'update and layered packages', level: 2 },
   { id: 'name', label: 'If a different pulsar runs', level: 2 },
@@ -59,20 +59,22 @@ const TOC = [
 
 <Docs
   title="The pulsar command"
-  fullTitle="The pulsar command — themes, health, agents and rollback"
+  fullTitle="The pulsar command"
   description={DESCRIPTION}
   path="/docs/cli"
   headings={TOC}
   jsonLd={JSONLD}
 >
   <h1>The pulsar command</h1>
-  <p class="intro"><code>pulsar</code> is one shell script. It switches themes, runs the health checks, updates or rolls back the system, and sets up coding agents.</p>
+  <p class="intro"><code>pulsar</code> is one shell script that runs Pulsar’s themes, health checks, updates and coding agents.</p>
 
-  <h2 id="usage">Everything it does</h2>
+  <h2 id="usage">Usage</h2>
   <arc-code-block class="theme-fixed-dark" filename="pulsar --help" code={usage}></arc-code-block>
   <p>
     Plain <code>pulsar</code> runs <code>doctor</code>. <code>pulsar help &lt;command&gt;</code> or{' '}
-    <code>--help</code> shows a command’s usage. Only commands marked root need it.
+    <code>--help</code> shows a command’s usage. Commands marked <code>(root)</code> need{' '}
+    <code>sudo</code>, and so do <code>setup apps</code>, <code>setup gamemode</code> and{' '}
+    <code>agent guard on|off</code>.
   </p>
   <table>
     <thead><tr><th>Commands</th><th>Explained in</th></tr></thead>
@@ -85,29 +87,27 @@ const TOC = [
 
   <h2 id="json">For scripts</h2>
   <p>
-    <code>--json</code> works anywhere on the line; commands without JSON output exit with an error.{' '}
-    <code>doctor</code> exits 1 only on a failed check; <code>update --check</code> exits 10 when an
-    update is available.
+    <code>--json</code> works anywhere on the line, and a command without JSON output exits with an
+    error. <code>doctor</code> exits 1 only on a failed check. <code>update --check</code> exits 10
+    when an update is available.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="json" code={JSON_EXAMPLES}></arc-code-block>
 
-  <h2 id="setup">setup: what the image can’t include</h2>
+  <h2 id="setup">setup recipes</h2>
   <p>
-    Each <code>setup</code> recipe handles per-machine or per-account state (apps, groups,
-    containers) and tells you if it needs, or must not have, <code>sudo</code>.
+    Each <code>setup</code> recipe handles what the image can’t ship because it belongs to one
+    machine or account, and tells you if it needs, or must not have, <code>sudo</code>.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="setup" code={SETUP}></arc-code-block>
-  <p class="hint">
-    <a href="/docs/where-things-go">Where things go</a> ·{' '}
-    <a href="/docs/gamescale#flatpak">gamescale setup</a>
-  </p>
+  <p class="hint">The gamescale recipe is explained in <a href="/docs/gamescale#flatpak">gamescale</a>.</p>
 
   <h2 id="doctor">How doctor checks</h2>
   <p>
-    <code>doctor</code> reads the system’s actual state (for example{' '}
-    <code>/sys/kernel/sched_ext/state</code>) and doesn’t go by unit status. It needs no root because
-    it reads through <code>rpm-ostree</code>, where <code>bootc status</code> would need it. <code>pulsar sbom</code> is generated from the live rpm database with
-    the nightly’s script.
+    The scheduler check reads <code>/sys/kernel/sched_ext/state</code>, so it catches an{' '}
+    <code>scx.service</code> that looks active but never attached a scheduler. <code>doctor</code>{' '}
+    needs no root because it reads through <code>rpm-ostree</code>, where <code>bootc status</code>{' '}
+    would need it. <code>pulsar sbom</code> builds its list from the live rpm database, with the
+    script that writes the published images’ SBOMs.
   </p>
 
   <h2 id="update">update and layered packages</h2>
@@ -120,9 +120,10 @@ const TOC = [
 
   <h2 id="name">If a different pulsar runs</h2>
   <p>
-    The Pulsar code editor’s RPM or AppImage can shadow this <code>pulsar</code> on{' '}
-    <code>PATH</code> (its Flatpak doesn’t). <code>/usr/bin/pulsar</code> always works; doctor’s{' '}
-    <code>cli</code> check flags shadowing.
+    The Pulsar code editor has a <code>pulsar</code> command too. Its AppImage, linked into{' '}
+    <code>~/.local/bin</code>, comes first on <code>PATH</code>, so call{' '}
+    <code>/usr/bin/pulsar</code>. Its RPM, layered, overwrites <code>/usr/bin/pulsar</code>, so
+    remove it. Its Flatpak doesn’t collide. doctor’s <code>cli</code> check catches both.
   </p>
-  <p class="hint">The source is <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>, one shell script.</p>
+  <p class="hint">The source is <a href={`${REPO}/blob/main/cli/pulsar`}>cli/pulsar</a>.</p>
 </Docs>
