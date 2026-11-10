@@ -50,10 +50,11 @@ function daysSince(when: string | null | undefined): number | null {
 }
 
 // One sentence, shown in the hero and over each changelog, so the places it
-// appears cannot phrase the same night differently. "Base image" on purpose:
-// the gate never looks at what Pulsar layers on top, and a night where only
-// that moved is skipped too -- see the note above base_moved().
-const SKIPPED = 'Last night’s build was skipped: no package in Fedora’s base image had moved.';
+// appears cannot phrase the same night differently. The gate builds when any
+// of three things moved (pulsar:scripts/nightly.sh, anything_moved()), so a
+// skip names all three.
+const SKIPPED =
+  'Last night’s build was skipped because Fedora’s base image, the Pulsar repo and the packages Pulsar adds on top hadn’t changed since the last build.';
 
 export async function initBeacon(): Promise<void> {
   const chip = document.getElementById('build-version');
@@ -137,7 +138,7 @@ export async function initBeacon(): Promise<void> {
     lines.push(
       success
         ? `${failures} builds have failed since.`
-        : `${failures} builds have failed, and none has succeeded in the window the build host retains.`,
+        : `${failures} builds have failed, and the build host has no record of one that succeeded.`,
     );
     stale = true;
   }
