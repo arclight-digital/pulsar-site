@@ -3,11 +3,12 @@
 // can run it, making the stick on the system they have, keeping Windows
 // alongside, and where their habits land. Facts from the OS repo: the ISOs are
 // x86_64 only (scripts/build-iso.sh), the installer asks before it touches a
-// disk and sets UTC without asking (iso-config.toml), the default apps
+// disk and writes no time zone or RTC setting (scripts/pulsar-install-system
+// writes only locale.conf and vconsole.conf), the default apps
 // (flatpaks.list), the window buttons and touchpad defaults and the disabled
 // auto-downloads (zz0-pulsar.gschema.override), Super+T (scripts/pulsar-theme),
 // the update notification's own text (cli/pulsar). The command output is real,
-// from a Pulsar machine on 44.20260928.0. Every Flathub ID below was checked
+// from a Pulsar machine on 45.20261109.0. Every Flathub ID below was checked
 // with flatpak remote-info.
 import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
@@ -29,12 +30,12 @@ const APPS = [
 
 const UPDATES = [
   '$ pulsar update --check',
-  'up to date: 44.20260928.0 (ghcr.io/arclight-digital/pulsar-nvidia:latest)',
+  'up to date: 45.20261109.0 (ghcr.io/arclight-digital/pulsar-nvidia:latest)',
   '',
   '$ pulsar status',
   'STATE    VERSION       IMAGE                                         PINNED',
-  'booted   44.20260928.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
-  '-        44.20260927.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+  'booted   45.20261109.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
+  '-        45.20261108.0 ghcr.io/arclight-digital/pulsar-nvidia:latest no',
 ].join('\n');
 
 const UPDATE_CMDS = [
@@ -50,11 +51,11 @@ const HABITS: [string, string, string][] = [
   ['Taskbar', 'Dock', 'The dash, in the overview. Right-click an app there to pin it.'],
   ['Settings, Control Panel', 'System Settings', 'Settings, in the app grid, or Super and type what you want.'],
   ['Microsoft Store, a .exe', 'App Store, a .dmg', 'GNOME Software, or flatpak install. Both install Flatpaks.'],
-  ['Windows Update', 'Software Update', 'Downloads in the background; a notification offers a restart. Never restarts on its own.'],
+  ['Windows Update', 'Software Update', 'Downloads in the background, and a notification offers a restart. It never restarts on its own.'],
   ['File Explorer', 'Finder', 'Files. Your folders are under /home/you, called ~ for short.'],
   ['Task Manager', 'Activity Monitor', 'System Monitor, in the app grid.'],
   ['Terminal, PowerShell', 'Terminal', 'Ptyxis. Themes recolor it too.'],
-  ['System Restore', 'Time Machine (the system half)', 'Rollback: the previous build is in the boot menu. Your files are yours to back up.'],
+  ['System Restore', 'Time Machine (the system half)', 'Rollback. The previous build is in the boot menu. Your files are yours to back up.'],
 ];
 
 const KEYS: [string, string, string, string][] = [
@@ -98,7 +99,7 @@ const JSONLD = [
   },
 ];
 const TOC = [
-  { id: 'can-it', label: 'Will it run on your computer?', level: 2 },
+  { id: 'can-it', label: 'Which computers can run it', level: 2 },
   { id: 'backup', label: 'Before you start', level: 2 },
   { id: 'stick', label: 'Make the USB stick', level: 2 },
   { id: 'boot', label: 'Start from the stick', level: 2 },
@@ -123,48 +124,48 @@ const TOC = [
 >
   <h1>From Windows or macOS</h1>
   <p class="intro">
-    Start by checking that your computer can run Pulsar at all. The rest of the page is in the
-    order you’ll need it.
+    This page is for people moving to Pulsar from Windows or macOS. Check the table below first,
+    because some computers can’t run Pulsar at all. The rest follows the order you’ll need it in.
   </p>
 
-  <h2 id="can-it">Will it run on your computer?</h2>
+  <h2 id="can-it">Which computers can run it</h2>
   <table>
     <thead><tr><th>You have</th><th>Pulsar?</th></tr></thead>
     <tbody>
       <tr>
         <td>A Windows PC with Intel or AMD graphics</td>
-        <td><strong>Yes.</strong> The standard download.</td>
+        <td>Yes, with the standard download.</td>
       </tr>
       <tr>
-        <td>A Windows PC with an NVIDIA GeForce RTX card</td>
+        <td>A Windows PC with an NVIDIA GeForce card</td>
         <td>
-          <strong>Yes.</strong> The NVIDIA download (<code>nvidia-open</code>: RTX 20, GTX 16 and
-          newer). Older GeForce cards: use the standard download.
+          Yes for GTX 16 and RTX 20 series cards and newer, with the NVIDIA download. It ships only
+          NVIDIA’s open driver (<code>nvidia-open</code>), which doesn’t support GTX 10 series and
+          older cards, so use the standard download for those.
         </td>
       </tr>
       <tr>
         <td>A Mac with Apple silicon (M1 and later)</td>
         <td>
-          <strong>No.</strong> Pulsar is x86_64 only.
+          No. Pulsar is x86_64 only.
         </td>
       </tr>
       <tr>
         <td>An Intel Mac, 2018 to 2020</td>
         <td>
-          <strong>No.</strong> The T2 chip’s keyboard, trackpad and audio need drivers Fedora’s
-          kernel lacks.
+          No. The T2 chip’s keyboard, trackpad and audio need drivers Fedora’s kernel lacks.
         </td>
       </tr>
       <tr>
         <td>An older Intel Mac</td>
         <td>
-          <strong>Maybe.</strong> Untested. Broadcom Wi-Fi needs a driver the image lacks; keep a
-          wired connection handy.
+          Maybe, but it’s untested. Broadcom Wi-Fi needs a driver the image lacks, so keep a wired
+          connection handy.
         </td>
       </tr>
     </tbody>
   </table>
-  <p>Not sure which graphics you have? On Windows, Task Manager → <strong>Performance</strong> lists each GPU.</p>
+  <p>On Windows, Task Manager → <strong>Performance</strong> lists each GPU in the machine.</p>
 
   <h2 id="backup">Before you start</h2>
   <p>
@@ -173,10 +174,10 @@ const TOC = [
   </p>
   <ul>
     <li>
-      <strong>BitLocker (Windows).</strong> Save the recovery key (Microsoft account or Control
-      Panel) before changing firmware settings: a boot-order or Secure Boot change can make Windows
-      ask for it. The first command below (PowerShell, admin) prints <code>Protection On</code> if
-      it’s enabled.
+      If Windows uses BitLocker, save the recovery key (from your Microsoft account or Control
+      Panel) before you change firmware settings, because a boot-order or Secure Boot change can make
+      Windows ask for it. The first command below (PowerShell, as admin) prints{' '}
+      <code>Protection On</code> if BitLocker is on.
     </li>
     <li>
       On a Mac with FileVault turned on, only macOS can read your files, so copy them off first.
@@ -210,44 +211,38 @@ const TOC = [
   <h2 id="boot">Start from the stick</h2>
   <ul>
     <li>
-      <strong>A PC:</strong> restart with the stick in and tap the boot menu key (usually{' '}
+      On a PC, restart with the stick in and tap the boot menu key (usually{' '}
       <arc-kbd>F12</arc-kbd>, <arc-kbd>F11</arc-kbd>, <arc-kbd>F8</arc-kbd> or <arc-kbd>Esc</arc-kbd>).
       Pick the USB entry.
     </li>
     <li>
-      <strong>An Intel Mac:</strong> hold <arc-kbd>Option</arc-kbd> at startup and pick EFI Boot.
+      On an Intel Mac, hold <arc-kbd>Option</arc-kbd> at startup and pick EFI Boot.
     </li>
   </ul>
   <p>
-    <strong>Leave Secure Boot on.</strong> The NVIDIA image needs its key enrolled once after
-    installing: <a href="/docs/install#secure-boot">steps</a>.
+    <strong>Leave Secure Boot on.</strong> The NVIDIA image needs{' '}
+    <a href="/docs/install#secure-boot">its key enrolled</a> once after installing. Disk encryption
+    is on by default. On a laptop, leave it on.
   </p>
-  <p>
-    The installer writes nothing until you press the button on its last page. Disk encryption is on
-    by default; on a laptop, leave it on.
-  </p>
-  <arc-alert variant="info" heading="Clock in the wrong time zone?">
-    The installer sets UTC. Settings → <strong>System → Date &amp; Time</strong>: turn on automatic
-    time zone, or pick yours.
-  </arc-alert>
 
   <h2 id="dual-boot">Keeping Windows</h2>
-  <p>Keep Windows on the same disk and choose at power-on:</p>
+  <p>To keep Windows on the same disk and pick one at power-on, do these in order.</p>
   <ol>
     <li>
-      <strong>Make room.</strong> Disk Management → right-click C: → <strong>Shrink Volume</strong>.
-      Pulsar needs 36&nbsp;GB; give it 100&nbsp;GB or more for games. Leave it unallocated.
+      In Disk Management, right-click C: and choose <strong>Shrink Volume</strong>. Pulsar needs
+      36&nbsp;GB (the installer counts that as 39&nbsp;GB), and 100&nbsp;GB or more if you play
+      games. Leave the space unallocated.
     </li>
     <li>
-      <strong>Turn off Fast Startup</strong> (Control Panel → Power Options → Choose what the power
-      buttons do), or the Windows drive stays locked.
+      Turn off Fast Startup (Control Panel → Power Options → Choose what the power buttons do), or
+      the Windows drive stays locked.
     </li>
     <li>
-      <strong>Turn off BitLocker</strong> and let it finish decrypting. The installer won’t install
-      beside a drive that has it on.
+      Turn off BitLocker and let it finish decrypting. The installer won’t install beside a drive
+      that has it on.
     </li>
     <li>
-      <strong>In the installer, pick the disk, then Install alongside Windows.</strong> Windows’
+      In the installer, pick the disk, then <strong>Install alongside Windows</strong>. Windows’
       partitions and boot files stay as they are, and Windows goes in the startup menu.
     </li>
   </ol>
@@ -257,8 +252,8 @@ const TOC = [
     down fully.
   </p>
   <p>
-    If the clock is off by your time zone after you’ve been in Windows, it’s because Windows keeps
-    the hardware clock in local time. Make Pulsar do the same:
+    Windows keeps the hardware clock in local time and Pulsar keeps it in UTC, so after you’ve been
+    in Windows the clock can be off by your time zone. This makes Pulsar use local time too.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="clock" code={CLOCK}></arc-code-block>
 
@@ -277,15 +272,14 @@ const TOC = [
     are on.
   </p>
   <p>
-    There is no <code>C:\</code>. Your files are in your home folder; the system is a read-only
-    image, so updates can’t touch your documents and can be undone.{' '}
-    <a href="/docs/where-things-go">Where things go</a>.
+    There is no <code>C:\</code>. Your files are in your home folder, and the system is a read-only
+    image, so an update can’t touch your documents and can be undone.{' '}
+    <a href="/docs/where-things-go">Where things go</a> explains the layout.
   </p>
 
   <h2 id="apps">Installing apps</h2>
   <p>
-    Apps are <strong>Flatpaks</strong> from Flathub. Install them in GNOME Software, or in the
-    terminal:
+    Apps are Flatpaks from Flathub. Install them in GNOME Software, or in the terminal.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="flatpak" code={APPS}></arc-code-block>
   <p>
@@ -293,8 +287,8 @@ const TOC = [
     calculator, image, PDF, video and music viewers, Steam, Heroic, Discord, OBS Studio and more).
     Removed apps stay removed.
   </p>
-  <h3>Apps you might be looking for</h3>
-  <p>All on Flathub; search the name in Software.</p>
+  <h3>Replacements for common apps</h3>
+  <p>These are all on Flathub. Search for the name in Software.</p>
   <table>
     <thead><tr><th>You used</th><th>Here</th></tr></thead>
     <tbody>
@@ -303,25 +297,24 @@ const TOC = [
       ))}
     </tbody>
   </table>
-  <h3>That one Windows program</h3>
+  <h3>Windows programs</h3>
   <p>
     Bottles (installed) runs many Windows programs through Wine. Utilities and older software often
-    work; suites with activation (Microsoft Office, Adobe Creative Cloud) mostly don’t, so use their
+    work. Suites with activation (Microsoft Office, Adobe Creative Cloud) mostly don’t, so use their
     web versions. Mac-only apps can’t run.
   </p>
 
   <h2 id="updates">Updates</h2>
   <p>
-    The system updates as one image. It downloads in the background on AC power, and a
-    notification (<strong>Pulsar 44.x is ready</strong>, with a Restart button) says when it’s
-    ready. It takes over at your next restart; nothing restarts on its own.
+    The system updates as one image. It downloads in the background, and a notification
+    (<strong>Pulsar 45.x is ready</strong>, with a Restart button) says when it’s ready. Nothing
+    changes until you restart.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="update" code={UPDATE_CMDS}></arc-code-block>
-  <arc-code-block class="theme-fixed-dark" filename="where you stand" code={UPDATES}></arc-code-block>
+  <arc-code-block class="theme-fixed-dark" filename="pulsar status" code={UPDATES}></arc-code-block>
   <p>
-    The second line in <code>pulsar status</code> is the previous build: if an update misbehaves,
-    pick it in the boot menu. Rollback covers the system, not your files.{' '}
-    <a href="/docs/updates">Updates and rollback</a>.
+    The second line in <code>pulsar status</code> is the previous build. If an update misbehaves,
+    pick it in the boot menu. <a href="/docs/updates">Updates and rollback</a> covers the rest.
   </p>
 
   <h2 id="keys">Keyboard shortcuts</h2>
@@ -344,31 +337,28 @@ const TOC = [
     </tbody>
   </table>
   <p>
-    <strong>From a Mac:</strong> copy and paste are <arc-kbd>Ctrl+C</arc-kbd> and{' '}
+    Coming from a Mac, copy and paste are <arc-kbd>Ctrl+C</arc-kbd> and{' '}
     <arc-kbd>Ctrl+V</arc-kbd>. In the terminal, <arc-kbd>Ctrl+Shift+C</arc-kbd> and{' '}
     <arc-kbd>Ctrl+Shift+V</arc-kbd> (<arc-kbd>Ctrl+C</arc-kbd> stops the running command).
   </p>
 
   <h2 id="games">Games</h2>
   <p>
-    Steam is installed; most Windows games run through Proton. Heroic covers Epic, GOG and Amazon.{' '}
-    <a href="/docs/gaming">Gaming</a>.
+    Steam is installed, and most Windows games run through Proton. Heroic covers Epic, GOG and
+    Amazon. <a href="/docs/gaming">Gaming</a> has more.
   </p>
   <p>
-    <strong>Anti-cheat:</strong> games whose anti-cheat blocks Linux won’t run (currently Valorant,
+    Games whose anti-cheat blocks Linux won’t run (currently Valorant,
     League of Legends, Fortnite, recent Call of Duty). Easy Anti-Cheat and BattlEye games work only
     if the developer enabled Proton support. Check ProtonDB before wiping anything, or keep Windows.
   </p>
 
   <h2 id="limits">What won’t work here</h2>
-  <ul>
-    <li><strong>Microsoft Office and Adobe apps</strong> as desktop programs. Their web versions work in the browser.</li>
-    <li><strong>Games with Linux-hostile anti-cheat</strong>, above.</li>
-    <li><strong>Apple’s services.</strong> No Linux clients for iCloud Drive, iMessage or AirDrop. iCloud’s website works.</li>
-    <li><strong>Windows-only hardware tools</strong> (RGB, fan, peripheral apps). The hardware usually works.</li>
-    <li><strong>Apple silicon Macs</strong>, at all.</li>
-  </ul>
-  <p>For anything else, search GNOME Software first.</p>
+  <p>
+    Apple has no Linux clients for iCloud Drive, iMessage or AirDrop (iCloud’s website works).
+    Windows-only apps for RGB lighting, fans and peripherals don’t run, but the hardware itself
+    usually works.
+  </p>
 
   <h2 id="stuck">When you’re stuck</h2>
   <p>Open the terminal (Super, type <em>terminal</em>) and run:</p>
