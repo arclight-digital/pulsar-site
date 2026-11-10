@@ -144,6 +144,41 @@ const VERIFY = [
         </div>
       </details>
       <details class="fold">
+        <summary>How do I install something that isn’t on Flathub?</summary>
+        <div class="fold-body">
+          <p>
+            Command-line tools and anything you’d normally get with <code>dnf</code> go in a toolbox:
+            <code>toolbox create</code>, then <code>toolbox enter</code>, and <code>sudo dnf install</code>
+            works inside it as usual. AppImages run as they are.
+          </p>
+          <p>
+            You can also layer an RPM onto the system with <code>rpm-ostree install</code>, but it needs a
+            restart and slows down every update after it, so keep that for drivers and other things that
+            have to be on the host.
+          </p>
+          <p class="hint"><a href="/docs/where-things-go">Where things go →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>What does a rollback take back?</summary>
+        <div class="fold-body">
+          <p>
+            Only the system image. Your home folder, Flatpak apps and their data, toolboxes and containers
+            stay as they are, in either direction.
+          </p>
+          <p class="hint"><a href="/docs/updates#rollback">Updates and rollback →</a></p>
+        </div>
+      </details>
+      <details class="fold">
+        <summary>Can I turn the glass off?</summary>
+        <div class="fold-body">
+          <p>
+            Yes. Pulsar Settings has separate switches for the glass on menus and the top bar, for glass
+            windows, and for turning glass off while a game is running.
+          </p>
+        </div>
+      </details>
+      <details class="fold">
         <summary>How do I check the ISO came from Pulsar?</summary>
         <div class="fold-body">
           <p>
