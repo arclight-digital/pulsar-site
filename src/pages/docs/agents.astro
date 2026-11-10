@@ -9,7 +9,7 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'How to install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, point one at a crash, run it on a local model, or keep it to one project.';
+  'How to install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, point one at a crash or a local model, and leave it running in a session you can undo.';
 
 const LIST = [
   '$ pulsar agent list',
@@ -42,6 +42,21 @@ const ASK = [
   'pulsar agent ask why does the fan never stop     # your own question',
   'pulsar agent ask --crash latest                  # the newest crash, explained',
   'pulsar agent ask --with codex                    # someone other than the default',
+].join('\n');
+
+const SESSIONS = [
+  'pulsar agent run claude --tmux work              # start claude in a session named work',
+  'pulsar agent run claude --tmux work --worktree   # the same, in its own git worktree',
+  'pulsar agent attach work                         # back onto work, from any terminal',
+  'pulsar agent attach                              # back onto the one you were on last',
+  'pulsar agent sessions                            # every session, and what each is doing',
+  'pulsar agent usage work                          # its model, context and tokens (Claude Code)',
+].join('\n');
+
+const UNDO = [
+  'pulsar agent undo work --dry-run    # what an undo would change',
+  'pulsar agent undo work              # the files as they were when work started',
+  'pulsar agent undo work --redo       # take the undo back',
 ].join('\n');
 
 const MODEL = [
@@ -111,6 +126,7 @@ const TOC = [
   { id: 'install', label: 'Install one', level: 2 },
   { id: 'briefing', label: 'What it knows about the machine', level: 2 },
   { id: 'ask', label: 'Ask it to fix something', level: 2 },
+  { id: 'sessions', label: 'Sessions you can leave running', level: 2 },
   { id: 'model', label: 'A model on your own GPU', level: 2 },
   { id: 'sandbox', label: 'The sandbox', level: 2 },
   { id: 'guard', label: 'Guard, and checkpoints', level: 2 },
@@ -119,7 +135,7 @@ const TOC = [
 
 <Docs
   title="Coding agents"
-  fullTitle="Coding agents on Pulsar — install, ask, sandbox"
+  fullTitle="Coding agents on Pulsar"
   description={DESCRIPTION}
   path="/docs/agents"
   headings={TOC}
@@ -132,7 +148,7 @@ const TOC = [
   </p>
 
   <h2 id="install">Install one</h2>
-  <p>The welcome window offers them at first login. Or:</p>
+  <p>The welcome window offers them at first login, or you can add one from a terminal.</p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent list" code={LIST}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="add" code={ADD}></arc-code-block>
   <p>
@@ -150,8 +166,8 @@ const TOC = [
   <h2 id="briefing">What it knows about the machine</h2>
   <p>
     The briefing is <code>/usr/share/pulsar/AGENTS.md</code>. It tells an agent that{' '}
-    <code>/usr</code> is read-only, where toolboxes and Flatpaks fit, what a rollback covers, and
-    what it must never do. <code>pulsar agent guide</code> prints it, so any agent can read it.
+    <code>/usr</code> is read-only, that dev tools go in a toolbox and apps in Flatpaks, what a
+    rollback covers, and what it must never do. <code>pulsar agent guide</code> prints it, so any agent can read it.
   </p>
   <p>
     <code>add</code> also links it into the agent’s own instructions if none exist (Claude Code:{' '}
@@ -168,7 +184,7 @@ const TOC = [
   </table>
   <p>
     Nothing in it needs root, and there’s no way through it to update, roll back, checkpoint,
-    change the guard or pin. Those are still yours to run. <code>pulsar agent</code> shows how it’s set up:
+    change the guard or pin. <code>pulsar agent</code> on its own shows how it’s set up.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent" code={STATUS}></arc-code-block>
 
@@ -178,8 +194,8 @@ const TOC = [
     <code>ask</code> writes a redacted <code>pulsar report</code> (plus the crash, if named) to a
     private file in <code>$XDG_RUNTIME_DIR</code> (deleted at logout), then starts your agent with
     a prompt pointing at it, your question, and “Do not change the system without asking me
-    first.” opencode: press Enter to send. aider: the report is a read-only file; paste the printed
-    prompt.
+    first.” In opencode, press Enter to send it. aider gets the report as a read-only file, and you
+    paste the prompt it prints.
   </p>
   <p>
     A crash notification’s <strong>Ask</strong> button runs <code>pulsar agent ask --crash</code>{' '}
@@ -188,8 +204,47 @@ const TOC = [
     to its provider, so only click it if you’re fine with that.
   </p>
 
+  <h2 id="sessions">Sessions you can leave running</h2>
+  <p>
+    <code>pulsar agent run &lt;agent&gt; --tmux &lt;name&gt;</code> starts the agent in a named tmux
+    session that outlives its terminal window, or attaches to it if it’s already running. Sessions
+    run on a tmux server of their own (<code>-L pulsar-agents</code>), apart from yours. tmux is in
+    the image.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="sessions" code={SESSIONS}></arc-code-block>
+  <p>
+    With Claude Code, coming back to a session picks up the same conversation. Other agents start a
+    new one. A session that ended starts again with its agent, folder and sandbox setting.{' '}
+    <code>--worktree</code> gives the session its own branch, named after it, checked out in{' '}
+    <code>&lt;repo&gt;/.worktrees/&lt;name&gt;</code>, so several agents can work in one project
+    without touching each other’s files. It works in the sandbox too.
+  </p>
+  <p>
+    When an agent in a session you aren’t looking at finishes or needs you, a notification says so,
+    and its <strong>Open</strong> button takes you to that session. Claude Code tells Pulsar about
+    both. Other agents notify you when they ring the terminal bell.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="undo" code={UNDO}></arc-code-block>
+  <p>
+    Undo works in git repositories. It puts the files back as they were when the session first
+    started (or last started with <code>--new</code>), however often it restarted since, and deletes
+    files added since. It never touches files git ignores, never overwrites a file it couldn’t take
+    back (it names those), and never moves a branch, so commits made since stay. It won’t run while
+    a session is running in that checkout, so end the session first.
+  </p>
+  <p>
+    Pulsar Settings has an Agents page listing each session with its folder and usage, and{' '}
+    <strong>Open</strong>, <strong>Undo</strong> and <strong>End</strong> buttons.
+  </p>
+  <p>
+    On a fresh install the sandbox and the guard are both off. A session you leave running can read
+    your whole home folder, and anything it runs can layer packages or roll back without a
+    password. <a href="#sandbox">The sandbox</a> limits what it can read, and{' '}
+    <a href="#guard">guard</a> makes those changes ask for a password.
+  </p>
+
   <h2 id="model">A model on your own GPU</h2>
-  <p>opencode and aider can use a local OpenAI-compatible server, no account needed:</p>
+  <p>opencode and aider can use a local OpenAI-compatible server, with no account.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="model" code={MODEL}></arc-code-block>
   <ul>
     <li>
@@ -198,7 +253,7 @@ const TOC = [
     </li>
     <li>First start downloads the model into <code>~/.local/share/pulsar/models</code>.</li>
     <li>
-      Serves <code>http://127.0.0.1:8080/v1</code> (local only); requests need the key in{' '}
+      Serves <code>http://127.0.0.1:8080/v1</code>, local only. Requests need the key in{' '}
       <code>~/.config/pulsar/model-key</code>.
     </li>
     <li>
@@ -229,28 +284,34 @@ const TOC = [
       git in the background could follow it: close the editor on the project while an untrusted
       agent works.
     </li>
-    <li>Linked worktrees and submodule checkouts are refused.</li>
+    <li>
+      A linked worktree inside its main checkout, where <code>--worktree</code> puts them, works. One
+      outside it, and a submodule checkout, are refused, because their git directory is outside the
+      project where the sandbox can’t protect it.
+    </li>
   </ul>
   <p>Type the agent’s name as usual:</p>
   <arc-code-block class="theme-fixed-dark" filename="claude" code={SANDBOX_START}></arc-code-block>
   <p>
-    Start it inside a project; it refuses your whole home folder. In interactive bash,{' '}
+    Start it inside a project. It refuses your whole home folder. In interactive bash,{' '}
     <code>claude</code>, <code>codex</code>, <code>gemini</code>, <code>opencode</code> and{' '}
-    <code>aider</code> go through the sandbox. Scripts, other shells and <code>command claude</code>{' '}
-    don’t; <code>pulsar agent run claude</code> always follows your settings.
+    <code>aider</code> go through the sandbox, and <code>pulsar agent sandbox wrap off</code> stops
+    that. Scripts, other shells and <code>command claude</code> don’t.{' '}
+    <code>pulsar agent run claude</code> always follows your settings.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={SANDBOX_MORE}></arc-code-block>
   <p>A repository can require the sandbox (this file can only tighten settings):</p>
   <arc-code-block class="theme-fixed-dark" filename=".pulsar/agent.toml" code={REPO_TOML}></arc-code-block>
   <p class="hint">
-    What goes in, what comes out, and what it doesn’t protect (the network):{' '}
+    The sandbox leaves the network open. The rest of what it lets in and out is in{' '}
     <a href="/docs/agents-safety#the-sandbox-and-a-push-that-never-holds-your-key">Agents and safety</a>.
   </p>
 
   <h2 id="guard">Guard, and checkpoints</h2>
   <p>
-    On stock Fedora, an admin’s session (and anything it starts) can layer packages, roll back, and
-    install or remove system Flatpaks without a password:
+    On stock Fedora, and on Pulsar until you turn the guard on, an admin’s session and anything it
+    starts can layer packages, roll back, clean up deployments, and install or remove system
+    Flatpaks without a password.
   </p>
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent guard" code={GUARD}></arc-code-block>
   <p>
