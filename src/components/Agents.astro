@@ -2,25 +2,35 @@
 // The agent pillar: the one picture of an agent being handed a problem (the
 // real crash notification, its words and both actions crash_notify_one's in
 // cli/pulsar), and
-// two short lists read across -- what an agent can do here and what it can't.
-// The second list is the point, so it gets the same weight as the first.
-// Titles only: every row is a page section in /docs/agents, and the limit
-// (rollback covers the system, never the home folder) is linked, not buried.
+// two lists read across -- what an agent can do here and what it can't.
+// The second list is the point, so it gets the same weight (and the same
+// number of rows) as the first. The limit that matters most (rollback covers
+// the system, never the home folder) is in the hint under them, linked.
 
+// All true on a fresh install, as you, with no password: the MCP server's
+// tools and theme_set, `flatpak install --user` and toolbox dnf (AGENTS.md
+// "Where software goes"), pulsar agent model.
 const CAN = [
   'Read a crash report and the journal around it',
   'Run pulsar doctor, or check for an update',
   'Make a theme and switch to it',
+  'Install compilers and SDKs in a toolbox',
+  'Install Flatpak apps for your account',
   'Use a local model on your GPU',
 ];
 
 // What a fresh install already stops, with guard and the sandbox both off
-// (their defaults: cli/pulsar agent_guard, setting_resolve). Source: the
-// table in the OS repo's docs/AGENTS-SAFETY.md; /etc is root-owned and no
-// polkit rule in system_files opens it.
+// (their defaults: cli/pulsar agent_guard, setting_resolve). Source: the OS
+// repo's docs/AGENTS-SAFETY.md: the table (/usr, /etc, /usr/local and /opt
+// root-owned, remotes ask polkit), "every OS change is a new deployment", and
+// checkpoint's subcommands all needing root.
 const CANT = [
   'Write to /usr, which is read-only even for root',
   'Edit /etc without sudo',
+  'Install into /usr/local or /opt without sudo',
+  'Add or change a Flatpak remote without your password',
+  'Apply a layered package or an update before the next reboot',
+  'Read or restore your checkpoints without sudo',
 ];
 ---
 
