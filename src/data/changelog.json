@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-10T22:16:09Z",
+  "generated": "2026-11-12T03:18:26Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:5ade51cebbf2d2f93c249e30173ff4d9c33928df72c83747c1a8a94b5b9e3731",
-    "digest": "sha256:5ade51cebbf2d2f93c249e30173ff4d9c33928df72c83747c1a8a94b5b9e3731"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:a113a26c6f51b31c9edcafef18460c2870ba94ea159d7dfcdb6e5ce75444525c",
     "digest": "sha256:a113a26c6f51b31c9edcafef18460c2870ba94ea159d7dfcdb6e5ce75444525c"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:cc3c2a61cc85d7a4818b9ef05bd7d59e4c64c85325087e09ece5b76131d42ecb",
+    "digest": "sha256:cc3c2a61cc85d7a4818b9ef05bd7d59e4c64c85325087e09ece5b76131d42ecb"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 27,
+    "upgraded": 33,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,165 +19,201 @@
   "removed": [],
   "changed": [
     {
-      "name": "bind-libs",
-      "from": "32:9.18.51^git20261003.d0a87358-12.fc45",
-      "to": "32:9.18.51^git20261102.973d8646-1.fc45",
+      "name": "f45-backgrounds-base",
+      "from": "45.0.3-1.fc45",
+      "to": "45.0.4-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "bind-utils",
-      "from": "32:9.18.51^git20261003.d0a87358-12.fc45",
-      "to": "32:9.18.51^git20261102.973d8646-1.fc45",
+      "name": "f45-backgrounds-gnome",
+      "from": "45.0.3-1.fc45",
+      "to": "45.0.4-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "bluez",
-      "from": "5.87+1.git8750129efca8-1.fc45",
-      "to": "5.88-1.fc45",
+      "name": "f45-backgrounds-gnome-time-of-day",
+      "from": "45.0.3-1.fc45",
+      "to": "45.0.4-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "bluez-cups",
-      "from": "5.87+1.git8750129efca8-1.fc45",
-      "to": "5.88-1.fc45",
+      "name": "glycin-gtk4-libs",
+      "from": "2.2.2-1.fc45",
+      "to": "2.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "bluez-libs",
-      "from": "5.87+1.git8750129efca8-1.fc45",
-      "to": "5.88-1.fc45",
+      "name": "glycin-libs",
+      "from": "2.2.2-1.fc45",
+      "to": "2.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "bluez-obexd",
-      "from": "5.87+1.git8750129efca8-1.fc45",
-      "to": "5.88-1.fc45",
+      "name": "glycin-loaders",
+      "from": "2.2.2-1.fc45",
+      "to": "2.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "fribidi",
-      "from": "1.0.16-5.fc45",
-      "to": "1.0.18-1.fc45",
+      "name": "glycin-thumbnailer",
+      "from": "2.2.2-1.fc45",
+      "to": "2.2.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "gnome-remote-desktop",
-      "from": "51.0-1.fc45",
-      "to": "51.0-2.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gst-editing-services",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugin-libav",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-bad-free",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-bad-free-libs",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-base",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-good",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-good-qt6",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "gstreamer1-plugins-ugly-free",
-      "from": "1.28.8-1.fc45",
-      "to": "1.28.9-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus-gtk3",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus-gtk4",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus-libs",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "ibus-setup",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "kernel-headers",
-      "from": "7.2.4-300.fc45",
+      "name": "kernel",
+      "from": "7.2.15-300.fc45",
       "to": "7.3.3-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libnbd",
-      "from": "1.25.8-1.fc45",
-      "to": "1.25.9-1.fc45",
+      "name": "kernel-core",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-devel",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-core",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-modules-extra",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "kernel-tools-libs",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libmodulemd",
+      "from": "2.15.3-3.fc45",
+      "to": "2.15.4-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libnghttp3",
+      "from": "1.18.0-1.fc45",
+      "to": "1.19.0-1.fc45",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.11.5-1",
-      "to": "2026.11.6-1",
+      "from": "2026.11.6-1",
+      "to": "2026.11.7-1",
       "direction": "upgraded"
     },
     {
-      "name": "openvpn",
-      "from": "2.7.8-1.fc45",
-      "to": "2.7.9-1.fc45",
+      "name": "nspr",
+      "from": "4.39.0-9.fc45",
+      "to": "4.39.0-10.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "python3-ibus",
-      "from": "1.5.35~rc1-1.fc45",
-      "to": "1.5.35-1.fc45",
+      "name": "nss",
+      "from": "3.131.0-1.fc45",
+      "to": "3.133.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-softokn",
+      "from": "3.131.0-1.fc45",
+      "to": "3.133.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-softokn-freebl",
+      "from": "3.131.0-1.fc45",
+      "to": "3.133.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-sysinit",
+      "from": "3.131.0-1.fc45",
+      "to": "3.133.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "nss-util",
+      "from": "3.131.0-1.fc45",
+      "to": "3.133.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "perf",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python-unversioned-command",
+      "from": "3.15.0-1.fc45",
+      "to": "3.15.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3",
+      "from": "3.15.0-1.fc45",
+      "to": "3.15.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-libs",
+      "from": "3.15.0-1.fc45",
+      "to": "3.15.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-perf",
+      "from": "7.2.15-300.fc45",
+      "to": "7.3.3-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "vim-data",
+      "from": "2:9.2.1202-1.fc45",
+      "to": "2:9.2.1302-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "vim-minimal",
+      "from": "2:9.2.1202-1.fc45",
+      "to": "2:9.2.1302-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "virtualbox-guest-additions",
+      "from": "7.2.20-1.fc45",
+      "to": "7.2.22-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "xxd",
+      "from": "2:9.2.1202-1.fc45",
+      "to": "2:9.2.1302-2.fc45",
       "direction": "upgraded"
     }
   ]
