@@ -2,9 +2,9 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.11.1",
-  "version": "45.20261112.0",
+  "version": "45.20261113.0",
   "base": "fedora-silverblue:45",
-  "built": "2026-11-12T03:00:23Z",
+  "built": "2026-11-13T03:00:03Z",
   "kernel": "7.3.3-300.fc45.x86_64",
   "components": {
     "scheduler": "eevdf",
