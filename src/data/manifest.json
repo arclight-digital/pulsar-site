@@ -2,9 +2,9 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.11.1",
-  "version": "45.20261113.0",
+  "version": "45.20261114.0",
   "base": "fedora-silverblue:45",
-  "built": "2026-11-13T03:00:03Z",
+  "built": "2026-11-14T03:04:32Z",
   "kernel": "7.3.3-300.fc45.x86_64",
   "components": {
     "scheduler": "eevdf",
@@ -17,5 +17,5 @@
     "gamescale": "v2.0.4"
   },
   "changelog_url": "https://getpulsar.dev/changelog.json",
-  "nvidia_driver": "615.71.09"
+  "nvidia_driver": "620.70.06"
 }
