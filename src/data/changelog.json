@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-14T03:32:01Z",
+  "generated": "2026-11-15T03:18:21Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:4f504522891318cbf0a9420afdc74253b3c1b9c6cee1d65e2fd166c74629ad49",
-    "digest": "sha256:4f504522891318cbf0a9420afdc74253b3c1b9c6cee1d65e2fd166c74629ad49"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:fa8ae2f52ae7fed29126e3cf48ab34cf2e88332f3771409fae76f28584bae186",
     "digest": "sha256:fa8ae2f52ae7fed29126e3cf48ab34cf2e88332f3771409fae76f28584bae186"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76",
+    "digest": "sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 59,
+    "upgraded": 14,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,357 +19,87 @@
   "removed": [],
   "changed": [
     {
-      "name": "exfatprogs",
-      "from": "1.4.3-1.fc45",
-      "to": "1.4.4-1.fc45",
+      "name": "crun",
+      "from": "1.30.1-1.fc45",
+      "to": "1.31-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "httpd",
-      "from": "2.4.69-1.fc45",
-      "to": "2.4.71-1.fc45",
+      "name": "dnf5",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "httpd-core",
-      "from": "2.4.69-1.fc45",
-      "to": "2.4.71-1.fc45",
+      "name": "dnf5-plugins",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "httpd-filesystem",
-      "from": "2.4.69-1.fc45",
-      "to": "2.4.71-1.fc45",
+      "name": "dnf5daemon-server",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "httpd-tools",
-      "from": "2.4.69-1.fc45",
-      "to": "2.4.71-1.fc45",
+      "name": "dnf5daemon-server-polkit",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libcupsfilters",
+      "from": "1:2.2.1-5.fc45",
+      "to": "1:2.2.1-8.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-crypto",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libdnf5",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-fs",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libdnf5-cli",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-loop",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libdnf5-plugin-appstream",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-mdraid",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libdnf5-plugin-expired-pgp-keys",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-nvme",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libdnf5-plugin-systemd-inhibit",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-part",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "libppd",
+      "from": "1:2.1.1-4.fc45",
+      "to": "1:2.1.1-5.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-smart",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
+      "name": "net-snmp-libs",
+      "from": "1:5.9.5.2-10.fc45",
+      "to": "1:5.9.5.2-12.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libblockdev-swap",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libblockdev-utils",
-      "from": "3.5.0-5.fc45",
-      "to": "3.6.0-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-client",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-client-qemu",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-common",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-config-network",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-config-nwfilter",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-ch",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-interface",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-libxl",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-lxc",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-network",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-nodedev",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-nwfilter",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-qemu",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-secret",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-core",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-disk",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-gluster",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-iscsi",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-iscsi-direct",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-logical",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-mpath",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-rbd",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-storage-scsi",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-driver-vbox",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-lock",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-log",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-plugin-lockd",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-daemon-proxy",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libvirt-libs",
-      "from": "12.6.0-2.fc45",
-      "to": "12.6.0-4.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libxmlb",
-      "from": "0.3.29-1.fc45",
-      "to": "0.3.30-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "m17n-db",
-      "from": "1.8.15-1.fc45",
-      "to": "1.8.17-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mise",
-      "from": "2026.11.7-1",
-      "to": "2026.11.8-1",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mod_http2",
-      "from": "2.0.39-4.fc45",
-      "to": "2.0.42-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "mod_lua",
-      "from": "2.4.69-1.fc45",
-      "to": "2.4.71-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "passim",
-      "from": "0.1.12-1.fc45",
-      "to": "0.1.13-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "passim-libs",
-      "from": "0.1.12-1.fc45",
-      "to": "0.1.13-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "poppler",
-      "from": "26.08.0-1.fc45",
-      "to": "26.08.0-2.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "poppler-glib",
-      "from": "26.08.0-1.fc45",
-      "to": "26.08.0-2.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "poppler-utils",
-      "from": "26.08.0-1.fc45",
-      "to": "26.08.0-2.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "xen-libs",
-      "from": "4.21.1-11.fc45",
-      "to": "4.21.2-7.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "xen-licenses",
-      "from": "4.21.1-11.fc45",
-      "to": "4.21.2-7.fc45",
+      "name": "python3-libdnf5",
+      "from": "5.4.7.0-1.fc45",
+      "to": "5.4.8.0-2.fc45",
       "direction": "upgraded"
     }
   ]
