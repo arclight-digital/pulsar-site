@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-15T03:18:21Z",
+  "generated": "2026-11-16T03:16:39Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:fa8ae2f52ae7fed29126e3cf48ab34cf2e88332f3771409fae76f28584bae186",
-    "digest": "sha256:fa8ae2f52ae7fed29126e3cf48ab34cf2e88332f3771409fae76f28584bae186"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76",
     "digest": "sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64",
+    "digest": "sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 14,
+    "upgraded": 11,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,87 +19,69 @@
   "removed": [],
   "changed": [
     {
-      "name": "crun",
-      "from": "1.30.1-1.fc45",
-      "to": "1.31-1.fc45",
+      "name": "adw-gtk3-theme",
+      "from": "6.4-4.fc45",
+      "to": "6.5-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "cmake-filesystem",
+      "from": "4.3.0-5.fc45",
+      "to": "4.3.0-7.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5-plugins",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "dbus",
+      "from": "1:1.16.2-6.fc45",
+      "to": "1:1.16.4-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5daemon-server",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "dbus-common",
+      "from": "1:1.16.2-6.fc45",
+      "to": "1:1.16.4-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dnf5daemon-server-polkit",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "dbus-daemon",
+      "from": "1:1.16.2-6.fc45",
+      "to": "1:1.16.4-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libcupsfilters",
-      "from": "1:2.2.1-5.fc45",
-      "to": "1:2.2.1-8.fc45",
+      "name": "dbus-libs",
+      "from": "1:1.16.2-6.fc45",
+      "to": "1:1.16.4-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdnf5",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "dbus-tools",
+      "from": "1:1.16.2-6.fc45",
+      "to": "1:1.16.4-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdnf5-cli",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "gamescope",
+      "from": "3.16.29-1.fc45",
+      "to": "3.16.31-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdnf5-plugin-appstream",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "kf6-filesystem",
+      "from": "6.31.0-1.fc45",
+      "to": "6.32.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdnf5-plugin-expired-pgp-keys",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "kf6-karchive",
+      "from": "6.31.0-1.fc45",
+      "to": "6.32.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdnf5-plugin-systemd-inhibit",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "libppd",
-      "from": "1:2.1.1-4.fc45",
-      "to": "1:2.1.1-5.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "net-snmp-libs",
-      "from": "1:5.9.5.2-10.fc45",
-      "to": "1:5.9.5.2-12.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "python3-libdnf5",
-      "from": "5.4.7.0-1.fc45",
-      "to": "5.4.8.0-2.fc45",
+      "name": "kf6-kimageformats",
+      "from": "6.31.0-1.fc45",
+      "to": "6.32.0-1.fc45",
       "direction": "upgraded"
     }
   ]
