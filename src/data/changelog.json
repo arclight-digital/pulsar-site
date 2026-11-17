@@ -1,12 +1,12 @@
 {
-  "generated": "2026-11-16T03:16:39Z",
+  "generated": "2026-11-17T03:20:55Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76",
-    "digest": "sha256:d27d8a13de4bbc0e9680ec080f3f9666a59122f4754a58aff5764b927d7e5e76"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64",
     "digest": "sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:df95c3a86b5b862ef96cd677dc1f3e924037794c088a7bd4052e5eeed39f09d4",
+    "digest": "sha256:df95c3a86b5b862ef96cd677dc1f3e924037794c088a7bd4052e5eeed39f09d4"
   },
   "summary": {
     "added": 0,
@@ -19,69 +19,69 @@
   "removed": [],
   "changed": [
     {
-      "name": "adw-gtk3-theme",
-      "from": "6.4-4.fc45",
-      "to": "6.5-1.fc45",
+      "name": "gjs",
+      "from": "1.90.1-1.fc45",
+      "to": "1.90.1-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "cmake-filesystem",
-      "from": "4.3.0-5.fc45",
-      "to": "4.3.0-7.fc45",
+      "name": "ibus",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dbus",
-      "from": "1:1.16.2-6.fc45",
-      "to": "1:1.16.4-2.fc45",
+      "name": "ibus-gtk3",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dbus-common",
-      "from": "1:1.16.2-6.fc45",
-      "to": "1:1.16.4-2.fc45",
+      "name": "ibus-gtk4",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dbus-daemon",
-      "from": "1:1.16.2-6.fc45",
-      "to": "1:1.16.4-2.fc45",
+      "name": "ibus-libs",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dbus-libs",
-      "from": "1:1.16.2-6.fc45",
-      "to": "1:1.16.4-2.fc45",
+      "name": "ibus-setup",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "dbus-tools",
-      "from": "1:1.16.2-6.fc45",
-      "to": "1:1.16.4-2.fc45",
+      "name": "mise",
+      "from": "2026.11.8-1",
+      "to": "2026.11.9-1",
       "direction": "upgraded"
     },
     {
-      "name": "gamescope",
-      "from": "3.16.29-1.fc45",
-      "to": "3.16.31-1.fc45",
+      "name": "mozjs140",
+      "from": "140.13.0-3.fc45",
+      "to": "140.17.0-3.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kf6-filesystem",
-      "from": "6.31.0-1.fc45",
-      "to": "6.32.0-1.fc45",
+      "name": "python3-ibus",
+      "from": "1.5.35-1.fc45",
+      "to": "1.5.35-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kf6-karchive",
-      "from": "6.31.0-1.fc45",
-      "to": "6.32.0-1.fc45",
+      "name": "tpm2-tss",
+      "from": "4.2.1-1.fc45",
+      "to": "4.2.2-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "kf6-kimageformats",
-      "from": "6.31.0-1.fc45",
-      "to": "6.32.0-1.fc45",
+      "name": "tpm2-tss-fapi",
+      "from": "4.2.1-1.fc45",
+      "to": "4.2.2-1.fc45",
       "direction": "upgraded"
     }
   ]
