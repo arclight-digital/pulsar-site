@@ -1,87 +1,109 @@
 {
-  "generated": "2026-11-17T03:20:55Z",
+  "generated": "2026-11-18T03:17:10Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64",
-    "digest": "sha256:b608bc97ce021532c198740cd8c8fbed3194404739968e98f09ab2d2d7b12e64"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:df95c3a86b5b862ef96cd677dc1f3e924037794c088a7bd4052e5eeed39f09d4",
     "digest": "sha256:df95c3a86b5b862ef96cd677dc1f3e924037794c088a7bd4052e5eeed39f09d4"
   },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:d440f08aae9830359d20d6b929db94c80b25ebd73ef796df0d1dd6ccf70476f6",
+    "digest": "sha256:d440f08aae9830359d20d6b929db94c80b25ebd73ef796df0d1dd6ccf70476f6"
+  },
   "summary": {
-    "added": 0,
-    "removed": 0,
-    "upgraded": 11,
+    "added": 1,
+    "removed": 1,
+    "upgraded": 13,
     "downgraded": 0,
     "changed": 0
   },
-  "added": [],
-  "removed": [],
+  "added": [
+    {
+      "name": "git-credential-libsecret",
+      "version": "2.56.1-1.fc45"
+    }
+  ],
+  "removed": [
+    {
+      "name": "mesa-va-drivers-freeworld",
+      "version": "26.2.6-1.fc45"
+    }
+  ],
   "changed": [
     {
-      "name": "gjs",
-      "from": "1.90.1-1.fc45",
-      "to": "1.90.1-2.fc45",
+      "name": "criu",
+      "from": "4.3-1.fc45",
+      "to": "4.3.1-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "criu-libs",
+      "from": "4.3-1.fc45",
+      "to": "4.3.1-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus-gtk3",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "kernel",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus-gtk4",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "kernel-core",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus-libs",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "kernel-devel",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "ibus-setup",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "kernel-modules",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mise",
-      "from": "2026.11.8-1",
-      "to": "2026.11.9-1",
+      "name": "kernel-modules-core",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "mozjs140",
-      "from": "140.13.0-3.fc45",
-      "to": "140.17.0-3.fc45",
+      "name": "kernel-modules-extra",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "python3-ibus",
-      "from": "1.5.35-1.fc45",
-      "to": "1.5.35-2.fc45",
+      "name": "kernel-tools",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "tpm2-tss",
-      "from": "4.2.1-1.fc45",
-      "to": "4.2.2-1.fc45",
+      "name": "kernel-tools-libs",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "tpm2-tss-fapi",
-      "from": "4.2.1-1.fc45",
-      "to": "4.2.2-1.fc45",
+      "name": "perf",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-perf",
+      "from": "7.3.3-300.fc45",
+      "to": "7.3.4-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "xfsprogs",
+      "from": "7.1.1-1.fc45",
+      "to": "7.1.1-1.fc45.1",
       "direction": "upgraded"
     }
   ]
