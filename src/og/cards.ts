@@ -149,7 +149,7 @@ export const CARDS: Card[] = [
     slug: 'coding-agents',
     path: '/docs/agents',
     headline: 'Coding agents',
-    sub: 'Claude Code, Codex, Gemini CLI, opencode or aider, in one shared toolbox.',
+    sub: 'Claude Code, Codex, Antigravity CLI or opencode, in one shared toolbox.',
     alt: 'The Pulsar logo, the heading "Coding agents", and the command pulsar agent add claude.',
     visual: { kind: 'terminal', line: { cmd: 'pulsar agent add claude' } },
   },

@@ -9,18 +9,17 @@ import Docs from '../../layouts/Docs.astro';
 import { APP_ID, ORG_ID } from '../../data/site';
 
 const DESCRIPTION =
-  'How to install Claude Code, Codex, Gemini CLI, opencode or aider on Pulsar, point one at a crash or a local model, and leave it running in a session you can undo.';
+  'How to install Claude Code, Codex, Antigravity CLI or opencode on Pulsar, point one at a crash or a local model, and leave it running in a session you can undo.';
 
 const LIST = [
   '$ pulsar agent list',
   'NAME      COMMAND   INSTALL                            STATE      DESCRIPTION',
   'claude    claude    npm @anthropic-ai/claude-code      -          Claude Code (Anthropic)',
   'codex     codex     npm @openai/codex                  -          Codex CLI (OpenAI)',
-  'gemini    gemini    npm @google/gemini-cli             -          Gemini CLI (Google)',
-  'opencode  opencode  npm opencode-ai                    -          opencode (open source, any provider)',
-  'aider     aider     uv aider-chat                      -          aider (open source, any provider)',
+  'agy       agy       download antigravity.google        -          Antigravity CLI (Google)',
+  'opencode  opencode  npm @opencode/cli                  -          opencode (open source, any provider)',
   '',
-  'none is installed by default. box: agents  prefix: /var/home/you/.local/share/pulsar/agents',
+  'none is installed by default. toolbox: agents  prefix: /var/home/you/.local/share/pulsar/agents',
 ].join('\n');
 
 const ADD = [
@@ -99,6 +98,14 @@ const GUARD = [
   '  org.freedesktop.Flatpak.app-uninstall                      no prompt',
 ].join('\n');
 
+// cli/pulsar agent_context_path, register_mcp, agent_skills_path.
+const WIRING: [string, string, string, string][] = [
+  ['Claude Code', '~/.claude/rules/pulsar.md', '~/.claude.json', '~/.claude/skills'],
+  ['Codex', '~/.codex/AGENTS.md', '~/.codex/config.toml', '~/.agents/skills'],
+  ['Antigravity CLI', '~/.gemini/config/rules/pulsar.md', '~/.gemini/config/mcp_config.json', '~/.gemini/config/skills'],
+  ['opencode', '~/.config/opencode/AGENTS.md', '~/.config/opencode/opencode.json', '~/.config/opencode/skills'],
+];
+
 const TOOLS: [string, string][] = [
   ['doctor', 'the health checks, all or one'],
   ['status', 'deployments, pins and layered packages'],
@@ -143,8 +150,8 @@ const TOC = [
 >
   <h1>Coding agents</h1>
   <p class="intro">
-    Pulsar doesn’t come with a coding agent. It can install Claude Code, Codex, Gemini CLI, opencode
-    or aider for you, each in a toolbox.
+    Pulsar doesn’t come with a coding agent. It can install Claude Code, Codex, Antigravity CLI or
+    opencode for you, each in a toolbox.
   </p>
 
   <h2 id="install">Install one</h2>
@@ -152,16 +159,27 @@ const TOC = [
   <arc-code-block class="theme-fixed-dark" filename="pulsar agent list" code={LIST}></arc-code-block>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="add" code={ADD}></arc-code-block>
   <p>
-    <code>add</code> creates an <code>agents</code> toolbox, installs the agent with its vendor’s npm
-    or uv method into <code>~/.local/share/pulsar/agents</code>, and adds a command to{' '}
-    <code>~/.local/bin</code>. It layers nothing on the host. Inside the toolbox it installs Node or
-    uv with the toolbox’s own sudo, which asks for no password. An agent you installed yourself is
-    left in place (listed as <code>native</code>) and still gets the setup below.
+    <code>add</code> creates an <code>agents</code> toolbox, installs the agent into{' '}
+    <code>~/.local/share/pulsar/agents</code>, and adds a command to <code>~/.local/bin</code>.
+    Claude Code, Codex and opencode come from npm, and Node is installed in the toolbox with the
+    toolbox’s own sudo, which asks for no password. Antigravity CLI has no package, so{' '}
+    <code>add</code> reads Google’s release manifest and checks the download’s SHA-512, as Google’s
+    own <code>install.sh</code> does. opencode is version 2 (<code>@opencode/cli</code>), and{' '}
+    <code>add</code> removes a 1.x it installed earlier. It layers nothing on the host. An agent you
+    installed yourself is left in place (listed as <code>native</code>) and still gets the setup
+    below.
+  </p>
+  <p>
+    Gemini CLI and aider aren’t listed any more, but <code>add</code>, <code>run</code> and{' '}
+    <code>remove</code> still work for them, and <code>add</code> first says why they were dropped:
+    Gemini CLI no longer signs in free or Google AI Pro/Ultra accounts, and aider has had no release
+    since February 2026.
   </p>
   <arc-alert variant="info" heading="The toolbox shares your home folder">
-    <code>toolbox rm -f agents</code> removes Node, Python and the agent in one go. An agent in the
-    toolbox can read your whole home folder and use your desktop session, as you can. To keep it to
-    one project, use <a href="#sandbox">the sandbox</a>.
+    The agents live in your home folder, so <code>toolbox rm -f agents</code> removes Node and
+    leaves them. <code>pulsar agent remove</code> takes one off. An agent in the toolbox can read
+    your whole home folder and use your desktop session, as you can. To keep it to one project, use{' '}
+    <a href="#sandbox">the sandbox</a>.
   </arc-alert>
 
   <h2 id="briefing">What it knows about the machine</h2>
@@ -171,11 +189,22 @@ const TOC = [
     rollback covers, and what it must never do. <code>pulsar agent guide</code> prints it.
   </p>
   <p>
-    For Claude Code, Codex and opencode, <code>add</code> links it into the agent’s own instructions
-    (Claude Code: <code>~/.claude/rules/pulsar.md</code>) unless a file is already there. For
-    Gemini CLI it prints a line to add to <code>~/.gemini/GEMINI.md</code>, and aider’s command
-    passes it with <code>--read</code>. <code>add</code> also links the image’s skills (including
-    one that makes themes), and for MCP agents registers <code>pulsar mcp</code>:
+    <code>add</code> puts the guide in each agent’s own instructions, unless a file is already there, and
+    links the image’s skills (including one that makes themes). It registers{' '}
+    <code>pulsar mcp</code> only if the agent has no <code>pulsar</code> server yet.
+  </p>
+  <table>
+    <thead><tr><th>Agent</th><th>Guide</th><th>MCP server</th><th>Skills</th></tr></thead>
+    <tbody>
+      {WIRING.map(([agent, guide, mcp, skills]) => (
+        <tr><td>{agent}</td><td><code>{guide}</code></td><td><code>{mcp}</code></td><td><code>{skills}</code></td></tr>
+      ))}
+    </tbody>
+  </table>
+  <p>
+    Antigravity CLI ignores a rules file without a <code>trigger</code>, so its{' '}
+    <code>pulsar.md</code> is a five-line file set to <code>trigger: always_on</code> that includes
+    the guide. The others get a link. The MCP server answers with these tools:
   </p>
   <table>
     <thead><tr><th>Tool</th><th>What it answers</th></tr></thead>
@@ -196,14 +225,13 @@ const TOC = [
     <code>ask</code> writes a redacted <code>pulsar report</code> (plus the crash, if named) to a
     private file in <code>$XDG_RUNTIME_DIR</code> (deleted at logout), then starts your agent with
     a prompt pointing at it, your question, and “Do not change the system without asking me
-    first.” In opencode, press Enter to send it. aider gets the report as a read-only file, and you
-    paste the prompt it prints.
+    first.” opencode sends it once a model is set up.
   </p>
   <p>
     A crash notification’s <strong>Ask</strong> button runs <code>pulsar agent ask --crash</code>{' '}
     in a new terminal. The report has the stack trace and logs, never the core file{' '}
     (<a href="/docs/troubleshooting#crashes">Troubleshooting</a>). The agent sends what it reads to
-    its provider (Anthropic, OpenAI, Google, or the one you set up in opencode or aider).
+    its provider (Anthropic, OpenAI, Google, or the one you set up in opencode).
   </p>
 
   <h2 id="sessions">Sessions you can leave running</h2>
@@ -244,7 +272,7 @@ const TOC = [
   </p>
 
   <h2 id="model">A model on your own GPU</h2>
-  <p>opencode and aider can use a local OpenAI-compatible server, with no account.</p>
+  <p>opencode can use a local OpenAI-compatible server, with no account.</p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="model" code={MODEL}></arc-code-block>
   <ul>
     <li>
@@ -257,8 +285,8 @@ const TOC = [
       <code>~/.config/pulsar/model-key</code>.
     </li>
     <li>
-      opencode: pick “Local (Pulsar)” with <code>/models</code>. aider:{' '}
-      <code>pulsar agent model</code> prints the command.
+      In opencode, pick “Local (Pulsar)” with <code>/models</code>. <code>pulsar agent model</code>{' '}
+      also prints the command for aider.
     </li>
     <li>
       Stops at logout unless started with <code>--at-login</code> (a loaded model holds gigabytes of
@@ -289,14 +317,26 @@ const TOC = [
       outside it, and a submodule checkout, are refused, because their git directory is outside the
       project where the sandbox can’t protect it.
     </li>
+    <li>
+      The project’s own agent settings (<code>.claude/</code>, <code>.mcp.json</code>,{' '}
+      <code>.codex/</code>, <code>.gemini/</code>, <code>.agents/</code>, <code>.opencode/</code>,{' '}
+      <code>opencode.json</code>) are read-only, and one the agent creates is renamed to{' '}
+      <code>&lt;name&gt;.from-sandbox</code> when the session ends. Antigravity CLI reads hooks and
+      MCP servers from <code>.agents/</code>.
+    </li>
   </ul>
+  <p>
+    Antigravity CLI and opencode 2 sign in again inside the sandbox, because their logins (the
+    keyring, and opencode’s <code>opencode.db</code>) aren’t copied in. Signing in to Antigravity
+    CLI in the sandbox hasn’t been tested yet.
+  </p>
   <p>Type the agent’s name as usual:</p>
   <arc-code-block class="theme-fixed-dark" filename="claude" code={SANDBOX_START}></arc-code-block>
   <p>
     Start it inside a project. It refuses your whole home folder. In interactive bash,{' '}
-    <code>claude</code>, <code>codex</code>, <code>gemini</code>, <code>opencode</code> and{' '}
-    <code>aider</code> go through the sandbox, and <code>pulsar agent sandbox wrap off</code> stops
-    that. Scripts, other shells and <code>command claude</code> don’t.{' '}
+    <code>claude</code>, <code>codex</code>, <code>agy</code> and <code>opencode</code> (and{' '}
+    <code>gemini</code> and <code>aider</code>) go through the sandbox, and{' '}
+    <code>pulsar agent sandbox wrap off</code> stops that. Scripts, other shells and <code>command claude</code> don’t.{' '}
     <code>pulsar agent run claude</code> always follows your settings.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="more" code={SANDBOX_MORE}></arc-code-block>
