@@ -1,6 +1,9 @@
 ---
 // The close. Pinned dark in both themes, the way the terminals are: the page
-// ends on ink, under a spectrum line that is the palette read left to right.
+// sinks back into the sky it opened on (the nebula still, the CI render of the
+// same shader the hero runs live), under a spectrum line that is the palette
+// read left to right, and signs off with the wordmark at the full width of
+// the page.
 import { getCollection } from 'astro:content';
 import ByArclight from './ByArclight.astro';
 import { posts } from '../data/blog';
@@ -32,6 +35,7 @@ const MACHINE = [
 
 <div class="foot theme-fixed-dark">
   <div class="spectrum" aria-hidden="true"></div>
+  <div class="sky" aria-hidden="true"></div>
   <arc-footer contained="lg" no-border>
     <div slot="logo" class="brand">
       {/* Static, and the small drawing: the brand package's placement for a
@@ -78,15 +82,60 @@ const MACHINE = [
       <ByArclight />
     </div>
   </arc-footer>
+  {/* the sign-off: the wordmark set across the page, its foot sunk into the
+      sky. Decoration: the name is already said by the logo above. */}
+  <p class="sign" aria-hidden="true">PULSAR</p>
 </div>
 
 <style>
   .foot {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
     background: var(--bg-deep);
     color: var(--text-primary);
-    /* room under the colophon for the fixed scroll-to-top button, which sits
-       bottom-left and would otherwise cover its last line at the page's end */
-    padding-bottom: var(--space-3xl);
+  }
+  /* The sky, faded in from the page's ink so there is no seam: dark at the
+     links, open nebula by the sign-off. */
+  .sky {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: url('/assets/nebula-still-dark.jpg') center 70% / cover no-repeat;
+    mask-image: linear-gradient(180deg, transparent 0%, rgb(0 0 0 / 0.35) 45%, #000 100%);
+    opacity: 0.9;
+  }
+  .foot arc-footer {
+    background: transparent;
+  }
+  /* The wordmark the hero wears, tracked the same, sized to the page: a
+     faint light in the sky, brightening only toward its top edge so its
+     foot dissolves into the nebula. It also keeps the colophon's last line
+     clear of the fixed scroll-to-top button. */
+  .sign {
+    margin: var(--space-xl) 0 0;
+    padding: 0 var(--space-lg);
+    text-align: center;
+    font-family: var(--font-display);
+    font-weight: var(--font-display-weight);
+    font-size: clamp(3.25rem, 16.5vw, 15rem);
+    line-height: 0.78;
+    letter-spacing: 0.3em;
+    margin-right: -0.3em;
+    color: rgb(233 237 247 / 0.12);
+    mask-image: linear-gradient(180deg, #000 30%, transparent 100%);
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: color 1.2s ease;
+  }
+  .foot:hover .sign {
+    color: rgba(var(--accent-primary-rgb), 0.16);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sign {
+      transition: none;
+    }
   }
   .spectrum {
     height: 2px;
