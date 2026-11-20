@@ -2,8 +2,8 @@
 // The close. Pinned dark in both themes, the way the terminals are: the page
 // sinks back into the sky it opened on (the nebula still, the CI render of the
 // same shader the hero runs live), under a spectrum line that is the palette
-// read left to right, and signs off with the wordmark at the full width of
-// the page.
+// read left to right, and signs off with the mark alone in that sky, its
+// glow beating in the theme's accent.
 import { getCollection } from 'astro:content';
 import ByArclight from './ByArclight.astro';
 import { posts } from '../data/blog';
@@ -72,19 +72,15 @@ const MACHINE = [
         Free to download and MIT licensed. Made by Arclight Digital&nbsp;LLC.
         {SUPPORT_URL && <a href={SUPPORT_URL}>Support Pulsar&nbsp;→</a>}
       </p>
-      <p class="colophon">
-        Set in Host&nbsp;Grotesk and JetBrains&nbsp;Mono, on ARC&nbsp;UI. The home page's sky runs
-        the same shaders as the OS wallpapers, pulsar.frag and theme.frag. The site has no
-        analytics and sets no cookies. The home page and Nightly builds ask
-        beacon.getpulsar.dev for the latest build's&nbsp;status.
-      </p>
       </div>
       <ByArclight />
     </div>
   </arc-footer>
-  {/* the sign-off: the wordmark set across the page, its foot sunk into the
-      sky. Decoration: the name is already said by the logo above. */}
-  <p class="sign" aria-hidden="true">PULSAR</p>
+  {/* the sign-off: no words, the mark alone in the open sky, its light
+      pulsing slowly in the theme's accent, the way a pulsar does */}
+  <div class="beacon" aria-hidden="true">
+    <Mark kind="small" size={52} class="beacon-mark" />
+  </div>
 </div>
 
 <style>
@@ -108,33 +104,32 @@ const MACHINE = [
   .foot arc-footer {
     background: transparent;
   }
-  /* The wordmark the hero wears, tracked the same, sized to the page: a
-     faint light in the sky, brightening only toward its top edge so its
-     foot dissolves into the nebula. It also keeps the colophon's last line
-     clear of the fixed scroll-to-top button. */
-  .sign {
-    margin: var(--space-xl) 0 0;
-    padding: 0 var(--space-lg);
-    text-align: center;
-    font-family: var(--font-display);
-    font-weight: var(--font-display-weight);
-    font-size: clamp(3.25rem, 16.5vw, 15rem);
-    line-height: 0.78;
-    letter-spacing: 0.3em;
-    margin-right: -0.3em;
-    color: rgb(233 237 247 / 0.12);
-    mask-image: linear-gradient(180deg, #000 30%, transparent 100%);
-    user-select: none;
-    pointer-events: none;
-    white-space: nowrap;
-    transition: color 1.2s ease;
+  /* The open sky at the foot of the page, and the mark in it. Its glow
+     beats every 4s, a quick rise and a long fade, in the accent of whatever
+     theme the visitor is wearing. It also keeps the colophon clear of the
+     fixed scroll-to-top button. */
+  .beacon {
+    display: grid;
+    place-items: center;
+    padding: var(--space-2xl) 0 var(--space-3xl);
   }
-  .foot:hover .sign {
-    color: rgba(var(--accent-primary-rgb), 0.16);
+  .beacon :global(.beacon-mark) {
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(var(--accent-primary-rgb), 0.35));
+    animation: beat 4s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+  }
+  @keyframes beat {
+    0%,
+    100% {
+      filter: drop-shadow(0 0 8px rgba(var(--accent-primary-rgb), 0.25));
+    }
+    8% {
+      filter: drop-shadow(0 0 26px rgba(var(--accent-primary-rgb), 0.8));
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .sign {
-      transition: none;
+    .beacon :global(.beacon-mark) {
+      animation: none;
     }
   }
   .spectrum {
