@@ -18,7 +18,20 @@ import { join } from 'node:path';
 import Mark from './Mark.astro';
 import Sky from './Sky.astro';
 import { bannerPost, postHref } from '../data/blog';
+import { shotSrcset } from '../data/shots';
 import { SUBLINE, TAGLINE } from '../data/site';
+import { THEMES, label, setCommand, tileAttrs, variant } from '../data/themes';
+
+// The desktop under the lockup: the first theme's real capture, the same
+// [data-preview] picture scripts/themes.ts swaps when any theme is picked, so
+// the swatches here, the tiles under #themes and the floating picker all
+// change the one screenshot. It sits half in the sky and half over the page.
+const FIRST = THEMES[0]!;
+const SHOT = variant(FIRST, 'dark').desktop;
+
+// Each swatch is the theme's own wallpaper, the render the image ships for
+// it (the same files as the tiles under #themes), so the themes are told
+// apart by what they look like rather than by a palette strip.
 
 // Where the flywheel pivots: the mark's CORE, read from the shipped SVG at
 // build time rather than typed in as a percentage. Each logo drop moves the
@@ -61,7 +74,7 @@ const news = await bannerPost();
     }
     {/* spin is the easter egg's hook -- see src/scripts/spin.ts. Inlined,
         so the mark wears the page's theme: pick one and it recolours. */}
-    <Mark kind="hero" size={200} spin class="mark" style={`--mark-origin: ${markOrigin}`} />
+    <Mark kind="hero" size={128} spin class="mark" style={`--mark-origin: ${markOrigin}`} />
     <h1 class="wordmark">
       <span class="glow-wrap">
         <span class="word">PULSAR</span>
@@ -73,17 +86,79 @@ const news = await bannerPost();
     <div class="go">
       <arc-button href="#install" variant="primary" size="lg">Download Pulsar</arc-button>
     </div>
+
+    {/* Toggle buttons, like the tiles under #themes: each one recolors the
+        site, the sky and the screenshot below (scripts/themes.ts). Without
+        JavaScript they are a row of palettes and the command still reads. */}
+    <div class="try" role="group" aria-labelledby="try-h">
+      <p class="try-h" id="try-h">
+        Try a theme <span class="try-name" data-preview-name>{label(FIRST)}</span>
+      </p>
+      <ul class="chips" role="list">
+        {
+          THEMES.map((t, i) => {
+            const dark = variant(t, 'dark');
+            const light = variant(t, 'light');
+            return (
+              <li>
+                <button
+                  type="button"
+                  class="chip"
+                  aria-pressed={i === 0 ? 'true' : 'false'}
+                  aria-label={label(t)}
+                  title={label(t)}
+                  style={`--bg:${dark.bg}`}
+                  {...tileAttrs(t)}
+                >
+                  {dark.wall && <img class="w-dark" src={dark.wall} alt="" width="1600" height="1000" decoding="async" />}
+                  {light.wall && light.wall !== dark.wall && (
+                    <img class="w-light" src={light.wall} alt="" width="1600" height="1000" decoding="async" />
+                  )}
+                  {/* the theme's accent along the foot, as on the tiles under #themes:
+                      the one color it paints GNOME with, so the bar tells the
+                      themes apart (their terminal palettes all look alike) */}
+                  <span class="strip" aria-hidden="true" style={`--acc:${dark.accent};--acc-l:${light.accent}`} />
+                </button>
+              </li>
+            );
+          })
+        }
+      </ul>
+      <code class="try-cmd" data-preview-cmd>{setCommand(FIRST)}</code>
+    </div>
   </div>
+
+  <figure class="peek">
+    <img
+      data-preview
+      data-zoom
+      src={SHOT}
+      srcset={SHOT && shotSrcset(SHOT)}
+      sizes="(max-width: 76rem) 100vw, 72rem"
+      alt={`The Pulsar desktop in the ${label(FIRST)} theme`}
+      width="1600"
+      height="1000"
+      decoding="async"
+    />
+  </figure>
 </header>
 
 <style>
+  /* The sky holds the lockup and the swatches, then the desktop rises out of
+     its bottom edge: --peek-w is the screenshot's width, and the last
+     --peek-out of its height hangs below the sky over the page (Home.astro
+     pads the first chapter by the same amount, from the same formula). The
+     canvases fill the hero's box, which ends where the screenshot leaves it. */
   .hero {
+    --peek-w: min(100vw - 2 * var(--space-lg), 72rem);
+    --peek-out: calc(var(--peek-w) * 0.2625);
     position: relative;
-    height: 100svh;
-    min-height: 34rem;
+    z-index: 1;
+    min-height: 100svh;
     display: grid;
-    place-items: center;
-    overflow: hidden;
+    grid-template-rows: 1fr auto;
+    justify-items: center;
+    padding-top: 6rem;
     background: url('/assets/nebula-still-dark.jpg') center / cover no-repeat var(--ink);
     color: var(--star);
     --glow-a: 1;
@@ -108,8 +183,8 @@ const news = await bannerPost();
     isolation: isolate;
     width: min(100% - 2 * var(--space-lg), 44rem);
     min-width: 0;
-    /* a little above optical center */
-    padding: var(--space-2xl) 0 calc(var(--space-2xl) + 2rem);
+    align-self: end;
+    padding: var(--space-xl) 0 0;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -147,7 +222,7 @@ const news = await bannerPost();
     display: inline-flex;
     align-items: center;
     gap: var(--space-sm);
-    margin-bottom: var(--space-xl);
+    margin-bottom: var(--space-2xl);
     padding: var(--space-xs) var(--space-md);
     border: 1px solid color-mix(in oklab, var(--accent-primary) 45%, transparent);
     border-radius: var(--radius-full);
@@ -213,7 +288,7 @@ const news = await bannerPost();
     display: block;
     font-family: var(--font-display);
     font-weight: var(--font-display-weight);
-    font-size: clamp(2.8rem, 8vw, 5.25rem);
+    font-size: clamp(2.4rem, 6.5vw, 4.25rem);
     letter-spacing: 0.3em;
     /* swallow the trailing tracking, so the word centers on its letters */
     margin-right: -0.3em;
@@ -275,19 +350,176 @@ const news = await bannerPost();
     display: inline-block;
   }
 
+  /* ---- try a theme: two rows of wallpaper chips ---------------------- */
+  .try {
+    margin-top: var(--space-2xl);
+    display: grid;
+    justify-items: center;
+    gap: var(--space-sm);
+    width: 100%;
+  }
+  .try-h {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: color-mix(in oklab, currentColor 72%, transparent);
+  }
+  .try-name {
+    margin-left: var(--space-xs);
+    font-family: var(--font-display);
+    font-weight: var(--font-display-weight);
+    color: currentColor;
+  }
+  /* twelve across: the twenty-four themes as two even rows */
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-xs);
+    display: grid;
+    grid-template-columns: repeat(12, auto);
+    justify-content: center;
+    gap: 0.375rem;
+  }
+  /* A wallpaper in a small frame of the theme's own background. Hover lifts
+     it toward you; the one being worn carries a ring in the page's text
+     color. */
+  .chip {
+    appearance: none;
+    position: relative;
+    display: block;
+    width: 3.25rem;
+    aspect-ratio: 16 / 10;
+    padding: 0;
+    border: 1px solid color-mix(in oklab, currentColor 18%, transparent);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg);
+    box-shadow: 0 3px 8px -3px rgb(0 0 0 / 0.55);
+    cursor: pointer;
+    transition:
+      transform 0.4s var(--ease-out-expo),
+      box-shadow 0.2s ease;
+  }
+  .chip img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .strip {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 5px;
+    background: var(--acc);
+  }
+  :global(:root[data-theme='light']) .strip {
+    background: var(--acc-l);
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .strip {
+      background: var(--acc-l);
+    }
+  }
+  /* a one-look theme has no .w-light, and keeps its one picture in both modes */
+  .chip .w-light {
+    display: none;
+  }
+  :global(:root[data-theme='light']) .chip .w-light {
+    display: block;
+  }
+  :global(:root[data-theme='light']) .chip .w-dark:has(+ .w-light) {
+    display: none;
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .chip .w-light {
+      display: block;
+    }
+    :global(:root[data-theme='auto']) .chip .w-dark:has(+ .w-light) {
+      display: none;
+    }
+  }
+  .chip:hover {
+    transform: translateY(-3px) scale(1.12);
+    box-shadow: 0 8px 16px -6px rgb(0 0 0 / 0.6);
+  }
+  .chip[aria-pressed='true'] {
+    border-color: transparent;
+    box-shadow:
+      0 0 0 2px var(--bg-deep),
+      0 0 0 4px currentColor;
+  }
+  .chip:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 4px;
+  }
+  .try-cmd {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: color-mix(in oklab, currentColor 64%, transparent);
+  }
+
+  /* ---- the desktop, half in the sky ---------------------------------- */
+  .peek {
+    position: relative;
+    z-index: 2;
+    width: var(--peek-w);
+    margin: var(--space-2xl) 0 calc(-1 * var(--peek-out));
+    animation: rise 1.1s var(--ease-out-expo) both;
+  }
+  .peek img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
+    background: var(--bg-deep);
+    box-shadow: 0 40px 90px -40px rgb(0 0 0 / 0.75);
+  }
+  /* the one entrance on the page: the desktop settles into place, from
+     already visible */
+  @keyframes rise {
+    from {
+      transform: translateY(2.5rem) scale(0.985);
+      opacity: 0.6;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .word-shadow {
+    .word-shadow,
+    .peek {
       animation: none;
+    }
+    .chip:hover {
+      transform: none;
     }
   }
 
   @media (max-width: 40rem) {
     .hero :global(.mark) {
-      --mk-fit: 144px;
+      --mk-fit: 88px;
     }
-    /* clear of the floating theme button */
-    .inner {
-      padding-bottom: calc(var(--space-xl) + 3.5rem);
+    /* one row that scrolls sideways under a thumb, faded at both ends,
+       rather than a grid of tiny chips */
+    .chips {
+      display: flex;
+      justify-content: flex-start;
+      overflow-x: auto;
+      max-width: calc(100vw - 2 * var(--space-lg));
+      padding: var(--space-sm) var(--space-md);
+      scroll-snap-type: x proximity;
+      scrollbar-width: none;
+      mask-image: linear-gradient(90deg, transparent, #000 var(--space-md), #000 calc(100% - var(--space-md)), transparent);
+    }
+    .chips li {
+      flex: none;
+      scroll-snap-align: center;
+    }
+    .chip {
+      width: 3.5rem;
+    }
+    .peek {
+      margin-top: var(--space-xl);
     }
   }
 </style>

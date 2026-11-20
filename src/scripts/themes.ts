@@ -239,6 +239,17 @@ export function initThemes(): void {
   const stored = storedTheme();
   const tile = stored && document.querySelector<HTMLElement>(`[data-theme-tile="${CSS.escape(stored)}"]`);
   if (tile) show(detailOf(tile));
+  else {
+    // Nothing picked yet: the page wears Pulsar, and the screenshot the
+    // server rendered is Pulsar's dark one. Track it so a light page (or the
+    // page's light/dark toggle) gets the light capture, without re-applying
+    // the theme.
+    const first = document.querySelector<HTMLElement>('[data-theme-tile]');
+    if (first) {
+      current = detailOf(first);
+      if (mode() === 'light') preview(current);
+    }
+  }
 
   document.querySelectorAll<HTMLElement>('[data-theme-radios]').forEach(radioKeys);
 

@@ -64,6 +64,25 @@ const CANT = [
     </figure>
   </div>
 
+  {/* The Agents app at work: a real capture (assets-static/agents-app.webp,
+      also on /docs/agents). */}
+  <figure class="app">
+    {/* no data-zoom: the lightbox wants a theme shot's @2x twin, and this
+        one is published at a single size, so it links to itself */}
+    <a href="/assets/agents-app.webp"><img
+      src="/assets/agents-app.webp"
+      alt="The Agents app: sessions grouped by project on the left, a Claude Code session in the middle explaining its fix for a flaky login test, and Changes on the right with the diff."
+      width="1800"
+      height="1133"
+      loading="lazy"
+      decoding="async"
+    /></a>
+    <figcaption>
+      The Agents app: every session by project, the agent’s own terminal, and what it changed.
+      <a href="/docs/agents#app">How it works →</a>
+    </figcaption>
+  </figure>
+
   <div class="split">
     <div class="can">
       <h3 class="col-h"><span class="mark yes" aria-hidden="true"><arc-icon name="check" size="lg"></arc-icon></span>Agents can:</h3>
@@ -198,6 +217,33 @@ const CANT = [
     color: var(--text-primary);
     font-weight: var(--font-display-weight);
     font-size: var(--text-sm);
+  }
+
+  /* ---- the app, at the page's full width -------------------------------- */
+  .app {
+    margin: var(--space-2xl) 0 0;
+  }
+  .app img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-default);
+    background: var(--bg-deep);
+    box-shadow: 0 30px 70px -32px rgb(0 0 0 / 0.65);
+  }
+  .app figcaption {
+    margin-top: var(--space-sm);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .app figcaption a {
+    margin-left: var(--space-xs);
+    text-decoration: none;
+  }
+  .app figcaption a:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   /* ---- can / can't: two plain ruled lists ------------------------------- */

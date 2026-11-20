@@ -1,13 +1,12 @@
 ---
-// Pillar one: the themes, shown before they are described. The preview is a
-// real screenshot of the desktop in that theme, the tiles are the wallpapers
+// Pillar one: the themes. The preview is the hero's screenshot (Hero.astro),
+// a real capture of the desktop in that theme, the tiles are the wallpapers
 // the image renders for it, and picking one recolors this page through
 // ARC's two-color contract -- the same move the engine makes on GNOME.
 //
 // Works without JavaScript: the first theme is shown, every tile is still a
 // wallpaper and a name, and the command is in the code block. The script only
 // adds the switching (src/scripts/themes.ts).
-import { shotSrcset } from '../data/shots';
 import { THEMES, label, setCommand, tileAttrs, variant } from '../data/themes';
 
 const first = THEMES[0];
@@ -22,32 +21,6 @@ const first = THEMES[0];
     <span>base16 schemes import directly, or your agent can make one.</span>
   </p>
 
-  <figure class="preview">
-    <div class="shot">
-      <img
-        data-preview
-        data-zoom
-        src={variant(first, 'dark').desktop}
-        srcset={variant(first, 'dark').desktop && shotSrcset(variant(first, 'dark').desktop!)}
-        sizes="(max-width: 80rem) 100vw, 80rem"
-        alt={`The Pulsar desktop in the ${label(first)} theme`}
-        width="1600"
-        height="1000"
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-    <figcaption class="cap">
-      <span class="cap-name" data-preview-name>{label(first)}</span>
-      <arc-code-block
-        class="theme-fixed-dark"
-        language="bash"
-        filename="terminal"
-        data-preview-cmd
-        code={setCommand(first)}
-      ></arc-code-block>
-    </figcaption>
-  </figure>
 
   <ul class="tiles" role="list">
     {
@@ -77,9 +50,9 @@ const first = THEMES[0];
                   <span class="ph" style={`--pa:${dark.accent};--pb:${dark.bg}`} />
                 )}
               </span>
-              <span class="swatch" aria-hidden="true">
-                {dark.swatch.slice(2, 9).map((c) => <span style={`background:${c}`} />)}
-              </span>
+              {/* the accent the theme paints GNOME with: what tells one
+                  theme from the next (their terminal palettes all look alike) */}
+              <span class="swatch" aria-hidden="true" style={`--acc:${dark.accent};--acc-l:${light.accent}`} />
               <span class="t-name">{label(t)}</span>
             </button>
           </li>
@@ -88,31 +61,25 @@ const first = THEMES[0];
     }
   </ul>
 
-  <p class="more"><a href="/docs/themes">Theme docs →</a></p>
+  {/* the theme being worn, as the command that wears it on a Pulsar
+      desktop; the screenshot of it is the one under the hero */}
+  <div class="cap">
+    <span class="cap-name" data-preview-name>{label(first)}</span>
+    <arc-code-block
+      class="theme-fixed-dark"
+      language="bash"
+      filename="terminal"
+      data-preview-cmd
+      code={setCommand(first)}
+    ></arc-code-block>
+    <a class="more" href="/docs/themes">Theme docs →</a>
+  </div>
 </section>
 
 <style>
   /* three set lines, each its own; the lede's balance would reflow them */
   .lines span {
     display: block;
-  }
-  .preview {
-    margin: var(--space-xl) 0 var(--space-lg);
-  }
-  .shot {
-    border-radius: var(--radius-md);
-    overflow: hidden;
-    border: 1px solid var(--border-subtle);
-    background: var(--bg-deep);
-    aspect-ratio: 16 / 10;
-  }
-  /* no loading state: scripts/themes.ts swaps a picture in only once it is
-     decoded, so the old one stays until then */
-  .shot img {
-    display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
   }
   .cap {
     display: grid;
@@ -121,11 +88,10 @@ const first = THEMES[0];
        copy button rather than stretching the whole figure: a full-width
        terminal around twenty-odd characters reads as empty chrome. It still
        shrinks below that on narrow screens (minmax 0). */
-    grid-template-columns: auto minmax(0, 30rem);
+    grid-template-columns: auto minmax(0, 30rem) auto;
     justify-content: start;
     align-items: center;
     gap: var(--space-md) var(--space-lg);
-    margin-top: var(--space-md);
   }
   .cap-name {
     font-family: var(--font-display);
@@ -140,7 +106,7 @@ const first = THEMES[0];
 
   .tiles {
     list-style: none;
-    margin: 0 0 var(--space-xl);
+    margin: var(--space-xl) 0 var(--space-lg);
     padding: 0;
     display: grid;
     /* eight across: twenty-four themes land as three even rows of eight */
@@ -203,13 +169,18 @@ const first = THEMES[0];
       var(--pb);
   }
   .swatch {
-    display: flex;
+    display: block;
     height: 4px;
     border-radius: var(--radius-full);
-    overflow: hidden;
+    background: var(--acc);
   }
-  .swatch span {
-    flex: 1;
+  :global(:root[data-theme='light']) .swatch {
+    background: var(--acc-l);
+  }
+  @media (prefers-color-scheme: light) {
+    :global(:root[data-theme='auto']) .swatch {
+      background: var(--acc-l);
+    }
   }
   .t-name {
     font-size: var(--text-sm);
@@ -232,13 +203,12 @@ const first = THEMES[0];
   }
 
   .more {
-    margin: 0;
-  }
-  .more a {
     text-decoration: none;
+    font-size: var(--text-sm);
   }
-  .more a:hover {
+  .more:hover {
     text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   @media (max-width: 64rem) {
@@ -263,7 +233,6 @@ const first = THEMES[0];
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .shot img,
     .wall {
       transition: none;
     }

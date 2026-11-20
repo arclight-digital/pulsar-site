@@ -13,3 +13,8 @@ src/data/asset-versions.json
 
 # Editor state.
 .idea/
+
+# impeccable: local review captures, decision pages and hook cache
+.impeccable/review/
+.impeccable/questions/
+.impeccable/hook.cache.json

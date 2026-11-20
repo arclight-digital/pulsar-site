@@ -9,26 +9,25 @@ import GetPulsar from './GetPulsar.astro';
 import Hero from './Hero.astro';
 import ThemeShowcase from './ThemeShowcase.astro';
 import Base from '../layouts/Base.astro';
-import { release, version } from '../data/build';
-import { shotSrcset } from '../data/shots';
+import DiffRow from './DiffRow.astro';
+import { changelog, manifest, release, version } from '../data/build';
+import { arithmetic, digest } from '../data/digest';
 import { BUILD_STATUS, SUBLINE, TAGLINE } from '../data/site';
-import { THEMES, label, variant } from '../data/themes';
 
 const DESCRIPTION = `${SUBLINE} Fedora Silverblue with 24 desktop themes, and Steam installed on first boot.`;
 
-// The desktop, as the theme harness photographed it: Pulsar Holo, the house's
-// other theme, since the themes section below opens on Pulsar's own.
-const HOLO = THEMES.find((t) => t.slug === 'pulsar-holo') ?? THEMES[0]!;
-const DESKTOP = variant(HOLO, 'dark').desktop;
-
-// What a fresh install already has, one line each.
-const READY = [
-  'A coding agent, set up at first login',
-  'Glass menus and windows, with 24 themes',
-  'Steam, Heroic and Bottles, plus gamescope and MangoHud',
-  'Unfiltered Flathub in GNOME Software',
-  'Signed builds with Secure Boot on, plus an NVIDIA variant',
-  'Pulsar Settings: one place for appearance and updates',
+// What a fresh install already has, one line each, with the command that
+// shows it on a Pulsar machine. Each is checked against the OS repo: agent
+// list and theme list are cli/pulsar's, Steam, Heroic and Bottles are
+// Flatpaks (flatpaks.list), flathub is a doctor check, verify checks the
+// image's signature. Pulsar Settings is an app with no command, so it has none.
+const READY: [string, string | null][] = [
+  ['A coding agent, set up at first login', 'pulsar agent list'],
+  ['Glass menus and windows, with 24 themes', 'pulsar theme list'],
+  ['Steam, Heroic and Bottles, plus gamescope and MangoHud', 'flatpak list --app'],
+  ['Unfiltered Flathub in GNOME Software', 'pulsar doctor flathub'],
+  ['Signed builds with Secure Boot on, plus an NVIDIA variant', 'pulsar verify'],
+  ['Pulsar Settings: one place for appearance and updates', null],
 ];
 
 // The nightly loop, left to right. The last station is the safety net.
@@ -38,6 +37,20 @@ const LOOP = [
   { i: 'arrow-clockwise', t: 'Applied at your next restart', d: 'The notification has a Restart button. Updates never restart the computer themselves.' },
   { i: 'shield-check', t: 'Rolled back after three failed boots', d: 'greenboot checks each boot for a working desktop. After the third failure it restarts into the previous build.' },
 ];
+
+// Last night's build, as the nightly published it: when it was built, and the
+// first few moves of its diff (the lead first, as /docs/changelog orders them).
+const BUILT = new Intl.DateTimeFormat('en-US', {
+  month: 'short',
+  day: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+  timeZone: 'UTC',
+  timeZoneName: 'short',
+}).format(new Date(manifest.built));
+const NIGHT = digest.bands.flatMap((b) => b.groups).slice(0, 4);
+const short = (d: string) => `${d.replace(/^sha256:/, 'sha256:').slice(0, 19)}…`;
 
 // gamescale's argument is arithmetic, so it is drawn: on a 2560x1600 laptop
 // at 133%, each row's box is the size an X11 game renders at, against the
@@ -62,6 +75,8 @@ const MODES = [
   <Hero />
   <main id="main">
     <arc-container size="lg">
+      <ThemeShowcase />
+
       <section class="chapter intro" id="about" aria-labelledby="about-h">
         <div class="intro-copy">
           <h2 id="about-h" class="statement">
@@ -71,27 +86,18 @@ const MODES = [
             Pulsar is Fedora Silverblue, and more. Updates download in the background and take over
             when you restart, and you can roll back easily with <code>sudo pulsar rollback</code>.
           </p>
-          <ul class="ready">
-            {READY.map((r) => <li>{r}</li>)}
-          </ul>
         </div>
-        <figure class="desk">
-          <img
-            data-zoom
-            src={DESKTOP}
-            srcset={DESKTOP && shotSrcset(DESKTOP)}
-            sizes="(max-width: 56rem) 100vw, 44rem"
-            alt={`The Pulsar desktop in the ${label(HOLO)} theme: GNOME with the top bar, a terminal and the wallpaper.`}
-            width="1600"
-            height="1000"
-            loading="lazy"
-            decoding="async"
-          />
-          <figcaption>The {label(HOLO)} theme.</figcaption>
-        </figure>
+        <ul class="ready">
+          {
+            READY.map(([claim, cmd]) => (
+              <li>
+                <span class="claim">{claim}</span>
+                {cmd && <code class="proof">{cmd}</code>}
+              </li>
+            ))
+          }
+        </ul>
       </section>
-
-      <ThemeShowcase />
 
       <Agents />
 
@@ -206,44 +212,72 @@ const MODES = [
         </script>
       </section>
 
-      <section class="chapter" id="rot" aria-labelledby="rot-h">
-        <h2 id="rot-h">Nightly builds</h2>
-        <p class="lede">
-          Each update is a whole new build of Pulsar, made overnight on top of Fedora Silverblue’s
-          latest image. Your previous build is kept until the next update, and you can start it from
-          the boot menu if the new one gives you trouble.
-        </p>
-        <ol class="loop" aria-label="What happens between one build and the next">
+      {/* Nightly builds, shown by the last one: what moved in it, read from
+          the diff the nightly committed (src/data/digest.ts, the same
+          reading /docs/changelog makes), beside the four steps every build
+          takes to reach you. */}
+      <section class="chapter nightly" id="rot" aria-labelledby="rot-h">
+        <div class="n-copy">
+          <h2 id="rot-h">Nightly builds</h2>
+          <p class="lede">
+            Each update is a whole new build of Pulsar, made overnight on top of Fedora Silverblue’s
+            latest image. Your previous build is kept until the next update, and you can start it from
+            the boot menu if the new one gives you trouble.
+          </p>
+          <ol class="loop" aria-label="What happens between one build and the next">
+            {
+              LOOP.map((s) => (
+                <li>
+                  <p class="st-t">{s.t}</p>
+                  <p class="st-d">{s.d}</p>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+
+        <div class="night">
+          <div class="night-head">
+            <a class="night-v mono" href="/docs/changelog" id="build-version" data-build-version>{version}</a>
+            <p class="night-when">
+              Built {BUILT}
+              {release && <> · release <a href="/docs/releases" class="mono">{release}</a></>}
+            </p>
+          </div>
           {
-            LOOP.map((s, i) => (
-              <li class={`station${i === LOOP.length - 1 ? ' safety' : ''}`}>
-                <span class="badge" aria-hidden="true"><arc-icon name={s.i} size="md"></arc-icon></span>
-                <p class="st-t">{s.t}</p>
-                <p class="st-d">{s.d}</p>
-              </li>
-            ))
+            digest.baseMove ? (
+              <p class="night-sum">Moved to Fedora {digest.baseMove.to}: nearly every package changed.</p>
+            ) : digest.baseline ? (
+              <p class="night-sum">The first build: nothing before it to compare.</p>
+            ) : digest.quiet ? (
+              <p class="night-sum">Nothing moved since the build before it.</p>
+            ) : (
+              <>
+                <p class="night-sum">{arithmetic()}</p>
+                <ul class="night-rows">
+                  {NIGHT.map((g) => <DiffRow group={g} />)}
+                </ul>
+              </>
+            )
           }
-        </ol>
-        {/* two facts and where to read more: a label and its value each,
-            no underlines until hover. The beacon's note, when it has one,
-            is its own line under them. */}
+          <p class="night-foot">
+            {changelog.from && (
+              <span class="night-from">
+                Diffed against <span class="mono">{short(changelog.from.digest)}</span>
+              </span>
+            )}
+            <a class="go" href="/docs/changelog">Every package <span aria-hidden="true">→</span></a>
+          </p>
+        </div>
+
         <div class="buildline">
           <p class="facts">
-            {release && (
-              <a class="fact" href="/docs/releases">
-                <span class="k">Release</span> <span class="v mono">{release}</span>
-              </a>
-            )}
-            <a class="fact" href="/docs/changelog">
-              <span class="k">Latest build</span>
-              <span class="v mono" id="build-version" data-build-version>{version}</span>
-            </a>
             <a class="go" href="/docs/updates">How updates work <span aria-hidden="true">→</span></a>
             <a class="go" href={BUILD_STATUS}>Build status <span aria-hidden="true">→</span></a>
           </p>
           <p class="hint build-note" id="build-note" hidden></p>
+          <p class="hint skip-note" data-skip-note hidden></p>
         </div>
-        <p class="hint skip-note" data-skip-note hidden></p>
       </section>
 
       <GetPulsar />
@@ -260,12 +294,16 @@ const MODES = [
 
 <style>
   /* ---- intro: a statement and a short list beside the thing itself ---- */
+  /* The hero's screenshot hangs this far below the sky (Hero.astro's
+     --peek-out, the same formula), so the page starts under it. */
+  main {
+    padding-top: calc(min(100vw - 2 * var(--space-lg), 72rem) * 0.2625);
+  }
   .intro {
     display: grid;
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    gap: var(--space-2xl);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-3xl);
     align-items: center;
-    padding-top: var(--space-3xl);
   }
   .statement {
     font-size: clamp(2.4rem, 5.2vw, 4.25rem);
@@ -282,34 +320,42 @@ const MODES = [
     text-wrap: balance;
     margin: 0 0 var(--space-md);
   }
+  .intro-copy .big {
+    max-width: 34ch;
+    color: var(--text-secondary);
+  }
   .ready {
     list-style: none;
     margin: 0;
     padding: 0;
+    align-self: center;
   }
   .ready li {
-    padding: var(--space-sm) 0;
+    display: grid;
+    gap: 0.2rem;
+    padding: var(--space-md) 0;
     border-top: 1px solid var(--border-subtle);
-    color: var(--text-secondary);
   }
-  .desk {
-    margin: 0;
-    min-width: 0;
+  .claim {
+    font-size: var(--text-lg);
+    line-height: 1.35;
+    color: var(--text-primary);
   }
-  .desk img {
-    display: block;
-    width: 100%;
-    height: auto;
-    aspect-ratio: 16 / 10;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border-default);
-    box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.6);
-    background: var(--ink);
-  }
-  .desk figcaption {
-    margin-top: var(--space-sm);
+  /* the command that shows it, in the theme's accent: pick a theme in the
+     hero and the proofs re-tint with the page */
+  .proof {
+    font-family: var(--font-mono);
     font-size: var(--text-sm);
+    color: var(--accent-primary);
+    background: none;
+    padding: 0;
+  }
+  .proof::before {
+    content: '$ ';
     color: var(--text-muted);
+  }
+  .ready li:last-child {
+    border-bottom: 1px solid var(--border-subtle);
   }
 
   /* ---- games: the copy, and the arithmetic beside it ------------------- */
@@ -540,44 +586,44 @@ const MODES = [
     color: var(--text-muted);
   }
 
-  /* ---- the nightly loop: four stations on one line -------------------- */
+  /* ---- nightly builds: the steps, and last night's build beside them --- */
+  .nightly {
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: var(--space-xl) var(--space-3xl);
+    align-items: start;
+  }
+  /* the four steps down a rail, the dots in the theme's accent */
   .loop {
     list-style: none;
-    margin: var(--space-xl) 0 var(--space-lg);
-    padding: 0;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--space-lg);
+    margin: var(--space-xl) 0 0;
+    padding: 0 0 0 var(--space-xl);
     position: relative;
+    display: grid;
+    gap: var(--space-lg);
   }
   .loop::before {
     content: '';
     position: absolute;
-    top: 23px;
-    left: 24px;
-    right: 24px;
-    height: 1px;
+    top: 0.6em;
+    bottom: 0.6em;
+    left: 4px;
+    width: 1px;
     background: var(--border-default);
   }
-  .station {
+  .loop li {
     position: relative;
-    min-width: 0;
   }
-  .badge {
-    position: relative;
-    display: grid;
-    place-items: center;
-    width: 48px;
-    height: 48px;
-    margin-bottom: var(--space-md);
-    border-radius: var(--radius-full);
-    background: var(--bg-deep);
-    border: 1px solid var(--border-default);
-    color: var(--accent-primary);
-  }
-  .safety .badge {
-    border-color: var(--color-success);
-    color: var(--color-success);
+  .loop li::before {
+    content: '';
+    position: absolute;
+    left: calc(-1 * var(--space-xl));
+    top: 0.45em;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--accent-primary);
+    box-shadow: 0 0 0 4px var(--bg-deep);
   }
   .st-t {
     font-family: var(--font-display);
@@ -589,9 +635,68 @@ const MODES = [
   .st-d {
     margin: 0;
     color: var(--text-secondary);
+    max-width: 52ch;
+  }
+
+  /* Last night's build: the build id large, then what moved in it. A record,
+     so it sits on the page's raised ground with a hairline, like a code
+     block, rather than floating. */
+  .night {
+    position: sticky;
+    top: 6rem;
+    padding: var(--space-xl);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+    box-shadow: 0 24px 60px -36px rgb(0 0 0 / 0.6);
+  }
+  .night-head {
+    padding-bottom: var(--space-md);
+    margin-bottom: var(--space-md);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .night-v {
+    display: inline-block;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  .night-v:hover {
+    color: var(--accent-primary);
+  }
+  .night-when {
+    margin: var(--space-xs) 0 0;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+  .night-when a {
+    color: var(--text-secondary);
+    text-decoration: none;
+  }
+  .night-sum {
+    margin: 0 0 var(--space-sm);
+    color: var(--text-secondary);
+  }
+  .night-rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .night-foot {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-sm) var(--space-lg);
+    margin: var(--space-md) 0 0;
+    font-size: var(--text-sm);
+  }
+  .night-from {
+    color: var(--text-muted);
   }
   .buildline {
-    margin-top: var(--space-lg);
+    grid-column: 1 / -1;
   }
   .facts {
     display: flex;
@@ -602,36 +707,24 @@ const MODES = [
     margin: 0;
     font-size: var(--text-sm);
   }
-  .fact,
   .go {
     display: inline-flex;
     align-items: baseline;
     gap: var(--space-sm);
     text-decoration: none;
-  }
-  .fact .k {
-    color: var(--text-muted);
-  }
-  .fact .v {
-    color: var(--text-primary);
-  }
-  .go {
     color: var(--text-secondary);
   }
-  .fact:hover .v,
   .go:hover {
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
-  .fact:focus-visible,
-  .go:focus-visible {
+  .go:focus-visible,
+  .night-v:focus-visible {
     outline: 2px solid var(--accent-primary);
     outline-offset: 2px;
     border-radius: var(--radius-sm);
   }
-  .build-note {
-    margin: var(--space-sm) 0 0;
-  }
+  .build-note,
   .skip-note {
     margin: var(--space-sm) 0 0;
   }
@@ -648,27 +741,17 @@ const MODES = [
 
   @media (max-width: 56rem) {
     .intro,
-    .games {
+    .games,
+    .nightly {
       grid-template-columns: minmax(0, 1fr);
       gap: var(--space-xl);
     }
-    .loop {
+    .nightly {
       grid-template-columns: minmax(0, 1fr);
-      padding-left: calc(48px + var(--space-md));
     }
-    .loop::before {
-      top: 24px;
-      bottom: 24px;
-      left: 23px;
-      right: auto;
-      width: 1px;
-      height: auto;
-    }
-    .badge {
-      position: absolute;
-      left: calc(-48px - var(--space-md));
-      top: 0;
-      margin: 0;
+    .night {
+      position: static;
+      padding: var(--space-lg);
     }
   }
 </style>
