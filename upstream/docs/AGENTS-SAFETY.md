@@ -72,6 +72,16 @@ update and rollback.
   `pulsar agent run <agent> --tmux <name>` in a git repository snapshots the
   project's files first, and `pulsar agent undo <name>` puts them back; it
   leaves ignored files, commits and branches alone, and it is not a backup.
+  `pulsar agent diff <name>` shows what changed since that snapshot, and the
+  Agents app shows the same diff beside the session's terminal.
+  `pulsar agent undo <name> --file <path>` puts back one file, even while the
+  session runs, and `--redo` takes that back too.
+  Archiving a session (`pulsar agent sessions --archive <name>`, or Archive
+  in the Agents app) ends it and keeps its record, worktree, branch and
+  snapshots. `pulsar agent sessions --tidy`, which the Agents app runs at
+  each start, forgets sessions archived 7 or more days ago: their snapshots
+  are deleted and a clean worktree is removed. A worktree with uncommitted
+  changes is never removed, and branches always stay.
 - **`/etc` across rollback.** Each deployment has its own `/etc`; updates
   carry local edits forward with a three-way merge. Rolling back boots the
   older copy, which can restore files you meant to change, lack edits made
@@ -100,8 +110,10 @@ as it starts.
 
 What it sees:
 
-- **The project** (the git root), read-write, except what git runs things
-  from, which is read-only: `.git/config`, `.git/hooks`, each submodule's
+- **The project** (the git root), read-write; for a session in its own
+  worktree (`--worktree`), only that worktree and the repository's `.git`,
+  not the checkout or the other sessions' worktrees. Read-only in either
+  case is what git runs things from: `.git/config`, `.git/hooks`, each submodule's
   config and hooks under `.git/modules`, and any in-project hooks path or
   included config (`core.hooksPath` such as husky's `.husky/_`,
   `include.path`). The agent can commit but can't plant a hook or
@@ -131,6 +143,10 @@ What it sees:
   It isn't your real `~/.claude` because an agent that could write its own
   settings could add a hook or MCP server your unsandboxed agent would run on
   the host.
+- **Its session's scratch folder**, read-write, for a session started with
+  `--tmux`: `/var/tmp/pulsar-agents/<session>` (`$PULSAR_SCRATCH`), where the
+  guide tells agents to put VM disks, builds and downloads. It's deleted with
+  the session (`--forget`, or `--tidy` a week after it's archived).
 - `~/.gitconfig` (read-only, so commits are yours), the guide and skills, and
   anything you `pulsar agent sandbox allow` (read-only unless `--rw`).
 
@@ -253,10 +269,80 @@ CLI (`~/.gemini/config/mcp_config.json`), Gemini CLI and opencode. Tools are the
 `manifest`, `report`, `crashes`, `update_check`, `agent_status`,
 `theme_list`, `theme_current`, plus the guide as a resource.
 
-Its one write is `theme_set` (the user's desktop theme, undone by
-`pulsar theme revert`). Nothing needs root and no root command is exposed:
-update, rollback, checkpoint, guard and pin stay yours. The sandbox doesn't
-include it (it reads the host).
+Its writes are `theme_set` (the user's desktop theme, undone by
+`pulsar theme revert`), `session_message`, `job_start`, `job_stop`,
+`machine_job`, `machine_run` and `machine_fetch`, each
+marked as a write so the agent's own permission prompt asks you. Nothing
+needs root and no root command is exposed: update, rollback, checkpoint,
+guard and pin stay yours. The sandbox doesn't include it (it reads the
+host).
+
+Sessions talking to each other: `session_read` returns another session's
+screen, which can hold anything that session's agent printed, so an agent
+reading it is reading untrusted text.
+
+A message from `session_message` reaches the other agent with a label naming
+the sender, only once that agent has ended its turn. A Claude Code session
+gets it from its own hooks, and nothing is typed: at the end of a turn its
+Stop hook answers "keep going" with the messages, and while it sits idle a
+background hook (`asyncRewake`) waits up to an hour for mail and wakes it
+with the messages. That can happen while you're looking at the session; it
+doesn't touch what you're typing. Antigravity CLI gets it from its Stop hook
+the same way at the end of a turn ("continue", in agy's words). Codex CLI,
+and an idle Antigravity CLI, get it typed into the prompt with Enter, only
+when Pulsar's own turn-end hook has marked the turn's end (a file beside the
+session's record; a bell in the agent's output doesn't count) and nobody is
+looking at the session. Nothing is typed into a permission question, where
+that Enter would answer for you, or into the shell left in a pane after its
+agent exits. Other agents (opencode) take no messages: Pulsar can't tell
+when their turns end.
+
+Sandboxed sessions take no messages yet. Every sandboxed Claude session
+shares one home, which each of them can write, so nothing there can say
+when a particular one has ended its turn; Pulsar never writes mail into it
+and never reads an unsandboxed session's turn ends from it.
+
+Every message is logged in `~/.local/state/pulsar/agents/messages.log`. One
+session can send another at most 10 in 10 minutes, and Agents > Preferences
+(or `pulsar agent messages off|on --cap N`) turns messages off or changes
+the cap; both apply to every sender, named or not. The sender's name is what
+the sending session said it was: Pulsar fills it in for an agent using
+`session_message` (which refuses when it can't tell), but an agent with a
+shell can run `pulsar agent send --from` with any name, or change the cap
+the same way. A message with no sender is labelled as from a sender that
+gave no name, never as from you, and a line of a message that starts with
+`[` is shifted by a space, so a message can't pass one off as a header.
+
+A job started with `job_start` runs as you, outside any sandbox, so a
+sandboxed agent can't start one: it has no `pulsar mcp`.
+
+## Other machines
+
+`pulsar machine` reaches your other Pulsar machines with your own SSH setup:
+no relay, no account. Every call is `ssh` in BatchMode, so a key that needs a
+prompt fails instead of asking. On the other side, `machine exec` runs only
+`pulsar agent ...` and `pulsar job wait|log|list|stop`.
+
+`machine run` and `machine job` send code by git: your branch, plus what
+isn't committed as one commit made in a scratch index, pushed to a new
+branch in the same project under your home there (made if missing, never
+over a folder that isn't a repository). A branch that's there already is
+refused, not overwritten. The agent or job there runs as you on that
+machine, with that machine's own settings: its sandbox default, its agents'
+logins. `machine fetch` brings a session's branch back under
+`refs/remotes/<machine>/`, so nothing changes in your checkout until you
+merge it yourself.
+
+Announcing (`pulsar machine announce on`, or the switch in Agents >
+Preferences) is off by default. On, a user service publishes this machine
+on the local network over mDNS as `_pulsar._tcp`, with your user name, its
+host name, its Pulsar release and whether SSH is on: anyone on that network
+can see those. It opens nothing; reaching the machine still takes your SSH
+key.
+
+A Claude Code session started this way in a project new to that machine
+stops at Claude's question about trusting the folder; open it in the app to
+answer.
 
 ## A local model
 
