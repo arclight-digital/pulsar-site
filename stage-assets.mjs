@@ -64,6 +64,8 @@ const FILES = [
   ['./assets-static/nebula-still-dark.jpg', 'nebula-still-dark.jpg'],
   ['./assets-static/nebula-still-light.jpg', 'nebula-still-light.jpg'],
   ['./assets-static/gamescale.svg', 'gamescale.svg'],
+  // the Agents app on the agents docs page: cwebp -q 86 -m 6 of a 1800x1133 capture
+  ['./assets-static/agents-app.webp', 'agents-app.webp'],
   // 64px tile of +-2-step triangular noise at a tiny alpha: dithers the
   // hero's CSS readability wash, which browsers (Firefox) draw undithered.
   ['./assets-static/dither.png', 'dither.png'],

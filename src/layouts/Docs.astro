@@ -262,6 +262,16 @@ const current = DOCS_NAV.flatMap((g) => g.links).find((l) => here(hrefOf(l)));
   .prose :global(strong) {
     color: var(--text-primary);
   }
+  .prose :global(figure.shot) {
+    margin: var(--space-lg) 0;
+  }
+  .prose :global(figure.shot img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-subtle);
+  }
   .prose :global(pre) {
     padding: var(--space-md) var(--space-lg);
     border-radius: var(--radius-md);

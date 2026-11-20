@@ -1,7 +1,8 @@
 ---
 // Coding agents, as a how-to: install one, point it at the machine, hand it a
 // problem, give it a local model, and sandbox it. Every command and message is
-// cli/pulsar's (agent_*, sandbox_*, model_*), scripts/pulsar-mcp's, or
+// cli/pulsar's (agent_*, sandbox_*, model_*), scripts/pulsar-mcp's,
+// scripts/pulsar-agents' (the Agents app: its labels and shortcuts), or
 // system_files/etc/profile.d/pulsar-agents.sh's. The transcripts are real
 // runs. What an agent can and cannot reach is docs/AGENTS-SAFETY.md, which
 // this page links to rather than restates.
@@ -46,16 +47,42 @@ const ASK = [
 const SESSIONS = [
   'pulsar agent run claude --tmux work              # start claude in a session named work',
   'pulsar agent run claude --tmux work --worktree   # the same, in its own git worktree',
+  'pulsar agent run claude --tmux work --prompt "fix the flaky test"',
   'pulsar agent attach work                         # back onto work, from any terminal',
   'pulsar agent attach                              # back onto the one you were on last',
   'pulsar agent sessions                            # every session, and what each is doing',
   'pulsar agent usage work                          # its model, context and tokens (Claude Code)',
+  'pulsar agent diff work                           # what it changed since it started',
+  'pulsar agent sessions --archive work             # done with it; --unarchive brings it back',
 ].join('\n');
 
 const UNDO = [
-  'pulsar agent undo work --dry-run    # what an undo would change',
-  'pulsar agent undo work              # the files as they were when work started',
-  'pulsar agent undo work --redo       # take the undo back',
+  'pulsar agent undo work --dry-run                 # what an undo would change',
+  'pulsar agent undo work                           # the files as they were when work started',
+  'pulsar agent undo work --redo                    # take the undo back',
+  'pulsar agent undo work --file src/app.ts         # one file, even while work runs',
+].join('\n');
+
+const DISK = [
+  'pulsar agent disk                                # free space on /var, and the big things in it',
+  'pulsar agent disk --delete <path>                # one of the things it listed',
+  'pulsar doctor suspend-room                       # NVIDIA image: whether a suspend will fit',
+].join('\n');
+
+// cli/pulsar cmd_machine and agent_send, as on OS main 0d66ec30.
+const MACHINE = [
+  'pulsar machine add desktop you@desktop.local     # checks Pulsar answers there, then saves it',
+  'pulsar machine check                             # each one’s release, GPU and agents',
+  'pulsar machine sessions                          # every machine’s agent sessions',
+  'pulsar machine run desktop claude --name train --prompt "run the training here"',
+  'pulsar machine job desktop --notify work -- python train.py',
+  'pulsar machine fetch desktop train               # its branch back, as desktop/train',
+  'pulsar agent send train@desktop "the data is in ~/data"',
+].join('\n');
+
+const SSH_SETUP = [
+  'ssh you@desktop.local          # once, to accept its host key',
+  'ssh-copy-id you@desktop.local  # your key, so Pulsar never has to ask',
 ].join('\n');
 
 const MODEL = [
@@ -133,7 +160,10 @@ const TOC = [
   { id: 'install', label: 'Install one', level: 2 },
   { id: 'briefing', label: 'What it knows about the machine', level: 2 },
   { id: 'ask', label: 'Ask it to fix something', level: 2 },
-  { id: 'sessions', label: 'Sessions you can leave running', level: 2 },
+  { id: 'app', label: 'The Agents app', level: 2 },
+  { id: 'sessions', label: 'Sessions from a terminal', level: 2 },
+  { id: 'disk', label: 'Disk space', level: 2 },
+  { id: 'machines', label: 'Your other machines', level: 2 },
   { id: 'model', label: 'A model on your own GPU', level: 2 },
   { id: 'sandbox', label: 'The sandbox', level: 2 },
   { id: 'guard', label: 'Guard and checkpoints', level: 2 },
@@ -234,41 +264,167 @@ const TOC = [
     its provider (Anthropic, OpenAI, Google, or the one you set up in opencode).
   </p>
 
-  <h2 id="sessions">Sessions you can leave running</h2>
+  <h2 id="app">The Agents app</h2>
+  <p>
+    Agents, in the app grid, lists every session under its project, with the ones that need you
+    first. A session is the agent’s own terminal, inside the window. Closing the window leaves the
+    agents working.
+  </p>
+  {/* assets-static/agents-app.webp, from the OS session's 1800x1133 capture
+      (pulsar-agents-in-use.png), chosen by Nick on 2026-11-20. */}
+  <figure class="shot">
+    <a href="/assets/agents-app.webp">
+      <img
+        src="/assets/agents-app.webp"
+        alt="The Agents app: sessions grouped by project on the left, a Claude Code session in the middle explaining its fix for a flaky login test, and Changes on the right with the diff of src/auth/login.py."
+        width="1800"
+        height="1133"
+        loading="lazy"
+        decoding="async"
+      />
+    </a>
+  </figure>
+  <ul>
+    <li>
+      With no session open, the window asks “What should the agent do?” What you type becomes the
+      agent’s first message and the session’s name. The agent, a worktree of its own and the sandbox
+      are picked beside it, and remembered per project.
+    </li>
+    <li>
+      Opening a stopped session continues it. Claude Code and opencode pick up the same
+      conversation, and Antigravity CLI does once Pulsar has seen its conversation. Codex picks up
+      its latest conversation in that folder.
+    </li>
+    <li>
+      <strong>Changes</strong> (Ctrl+Shift+D) lists the files the agent changed since the session
+      started, or since the last commit, with each file’s diff and <strong>Revert File</strong>. A
+      comment on a diff line is typed into the agent’s prompt as <code>path:line: …</code> for you
+      to send.
+    </li>
+    <li>
+      <strong>History</strong> lists the snapshot taken at each start. <strong>Go Back</strong> puts
+      the files back, stopping the agent first if it’s working, and the Undo after it takes that
+      back.
+    </li>
+    <li>
+      The bar under a session shows the model, what the agent is doing, how full its context is,
+      Codex’s 5-hour and weekly limits, the sandbox, the branch and how many files changed. Claude
+      Code and Antigravity CLI don’t write their plan limits to disk, so they show context only.
+    </li>
+    <li>
+      Archive (the × on a session, or Ctrl+Shift+Delete) hides it, with Undo. The app deletes
+      archived sessions after a week, with their snapshots and scratch folders. Preferences
+      (Ctrl+,) sets that to 1 day, 30 days or never. A worktree with
+      uncommitted changes is kept, and so is every branch.
+    </li>
+    <li>Ctrl+Shift+B narrows the list to the agents’ tiles.</li>
+  </ul>
+  <p>
+    In the app a session has no tmux keys, menus or status line, and when the agent quits you get{' '}
+    <strong>Continue</strong>. A terminal attached to the same session keeps tmux. A notification’s{' '}
+    <strong>Open</strong>, Pulsar Commands and the Agents page in Pulsar Settings all open the
+    session in the app.
+  </p>
+
+  <h2 id="sessions">Sessions from a terminal</h2>
   <p>
     <code>pulsar agent run &lt;agent&gt; --tmux &lt;name&gt;</code> starts the agent in a named tmux
     session that outlives its terminal window, or attaches to it if it’s already running. Sessions
     run on a tmux server of their own (<code>-L pulsar-agents</code>), apart from yours. tmux is in
-    the image.
+    the image. The app shows these sessions too.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sessions" code={SESSIONS}></arc-code-block>
   <p>
-    With Claude Code, coming back to a session picks up the same conversation. Other agents start a
-    new one. A session that ended starts again with its agent, folder and sandbox setting.{' '}
-    With <code>--worktree</code>, the session gets a branch named after it, checked out in{' '}
-    <code>&lt;repo&gt;/.worktrees/&lt;name&gt;</code>, and the sandbox accepts that checkout.
+    A session that ended starts again with its agent, folder, conversation and sandbox setting.{' '}
+    <code>--new</code> starts a fresh conversation. With <code>--worktree</code>, the session gets a
+    branch named after it, checked out in <code>&lt;repo&gt;/.worktrees/&lt;name&gt;</code>.
   </p>
   <p>
-    When an agent in a session you aren’t looking at finishes or needs you, a notification says so,
-    and its <strong>Open</strong> button takes you to that session. Claude Code tells Pulsar about
-    both. Other agents notify you when they ring the terminal bell.
+    Each session gets a scratch folder, <code>/var/tmp/pulsar-agents/&lt;name&gt;</code>, in{' '}
+    <code>$PULSAR_SCRATCH</code>. Pulsar’s guide tells agents to put VM disks, builds and downloads
+    there. It’s deleted with the session.
+  </p>
+  <p>
+    When an agent in a session you aren’t looking at finishes or needs you, a notification says so.
+    Claude Code, Codex and Antigravity CLI tell Pulsar when they finish a turn. opencode doesn’t
+    yet, and notifies you only when it rings the terminal bell.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="undo" code={UNDO}></arc-code-block>
   <p>
     Undo works in git repositories. It puts the files back as they were when the session first
     started (or last started with <code>--new</code>), however often it restarted since, and deletes
     files added since. Files git ignores are left as they are, and so is any file the undo couldn’t
-    take back, which it names. Branches, and commits made since, stay where they are. End the
-    session first. Undo refuses to run while a session is running in that checkout.
-  </p>
-  <p>
-    Pulsar Settings has an Agents page listing each session with its folder and usage, and{' '}
-    <strong>Open</strong>, <strong>Undo</strong> and <strong>End</strong> buttons.
+    take back, which it names. Branches, and commits made since, stay where they are. A whole undo
+    refuses to run while a session is running in that checkout, and <code>--file</code> doesn’t.
   </p>
   <p>
     On a fresh install <a href="#sandbox">the sandbox</a> and <a href="#guard">the guard</a> are
     both off. A session you leave running can read your whole home folder, and anything it runs can
     layer packages or roll back without a password.
+  </p>
+
+  <h2 id="disk">Disk space</h2>
+  <p>
+    The footer of the app’s session list shows how much room is left on <code>/var</code>, amber
+    when it’s getting tight and red when it’s nearly full. Click it for the big things in{' '}
+    <code>/var/tmp</code>, <code>~/.cache</code> and the sessions’ scratch folders, each with
+    Delete.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="disk" code={DISK}></arc-code-block>
+  <p>
+    On the NVIDIA image, the driver saves the GPU’s memory to <code>/var/lib/systemd/sleep</code>{' '}
+    as the machine suspends. Without room for it, the suspend fails and the machine stays awake.
+  </p>
+
+  <h2 id="machines">Your other machines</h2>
+  <p>
+    <code>pulsar machine</code> hands work to your other Pulsar machines over SSH. From the laptop
+    you can start an agent on the desktop, run a long job there, and bring the branch back.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="machine" code={MACHINE}></arc-code-block>
+  <p>
+    <code>run</code> and <code>job</code> send your branch by git over SSH, with what isn’t
+    committed as one extra commit, to the same project path in your home folder there. The agent
+    starts in a worktree on a new branch named for the session, as you, with that machine’s logins
+    and sandbox setting. <code>--notify work</code> tells the session <code>work</code> here how
+    the job ended. <code>fetch</code> writes only <code>desktop/train</code> and never touches your
+    checkout. A branch that already exists there is refused, not overwritten.
+  </p>
+  <p>
+    <strong>New files git doesn’t ignore are sent too</strong>, so an untracked <code>.env</code>{' '}
+    that isn’t in <code>.gitignore</code> goes with the branch. Files git ignores stay here.
+  </p>
+  <p>
+    In the app, sessions on other machines are listed as <code>&lt;name&gt;@&lt;machine&gt;</code>{' '}
+    under “&lt;project&gt; · &lt;machine&gt;” and open like local ones. A machine that doesn’t
+    answer keeps its sessions in the list, dimmed, with <strong>Try Again</strong>. Agents get the
+    MCP tools <code>machines</code>, <code>machine_run</code>, <code>machine_job</code> and{' '}
+    <code>machine_fetch</code>, and ask you before using the last three.
+  </p>
+  <h3>Before you add one</h3>
+  <p>
+    Pulsar runs ssh with no prompts, so SSH has to be on on the other machine (Pulsar doesn’t turn
+    it on) and your key has to be there already:
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="once" code={SSH_SETUP}></arc-code-block>
+  <p>
+    A key that asks for a passphrase fails. If your SSH agent holds many keys (1Password’s does),
+    set <code>IdentityFile</code> and <code>IdentitiesOnly</code> for that host in{' '}
+    <code>~/.ssh/config</code>, or sshd refuses after too many tries.
+  </p>
+  <p>
+    <strong>Announce This Machine</strong>, in the app’s Preferences under Your Machines (or{' '}
+    <code>pulsar machine announce on</code>), is off until you turn it on. It publishes your user
+    name, the host name, the Pulsar release and whether SSH is on to everyone on the local
+    network. It opens nothing. Your other machines then list it with <strong>Add</strong>, and{' '}
+    <code>pulsar machine discover</code> shows it.
+  </p>
+  <p>
+    The other machine needs Pulsar 26.11.2 or newer. Handing off runs and jobs, and fetching them
+    back, has been tested against one real second machine. Announcing, discovering, and messages
+    between machines have only been tested against stand-ins so far. A Claude Code session started
+    in a project that’s new to that machine stops at Claude’s question about trusting the folder,
+    so open it in the app to answer.
   </p>
 
   <h2 id="model">A model on your own GPU</h2>
@@ -297,7 +453,8 @@ const TOC = [
   <h2 id="sandbox">The sandbox</h2>
   <p>
     The agent runs in a rootless container that sees only the project you started it in, its own
-    login and your git identity, with no SSH agent and no session bus. Pushes go through a gate on
+    login, your git identity and its session’s scratch folder, with no SSH agent and no session
+    bus. Pushes go through a gate on
     the host that pushes with your credentials and refuses force-pushes, deletions and tags.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="sandbox" code={SANDBOX}></arc-code-block>
@@ -316,6 +473,10 @@ const TOC = [
       A linked worktree inside its main checkout, where <code>--worktree</code> puts them, works. One
       outside it, and a submodule checkout, are refused, because their git directory is outside the
       project where the sandbox can’t protect it.
+    </li>
+    <li>
+      A session in its own worktree sees only that worktree and the repository’s <code>.git</code>,
+      not the main checkout or other sessions’ worktrees.
     </li>
     <li>
       The project’s own agent settings (<code>.claude/</code>, <code>.mcp.json</code>,{' '}

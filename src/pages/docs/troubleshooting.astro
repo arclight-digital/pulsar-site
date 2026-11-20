@@ -110,7 +110,8 @@ const CHECKS: [string, string][] = [
   ['fedora', 'Fedora’s Flatpak remote is there, for the stock GNOME apps.'],
   ['origin', 'Whether this system follows a tag. Following one image digest means it never updates, and that’s a fail.'],
   ['updates', 'Whether an update is staged, and how many packages you have layered.'],
-  ['disk', 'Free space on /sysroot. Warns at 80% full, fails at 90%: staging an update needs several GB.'],
+  ['disk', 'Free space on /sysroot. Staging an update needs about 10 GB: under that it fails, under 20 GB it warns.'],
+  ['suspend-room', 'NVIDIA image only. Whether /var has room for the driver to save the GPU’s memory when the machine suspends.'],
   ['crashes', 'Programs of yours that crashed since this boot.'],
   ['cli', 'That `pulsar` on your PATH is this system’s CLI and not the Pulsar code editor, which ships a command with the same name.'],
 ];
@@ -123,6 +124,7 @@ const FIXES: [string, string, string][] = [
   ['gamemode', '… enrolled in gamemode, but this session predates it', 'Log out and back in. Groups are fixed at login.'],
   ['nvidia', 'nvidia variant but no nvidia module is loaded', 'Usually Secure Boot refusing a module it does not trust: enroll the key (see Install).'],
   ['gpu-containers', 'stale CDI spec for driver …', 'If the spec it names is in /etc/cdi, delete it. If it is in /var/run/cdi, run sudo systemctl restart nvidia-cdi-refresh.service, which writes that folder.'],
+  ['suspend-room', 'suspend will fail: … GB free, the GPU needs … GB', 'Free some space. pulsar agent disk lists what agents left in /var/tmp, ~/.cache and their scratch folders.'],
   ['cli', 'another pulsar comes first on PATH', 'Call /usr/bin/pulsar, or rename the editor’s command.'],
 ];
 
