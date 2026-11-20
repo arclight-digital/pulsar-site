@@ -287,8 +287,8 @@ const TOC = [
   <ul>
     <li>
       With no session open, the window asks “What should the agent do?” What you type becomes the
-      agent’s first message and the session’s name. The agent, a worktree of its own and the sandbox
-      are picked beside it, and remembered per project.
+      agent’s first message, and the session’s name unless you fill in Name. The agent, a worktree
+      of its own and the sandbox are picked beside it, and remembered per project.
     </li>
     <li>
       Opening a stopped session continues it. Claude Code and opencode pick up the same
@@ -346,8 +346,9 @@ const TOC = [
   </p>
   <p>
     When an agent in a session you aren’t looking at finishes or needs you, a notification says so.
-    Claude Code, Codex and Antigravity CLI tell Pulsar when they finish a turn. opencode doesn’t
-    yet, and notifies you only when it rings the terminal bell.
+    Claude Code, Codex and Antigravity CLI tell Pulsar when they finish a turn, and the session
+    shows as waiting until you send it something. opencode doesn’t yet, and notifies you only when
+    it rings the terminal bell.
   </p>
   <arc-code-block class="theme-fixed-dark" language="bash" filename="undo" code={UNDO}></arc-code-block>
   <p>
