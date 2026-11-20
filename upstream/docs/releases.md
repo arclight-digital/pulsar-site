@@ -13,6 +13,138 @@ move independently: a month with no new Pulsar features keeps its release
 while the builds go on, so the About page may read
 `Pulsar 26.9.1 (44.20261103.0)` in November.
 
+## 26.11.2
+
+Coding-agent sessions get their own app. Antigravity CLI replaces Gemini
+CLI, and opencode moves to version 2.
+
+### The Agents app
+
+- Agents, in the app grid and Pulsar Commands, shows every agent session
+  under its project, with the ones that need you first. Each session is the
+  agent's own terminal, inside the window. Closing the window leaves them
+  working.
+- With no session open, the window asks what the agent should do, in which
+  project. That text becomes the agent's first message and the session's
+  name. The agent, a worktree of its own and the sandbox sit beside it,
+  remembered per project.
+- Opening a stopped session continues it, on the same conversation for
+  Claude Code and opencode, and for Antigravity CLI once Pulsar has seen
+  its conversation. Codex CLI picks up its latest conversation in that
+  folder, which is the same one for a session in its own worktree.
+- Changes lists the files the agent changed, since the session started or
+  since the last commit, with each file's diff and Revert File. A comment
+  on a diff line is typed into the agent's prompt as `path:line: …` for
+  you to send.
+- In the app a session is only its agent: tmux's keys, menus and status
+  line aren't there, and when the agent quits you get Continue, not a
+  shell. The mouse wheel scrolls back through the session. A terminal
+  attached to the same session keeps tmux as it was.
+- Each session in the list has a bar for how full its context is. A
+  status bar under the open session shows the agent and model, what it is
+  doing, the context used against the window, Codex CLI's 5-hour and
+  weekly limits, whether it is sandboxed, its branch, and how many files
+  it changed (click for Changes).
+  The numbers come from each agent's own files. Claude Code and
+  Antigravity CLI don't write their plan limits to disk, so those two
+  show context only.
+- Ctrl+Shift+B (or the button over the list) narrows the session list to
+  the agents' tiles, which still show who is working and who needs you.
+- The list's footer shows how much room is left on `/var`, amber when it's
+  getting tight and red when it's nearly full. Click it for the big things
+  in `/var/tmp`, `~/.cache` and the sessions' scratch folders, each with
+  Delete. `pulsar agent disk` lists the same, and
+  `pulsar doctor suspend-room` says whether a suspend will fit.
+- Antigravity CLI and Codex CLI sessions now say when they finish a turn,
+  as Claude Code's do: the session shows as waiting in the app, and a
+  notification comes when you aren't looking at it. Pulsar adds a `pulsar`
+  Stop hook to agy's `~/.gemini/config/hooks.json`, and gives Codex a
+  `notify` program on its command line unless you have one of your own.
+  opencode doesn't yet.
+- Each session started with `--tmux` gets a scratch folder,
+  `$PULSAR_SCRATCH`, for VM disks, builds and downloads, mounted into the
+  sandbox too. It's deleted with the session.
+- History lists the snapshot taken at each start, and Go Back puts the
+  files back, stopping the agent first if it's working. The Undo button
+  that appears after takes it back.
+- Archive (the × on a session, or Ctrl+Shift+Delete) hides a session, with
+  Undo. Archived sessions are deleted after 7 days with their undo
+  snapshots. A worktree with uncommitted changes is never deleted, and
+  branches stay. `pulsar agent sessions --archive`, `--unarchive` and
+  `--tidy` do the same from a terminal.
+- A notification's Open, Pulsar Commands and Pulsar Settings' Agents page
+  all open the session in the app.
+- Sessions can see each other. `pulsar agent read <name>` shows a
+  session's screen, and `pulsar agent send <name> <text>` types a message
+  into its prompt, labelled as from another session (`<name>@<machine>`
+  for a session on another of your machines). It goes in when that
+  agent finishes a turn and you aren't looking at the session (or at once
+  with `--now`), never into a permission question. Messages are logged in
+  `~/.local/state/pulsar/agents/messages.log`, and one session can send
+  another at most 10 in 10 minutes. Claude Code, Codex CLI and Antigravity
+  CLI sessions take messages; sandboxed sessions don't yet.
+- Preferences (Ctrl+, or the main menu) sets the agent, sandbox and pushes
+  new sessions start with, whether sessions can message each other and how
+  many, and how long archived sessions are kept (a day, a week, 30 days or
+  for good). The first four are the CLI's own settings: `pulsar agent
+  settings` shows them.
+- Each message has an id. `pulsar agent inbox` lists a session's messages
+  both ways, `send --reply-to <id>` answers one, and the Messages tab
+  beside Changes and History shows the open session's. A Claude Code
+  session gets its mail through its own hooks, at the end of a turn or as
+  it arrives while the session sits idle, so nothing is typed into it.
+  Antigravity CLI gets it the same way at the end of a turn. Codex CLI, and
+  an idle or sandboxed Antigravity CLI, still get it typed into their prompt.
+- `pulsar job run -- <command>` runs a long command in a tmux of its own,
+  keeps its output (`pulsar job log`), and notifies you when it ends.
+  `--notify <session>` also tells that agent session how it ended.
+- `pulsar mcp` gives agents the same: `sessions`, `session_read`,
+  `session_message` (with `reply_to`), `inbox`, `job_start`, `jobs`,
+  `job_log` and `job_stop`, and for your other machines `machines`,
+  `machine_job`, `machine_run` and `machine_fetch`: ask Claude on the laptop
+  to train it on the desktop, and it sends the work there, starts the job,
+  and hears how it ended. The
+  ones that change something are marked as writes, so the agent asks you
+  first. A sandboxed agent doesn't have `pulsar mcp`.
+- Your other Pulsar machines, over SSH: `pulsar machine add <name> <ssh
+  target>`, then their sessions show in the app as `name@machine`, and open
+  there as here. Each machine keeps one SSH connection open for two
+  minutes, and nothing prompts (a key that needs a passphrase prompt fails).
+- Announce This Machine, in Agents > Preferences > Your Machines (or
+  `pulsar machine announce on`), publishes the machine on the local network
+  over mDNS with your user name and release. It's off until you turn it on.
+  The same page, and `pulsar machine discover`, list the Pulsar machines
+  that announce, each with Add. If your SSH key isn't on one yet, Add says
+  the `ssh-copy-id` line to run.
+- Work can move to another machine. `pulsar machine run <machine> <agent>
+  --prompt <text>` sends your branch there, with what isn't committed as one
+  commit on top, to the same project under your home there, and starts the
+  agent on it in a worktree. `pulsar machine job <machine> --notify <session>
+  -- <command>` runs a command there the same way, and the session here hears
+  how it ended. `pulsar machine fetch <machine> <session>` brings that
+  session's branch back as `<machine>/<session>`, its uncommitted work on
+  top. Your checkout is never touched, on either side. Code goes by git;
+  data files don't move.
+- `pulsar agent diff <name>` shows what a session changed since it started.
+  `pulsar agent run --prompt <text>` starts the agent with a first message.
+
+### Agents
+
+- Antigravity CLI (`agy`) replaces Gemini CLI in `pulsar agent add` and the
+  welcome. `gemini` and `aider` still run and can be removed if you have
+  them, but are no longer offered.
+- opencode is version 2 (`@opencode/cli`).
+
+### Also
+
+- git keeps HTTPS passwords in the keyring (`git-credential-libsecret` is
+  in the image) instead of in plain text in `~/.git-credentials`.
+- A speaker on the network (AirPlay and other network audio) plays only
+  when you pick it; PipeWire no longer makes one the default by itself.
+- Sublime Text's menu bar gets the glass blur, and GTK 3 windows take glass
+  like GTK 4 ones.
+- The NVIDIA driver is 620.70.06.
+
 ## 26.11.1
 
 Coding agents can run in sessions that outlive their terminal, and
