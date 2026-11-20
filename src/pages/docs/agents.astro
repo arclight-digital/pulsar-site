@@ -69,6 +69,22 @@ const DISK = [
   'pulsar doctor suspend-room                       # NVIDIA image: whether a suspend will fit',
 ].join('\n');
 
+// cli/pulsar agent_read, agent_send, agent_inbox, agent_messages and cmd_job,
+// as on OS main 1e7f098e.
+const MESSAGES = [
+  'pulsar agent read work                           # its screen, as it is now',
+  'pulsar agent send work "the API tests pass now"  # into its prompt, at the end of its turn',
+  'pulsar agent inbox work                          # its messages both ways, each with an id',
+  'pulsar agent send work --reply-to <id> "on it"   # answer one',
+  'pulsar agent messages off                        # or on, with --cap N',
+].join('\n');
+
+const JOBS = [
+  'pulsar job run --name check -- make check        # its own tmux, a log, a notification',
+  'pulsar job run --notify work -- make check       # and the session work hears how it ended',
+  'pulsar job log check                             # its output',
+].join('\n');
+
 // cli/pulsar cmd_machine and agent_send, as on OS main 0d66ec30.
 const MACHINE = [
   'pulsar machine add desktop you@desktop.local     # checks Pulsar answers there, then saves it',
@@ -133,16 +149,29 @@ const WIRING: [string, string, string, string][] = [
   ['opencode', '~/.config/opencode/AGENTS.md', '~/.config/opencode/opencode.json', '~/.config/opencode/skills'],
 ];
 
-const TOOLS: [string, string][] = [
-  ['doctor', 'the health checks, all or one'],
-  ['status', 'deployments, pins and layered packages'],
-  ['manifest', 'the image, the variant, the kernel and the hardware'],
-  ['report', 'the redacted diagnosis report, with a crash if asked'],
-  ['crashes', 'your crashes this boot'],
-  ['update_check', 'whether a newer image is out'],
-  ['agent_status', 'the guide, the agents, guard, the pin and the sandbox setting'],
-  ['theme_list, theme_current', 'the desktop themes'],
-  ['theme_set', 'sets your desktop theme (pulsar theme revert undoes it). The only tool here that changes anything'],
+// scripts/pulsar-mcp's TOOLS, as on OS main 1e7f098e. The third column is
+// its readOnly flag turned around: the tools an agent is told change
+// something, so it asks you first.
+const TOOLS: [string, string, boolean][] = [
+  ['doctor', 'the health checks, all or one', false],
+  ['status', 'deployments, pins and layered packages', false],
+  ['manifest', 'the image, the variant, the kernel and the hardware', false],
+  ['report', 'the redacted diagnosis report, with a crash if asked', false],
+  ['crashes', 'your crashes this boot', false],
+  ['update_check', 'whether a newer image is out', false],
+  ['agent_status', 'the guide, the agents, guard, the pin and the sandbox setting', false],
+  ['theme_list, theme_current', 'the desktop themes', false],
+  ['theme_set', 'sets your desktop theme (pulsar theme revert undoes it)', true],
+  ['sessions', 'the agent sessions, and what each is doing', false],
+  ['session_read', 'another session’s screen', false],
+  ['session_message', 'a message to another session, or a reply', true],
+  ['inbox', 'a session’s messages, both ways', false],
+  ['job_start', 'starts a long command as a job', true],
+  ['jobs, job_log', 'the jobs, and one’s output', false],
+  ['job_stop', 'stops a job', true],
+  ['machines', 'your other Pulsar machines', false],
+  ['machine_run, machine_job', 'starts an agent or a job on another machine, with your branch', true],
+  ['machine_fetch', 'brings a session’s branch back from another machine', true],
 ];
 
 const JSONLD = [
@@ -163,6 +192,7 @@ const TOC = [
   { id: 'app', label: 'The Agents app', level: 2 },
   { id: 'sessions', label: 'Sessions from a terminal', level: 2 },
   { id: 'disk', label: 'Disk space', level: 2 },
+  { id: 'messages', label: 'Sessions talking to each other', level: 2 },
   { id: 'machines', label: 'Your other machines', level: 2 },
   { id: 'model', label: 'A model on your own GPU', level: 2 },
   { id: 'sandbox', label: 'The sandbox', level: 2 },
@@ -237,13 +267,17 @@ const TOC = [
     the guide. The others get a link. The MCP server answers with these tools:
   </p>
   <table>
-    <thead><tr><th>Tool</th><th>What it answers</th></tr></thead>
+    <thead><tr><th>Tool</th><th>What it answers</th><th>Changes something</th></tr></thead>
     <tbody>
-      {TOOLS.map(([t, what]) => (
-        <tr><td><code>{t}</code></td><td>{what}</td></tr>
+      {TOOLS.map(([t, what, write]) => (
+        <tr><td><code>{t}</code></td><td>{what}</td><td>{write ? 'yes' : ''}</td></tr>
       ))}
     </tbody>
   </table>
+  <p>
+    The tools that change something are marked as writes, so the agent asks you before using
+    them. A sandboxed agent has no <code>pulsar mcp</code>.
+  </p>
   <p>
     <code>pulsar agent</code> on its own shows how it’s set up.
   </p>
@@ -375,6 +409,43 @@ const TOC = [
   <p>
     On the NVIDIA image, the driver saves the GPU’s memory to <code>/var/lib/systemd/sleep</code>{' '}
     as the machine suspends. Without room for it, the suspend fails and the machine stays awake.
+  </p>
+
+  <h2 id="messages">Sessions talking to each other</h2>
+  <p>
+    One session can read another’s screen and leave it a message, and a long command can run as a
+    job that tells a session how it ended. Agents use the same through <code>pulsar mcp</code>.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="messages" code={MESSAGES}></arc-code-block>
+  <ul>
+    <li>
+      A message goes in only once that agent has ended its turn, never into a permission question,
+      and while you’re watching the session only with <code>--now</code>. It’s labelled with the
+      sender (<code>&lt;name&gt;@&lt;machine&gt;</code> from another of your machines).
+    </li>
+    <li>
+      Claude Code gets its messages through its own hooks, at the end of a turn or while it sits
+      idle, so nothing is typed into it. Antigravity CLI gets them the same way at the end of a
+      turn. Codex, and an idle Antigravity CLI, get them typed into the prompt.
+    </li>
+    <li>
+      opencode takes no messages, because Pulsar can’t tell when its turns end. Sandboxed sessions
+      don’t take them yet.
+    </li>
+    <li>
+      Every message is logged in <code>~/.local/state/pulsar/agents/messages.log</code>. One session
+      can send another at most 10 in 10 minutes. Preferences in the Agents app, or{' '}
+      <code>pulsar agent messages</code>, turns messages off or changes that limit.
+    </li>
+  </ul>
+  <p>
+    A screen read from another session holds whatever its agent printed, so an agent reading it is
+    reading untrusted text. The sender’s name is what the sending session says it is: an agent
+    with a shell can claim any name.
+  </p>
+  <arc-code-block class="theme-fixed-dark" language="bash" filename="jobs" code={JOBS}></arc-code-block>
+  <p>
+    A job runs as you, outside any sandbox, so a sandboxed agent can’t start one.
   </p>
 
   <h2 id="machines">Your other machines</h2>
