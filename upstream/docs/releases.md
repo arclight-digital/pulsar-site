@@ -25,9 +25,10 @@ CLI, and opencode moves to version 2.
   agent's own terminal, inside the window. Closing the window leaves them
   working.
 - With no session open, the window asks what the agent should do, in which
-  project. That text becomes the agent's first message and the session's
-  name. The agent, a worktree of its own and the sandbox sit beside it,
-  remembered per project.
+  project. That text becomes the agent's first message, and the session's
+  name unless you type one in Name. The agent, a worktree of its own and
+  the sandbox sit beside it, remembered per project. Renaming a session
+  gives it a new icon.
 - Opening a stopped session continues it, on the same conversation for
   Claude Code and opencode, and for Antigravity CLI once Pulsar has seen
   its conversation. Codex CLI picks up its latest conversation in that
@@ -38,13 +39,43 @@ CLI, and opencode moves to version 2.
   you to send.
 - In the app a session is only its agent: tmux's keys, menus and status
   line aren't there, and when the agent quits you get Continue, not a
-  shell. The mouse wheel scrolls back through the session. A terminal
-  attached to the same session keeps tmux as it was.
+  shell. The mouse wheel scrolls back through the session, or through
+  Claude Code's own transcript in its fullscreen mode, and typing goes
+  back to the prompt. A terminal attached to the same session keeps tmux
+  as it was. While the app shows a session, its window takes the smaller
+  of the app's and a terminal's sizes, so the two stop resizing it in
+  turn. A session the app has open but isn't showing doesn't count,
+  on this machine or on another one.
+- Sessions stay where they are in the list: newest started on top in each
+  project, and the project with the newest session first. Drag a session
+  within its group, or a group by its heading, to put them in your own
+  order (or right-click for Move Up and Move Down, or Alt+Up and Alt+Down
+  in the list, with Shift for the whole group); new ones still come in at
+  the top. One whose turn it is pulses. Right-clicking a terminal gives Copy and Paste, and Select
+  All in a shell.
+- Ctrl+\` (or the terminal button in the header) opens a shell under the
+  agent, in the session's folder (its worktree, when it has one), with a
+  divider to drag. Ctrl+Shift+\` or + opens another in a new tab; each tab
+  is named for the folder its shell is in. Each session keeps the panel
+  shown or hidden as you left it there. Hiding it leaves the shells running, and when one finishes a command or rings its bell while
+  you can't see it, its tab and the terminal button get a dot. `exit`
+  closes a tab. A session on another machine gets its shells on that
+  machine (`pulsar machine shell`). A sandboxed session's shells run on
+  your machine, outside the sandbox.
 - Each session in the list has a bar for how full its context is. A
   status bar under the open session shows the agent and model, what it is
   doing, the context used against the window, Codex CLI's 5-hour and
   weekly limits, whether it is sandboxed, its branch, and how many files
-  it changed (click for Changes).
+  it changed (click for Changes). It also shows the account the agent is
+  signed in with on the session's machine, what it may do without asking
+  (Claude Code's permission mode, Codex CLI's approvals and sandbox, in
+  the warning color when it never asks), the ports that servers in the
+  session's folder listen on (click one to open it in the browser), and
+  the session's scratch folder once it holds 100 MB, in a warning color
+  when the disk gets tight. Each of these shows whole or not at all: on a
+  narrow window the least needed make room first (the scratch folder,
+  unless the disk is low, then the branch, the mode, the account, the
+  ports).
   The numbers come from each agent's own files. Claude Code and
   Antigravity CLI don't write their plan limits to disk, so those two
   show context only.
@@ -56,11 +87,16 @@ CLI, and opencode moves to version 2.
   Delete. `pulsar agent disk` lists the same, and
   `pulsar doctor suspend-room` says whether a suspend will fit.
 - Antigravity CLI and Codex CLI sessions now say when they finish a turn,
-  as Claude Code's do: the session shows as waiting in the app, and a
-  notification comes when you aren't looking at it. Pulsar adds a `pulsar`
-  Stop hook to agy's `~/.gemini/config/hooks.json`, and gives Codex a
-  `notify` program on its command line unless you have one of your own.
-  opencode doesn't yet.
+  as Claude Code's do: the session shows as waiting in the app until you
+  send it something, and a notification comes when you aren't looking at
+  it. Pulsar adds a `pulsar` entry to agy's `~/.gemini/config/hooks.json`
+  (a Stop hook for the end of a turn, and a PreInvocation hook that says
+  when the next one starts, so typing a draft or opening `/context`
+  leaves it waiting), and gives Codex a `notify` program on its command
+  line unless you have one of your own. opencode doesn't yet. A Claude
+  Code or Codex CLI session whose screen hasn't changed for 20 seconds is
+  waiting too, even without that signal: both show a ticking counter
+  while they work, and Claude Code runs no hook when you cancel a turn.
 - Each session started with `--tmux` gets a scratch folder,
   `$PULSAR_SCRATCH`, for VM disks, builds and downloads, mounted into the
   sandbox too. It's deleted with the session.
@@ -73,16 +109,22 @@ CLI, and opencode moves to version 2.
   branches stay. `pulsar agent sessions --archive`, `--unarchive` and
   `--tidy` do the same from a terminal.
 - A notification's Open, Pulsar Commands and Pulsar Settings' Agents page
-  all open the session in the app.
+  all open the session in the app. Open finds the app when it's running,
+  wherever it was started from. The notification also has Open in
+  Terminal, for a terminal on the session instead. Without the app, Open
+  opens a terminal.
 - Sessions can see each other. `pulsar agent read <name>` shows a
   session's screen, and `pulsar agent send <name> <text>` types a message
   into its prompt, labelled as from another session (`<name>@<machine>`
-  for a session on another of your machines). It goes in when that
-  agent finishes a turn and you aren't looking at the session (or at once
-  with `--now`), never into a permission question. Messages are logged in
+  for a session on another of your machines). It goes in only at the end
+  of that agent's turn, never into a permission question, and while you
+  watch the session only with `--now`. Messages are logged in
   `~/.local/state/pulsar/agents/messages.log`, and one session can send
   another at most 10 in 10 minutes. Claude Code, Codex CLI and Antigravity
   CLI sessions take messages; sandboxed sessions don't yet.
+- Help (F1, or the main menu) has the practices that keep agents out of
+  each other's way, each tied to the feature that does it, and the keyboard
+  shortcuts.
 - Preferences (Ctrl+, or the main menu) sets the agent, sandbox and pushes
   new sessions start with, whether sessions can message each other and how
   many, and how long archived sessions are kept (a day, a week, 30 days or
@@ -94,7 +136,7 @@ CLI, and opencode moves to version 2.
   session gets its mail through its own hooks, at the end of a turn or as
   it arrives while the session sits idle, so nothing is typed into it.
   Antigravity CLI gets it the same way at the end of a turn. Codex CLI, and
-  an idle or sandboxed Antigravity CLI, still get it typed into their prompt.
+  an idle Antigravity CLI, get it typed into their prompt.
 - `pulsar job run -- <command>` runs a long command in a tmux of its own,
   keeps its output (`pulsar job log`), and notifies you when it ends.
   `--notify <session>` also tells that agent session how it ended.
