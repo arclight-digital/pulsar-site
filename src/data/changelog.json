@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-21T03:19:22Z",
+  "generated": "2026-11-22T03:17:32Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:e602c95580ec1e7dde262af881466d075232a4e9237ecd33e97f04fac69a50a7",
-    "digest": "sha256:e602c95580ec1e7dde262af881466d075232a4e9237ecd33e97f04fac69a50a7"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:e104aab0cb609f0934c19bd3c7d7f4420dc5fc45fb43c583cabc82c828361819",
     "digest": "sha256:e104aab0cb609f0934c19bd3c7d7f4420dc5fc45fb43c583cabc82c828361819"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:7fef67c23357cb21331adfcff3db75294e3b42d2513786f287cb886d9c0ed67f",
+    "digest": "sha256:7fef67c23357cb21331adfcff3db75294e3b42d2513786f287cb886d9c0ed67f"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 1,
+    "upgraded": 2,
     "downgraded": 0,
     "changed": 0
   },
@@ -20,8 +20,14 @@
   "changed": [
     {
       "name": "mise",
-      "from": "2026.11.10-1",
-      "to": "2026.11.11-1",
+      "from": "2026.11.11-1",
+      "to": "2026.11.12-1",
+      "direction": "upgraded"
+    },
+    {
+      "name": "sqlite-libs",
+      "from": "3.53.4-1.fc45",
+      "to": "3.54.1-2.fc45",
       "direction": "upgraded"
     }
   ]

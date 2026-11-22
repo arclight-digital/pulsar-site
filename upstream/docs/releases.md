@@ -176,6 +176,9 @@ CLI, and opencode moves to version 2.
   welcome. `gemini` and `aider` still run and can be removed if you have
   them, but are no longer offered.
 - opencode is version 2 (`@opencode/cli`).
+- Agents in the agents toolbox (Codex, opencode, agy) can message other
+  sessions and read their inbox through `pulsar mcp`. Its server runs on
+  the host and couldn't tell which session they were in, so it refused.
 
 ### Also
 
@@ -185,6 +188,15 @@ CLI, and opencode moves to version 2.
   when you pick it; PipeWire no longer makes one the default by itself.
 - Sublime Text's menu bar gets the glass blur, and GTK 3 windows take glass
   like GTK 4 ones.
+- With glass on, icons dragged onto the dash reach it again, so you can
+  reorder favorites and add one from the app grid, and Alt+Tab selects the
+  app under the pointer. The glass's light lay over both and took the drag
+  and the hover.
+- On the NVIDIA image, DirectX 11 games in Steam and Faugus no longer hang
+  the GPU on DXVK's descriptor heap (Boltgun every run, Sins of a Solar
+  Empire II on its first frame in a game): Pulsar sets
+  `DXVK_CONFIG=dxvk.enableDescriptorHeap = False`. A launch option that sets
+  `DXVK_CONFIG` replaces it, so add that setting to yours.
 - The NVIDIA driver is 620.70.06.
 
 ## 26.11.1
