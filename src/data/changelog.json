@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-23T03:16:08Z",
+  "generated": "2026-11-24T03:18:56Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:7fef67c23357cb21331adfcff3db75294e3b42d2513786f287cb886d9c0ed67f",
-    "digest": "sha256:7fef67c23357cb21331adfcff3db75294e3b42d2513786f287cb886d9c0ed67f"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:0dcbdc2d9485fda37524f1613b0d1a95149146a4ec3ab03f14ad3a91ad6f465d",
     "digest": "sha256:0dcbdc2d9485fda37524f1613b0d1a95149146a4ec3ab03f14ad3a91ad6f465d"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:71eacc6be5c6c2ed73f19b1e7b85fb9ded581781e87efaf4bee77147dc2cbf2d",
+    "digest": "sha256:71eacc6be5c6c2ed73f19b1e7b85fb9ded581781e87efaf4bee77147dc2cbf2d"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 4,
+    "upgraded": 3,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,27 +19,21 @@
   "removed": [],
   "changed": [
     {
-      "name": "android-tools",
-      "from": "1:37.0.0p1-1.fc45",
-      "to": "1:37.0.0p1-2.fc45",
+      "name": "edk2-ovmf",
+      "from": "20260812-10.fc45",
+      "to": "20260812-12.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "distribution-gpg-keys",
-      "from": "1.123-1.fc45",
-      "to": "1.124-1.fc45",
+      "name": "edk2-shell-x64",
+      "from": "20260812-10.fc45",
+      "to": "20260812-12.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "exfatprogs",
-      "from": "1.4.4-1.fc45",
-      "to": "1.4.5-1.fc45",
-      "direction": "upgraded"
-    },
-    {
-      "name": "os-prober",
-      "from": "1.81-12.fc45",
-      "to": "1.81-13.fc45",
+      "name": "mise",
+      "from": "2026.11.12-1",
+      "to": "2026.11.13-1",
       "direction": "upgraded"
     }
   ]
