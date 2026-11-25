@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-24T03:18:56Z",
+  "generated": "2026-11-25T03:19:08Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0dcbdc2d9485fda37524f1613b0d1a95149146a4ec3ab03f14ad3a91ad6f465d",
-    "digest": "sha256:0dcbdc2d9485fda37524f1613b0d1a95149146a4ec3ab03f14ad3a91ad6f465d"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:71eacc6be5c6c2ed73f19b1e7b85fb9ded581781e87efaf4bee77147dc2cbf2d",
     "digest": "sha256:71eacc6be5c6c2ed73f19b1e7b85fb9ded581781e87efaf4bee77147dc2cbf2d"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0a90cc0cfc7767f53a86a1fefe4b55e70dcff1f4e0ed7fbf71e0c37afbe9fdc5",
+    "digest": "sha256:0a90cc0cfc7767f53a86a1fefe4b55e70dcff1f4e0ed7fbf71e0c37afbe9fdc5"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 3,
+    "upgraded": 9,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,21 +19,57 @@
   "removed": [],
   "changed": [
     {
-      "name": "edk2-ovmf",
-      "from": "20260812-10.fc45",
-      "to": "20260812-12.fc45",
+      "name": "hplip",
+      "from": "3.26.6-1.fc45",
+      "to": "3.26.6-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "edk2-shell-x64",
-      "from": "20260812-10.fc45",
-      "to": "20260812-12.fc45",
+      "name": "hplip-common",
+      "from": "3.26.6-1.fc45",
+      "to": "3.26.6-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "hplip-libs",
+      "from": "3.26.6-1.fc45",
+      "to": "3.26.6-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "ibus-m17n",
+      "from": "1.4.41-1.fc45",
+      "to": "1.4.42-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libsane-hpaio",
+      "from": "3.26.6-1.fc45",
+      "to": "3.26.6-2.fc45",
       "direction": "upgraded"
     },
     {
       "name": "mise",
-      "from": "2026.11.12-1",
-      "to": "2026.11.13-1",
+      "from": "2026.11.13-1",
+      "to": "2026.11.14-1",
+      "direction": "upgraded"
+    },
+    {
+      "name": "openssh",
+      "from": "10.5p1-1.fc45",
+      "to": "10.6p1-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "openssh-clients",
+      "from": "10.5p1-1.fc45",
+      "to": "10.6p1-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "openssh-server",
+      "from": "10.5p1-1.fc45",
+      "to": "10.6p1-1.fc45",
       "direction": "upgraded"
     }
   ]
