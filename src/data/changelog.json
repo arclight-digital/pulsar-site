@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-26T03:17:32Z",
+  "generated": "2026-11-27T03:21:43Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:0a90cc0cfc7767f53a86a1fefe4b55e70dcff1f4e0ed7fbf71e0c37afbe9fdc5",
-    "digest": "sha256:0a90cc0cfc7767f53a86a1fefe4b55e70dcff1f4e0ed7fbf71e0c37afbe9fdc5"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:ba95849954bd520f32ea71a640d4047b7bebf58464f5e2e92e638828b670a4b4",
     "digest": "sha256:ba95849954bd520f32ea71a640d4047b7bebf58464f5e2e92e638828b670a4b4"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:45fcf5b6d7dbdcda27827168e822a32fd34a901bdfafeb783bad3582f6af7302",
+    "digest": "sha256:45fcf5b6d7dbdcda27827168e822a32fd34a901bdfafeb783bad3582f6af7302"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 1,
+    "upgraded": 27,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,9 +19,165 @@
   "removed": [],
   "changed": [
     {
-      "name": "libcupsfilters",
-      "from": "1:2.2.1-8.fc45",
-      "to": "1:2.2.1^20261118.3bf1892-1.fc45",
+      "name": "at-spi2-atk",
+      "from": "2.62.1-1.fc45",
+      "to": "2.62.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "at-spi2-core",
+      "from": "2.62.1-1.fc45",
+      "to": "2.62.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "atk",
+      "from": "2.62.1-1.fc45",
+      "to": "2.62.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "cryptsetup",
+      "from": "2.8.8-1.fc45",
+      "to": "2.8.9-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "cryptsetup-libs",
+      "from": "2.8.8-1.fc45",
+      "to": "2.8.9-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "firefox",
+      "from": "160.0-1.fc45",
+      "to": "161.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "firefox-langpacks",
+      "from": "160.0-1.fc45",
+      "to": "161.0-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gnome-software",
+      "from": "51.1-1.fc45",
+      "to": "51.1-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gnome-software-rpm-ostree",
+      "from": "51.1-1.fc45",
+      "to": "51.1-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gnome-user-docs",
+      "from": "51.0-1.fc45",
+      "to": "51.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "gtk4",
+      "from": "4.24.1-1.fc45",
+      "to": "4.24.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk4.1",
+      "from": "2.54.2-1.fc45",
+      "to": "2.54.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "javascriptcoregtk6.0",
+      "from": "2.54.2-1.fc45",
+      "to": "2.54.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libdav1d",
+      "from": "1.5.4-1.fc45",
+      "to": "1.5.5-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "libgtop2",
+      "from": "2.41.3-13.fc45",
+      "to": "2.41.4-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "m17n-db",
+      "from": "1.8.18-1.fc45",
+      "to": "1.8.19-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "oo7-daemon",
+      "from": "0.7.0~beta^1.e91b98a-1.fc45",
+      "to": "0.7.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "oo7-portal",
+      "from": "0.7.0~beta^1.e91b98a-1.fc45",
+      "to": "0.7.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "orca",
+      "from": "51.1-1.fc45",
+      "to": "51.2-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pam_oo7",
+      "from": "0.7.0~beta^1.e91b98a-1.fc45",
+      "to": "0.7.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "perl-libnet",
+      "from": "3.16-1.fc45",
+      "to": "3.17-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "seabios-bin",
+      "from": "1.17.0-16.fc45",
+      "to": "1.17.0-17.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "seavgabios-bin",
+      "from": "1.17.0-16.fc45",
+      "to": "1.17.0-17.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "selinux-policy",
+      "from": "45.24-1.fc45",
+      "to": "45.25-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "selinux-policy-targeted",
+      "from": "45.24-1.fc45",
+      "to": "45.25-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkit2gtk4.1",
+      "from": "2.54.2-1.fc45",
+      "to": "2.54.3-2.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "webkitgtk6.0",
+      "from": "2.54.2-1.fc45",
+      "to": "2.54.3-2.fc45",
       "direction": "upgraded"
     }
   ]
