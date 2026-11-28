@@ -2,10 +2,10 @@
   "image": "pulsar-nvidia",
   "variant": "nvidia-open",
   "release": "26.11.2",
-  "version": "45.20261127.0",
+  "version": "45.20261128.0",
   "base": "fedora-silverblue:45",
-  "built": "2026-11-27T03:01:47Z",
-  "kernel": "7.3.4-300.fc45.x86_64",
+  "built": "2026-11-28T03:02:26Z",
+  "kernel": "7.3.6-300.fc45.x86_64",
   "components": {
     "scheduler": "eevdf",
     "sched_ext": "opt-in (scx.service)",

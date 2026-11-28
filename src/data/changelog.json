@@ -1,17 +1,17 @@
 {
-  "generated": "2026-11-27T03:21:43Z",
+  "generated": "2026-11-28T03:23:09Z",
   "from": {
-    "ref": "ghcr.io/arclight-digital/pulsar@sha256:ba95849954bd520f32ea71a640d4047b7bebf58464f5e2e92e638828b670a4b4",
-    "digest": "sha256:ba95849954bd520f32ea71a640d4047b7bebf58464f5e2e92e638828b670a4b4"
-  },
-  "to": {
     "ref": "ghcr.io/arclight-digital/pulsar@sha256:45fcf5b6d7dbdcda27827168e822a32fd34a901bdfafeb783bad3582f6af7302",
     "digest": "sha256:45fcf5b6d7dbdcda27827168e822a32fd34a901bdfafeb783bad3582f6af7302"
+  },
+  "to": {
+    "ref": "ghcr.io/arclight-digital/pulsar@sha256:a9c9186d32da0a50700fada80686648a3a5f01e83327532d104ec7f7566c236b",
+    "digest": "sha256:a9c9186d32da0a50700fada80686648a3a5f01e83327532d104ec7f7566c236b"
   },
   "summary": {
     "added": 0,
     "removed": 0,
-    "upgraded": 27,
+    "upgraded": 36,
     "downgraded": 0,
     "changed": 0
   },
@@ -19,165 +19,219 @@
   "removed": [],
   "changed": [
     {
-      "name": "at-spi2-atk",
-      "from": "2.62.1-1.fc45",
-      "to": "2.62.2-1.fc45",
+      "name": "PackageKit-glib",
+      "from": "1.4.0-3.fc45",
+      "to": "1.4.1-2.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "at-spi2-core",
-      "from": "2.62.1-1.fc45",
-      "to": "2.62.2-1.fc45",
+      "name": "greenboot",
+      "from": "0.16.4-0.fc45",
+      "to": "0.16.6-0.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "atk",
-      "from": "2.62.1-1.fc45",
-      "to": "2.62.2-1.fc45",
+      "name": "greenboot-default-health-checks",
+      "from": "0.16.4-0.fc45",
+      "to": "0.16.6-0.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "cryptsetup",
-      "from": "2.8.8-1.fc45",
-      "to": "2.8.9-1.fc45",
+      "name": "kernel",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "cryptsetup-libs",
-      "from": "2.8.8-1.fc45",
-      "to": "2.8.9-1.fc45",
+      "name": "kernel-core",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "firefox",
-      "from": "160.0-1.fc45",
-      "to": "161.0-1.fc45",
+      "name": "kernel-devel",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "firefox-langpacks",
-      "from": "160.0-1.fc45",
-      "to": "161.0-1.fc45",
+      "name": "kernel-modules",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "gnome-software",
-      "from": "51.1-1.fc45",
-      "to": "51.1-2.fc45",
+      "name": "kernel-modules-core",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "gnome-software-rpm-ostree",
-      "from": "51.1-1.fc45",
-      "to": "51.1-2.fc45",
+      "name": "kernel-modules-extra",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "gnome-user-docs",
-      "from": "51.0-1.fc45",
-      "to": "51.2-1.fc45",
+      "name": "kernel-tools",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "gtk4",
-      "from": "4.24.1-1.fc45",
-      "to": "4.24.2-1.fc45",
+      "name": "kernel-tools-libs",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "javascriptcoregtk4.1",
-      "from": "2.54.2-1.fc45",
-      "to": "2.54.3-2.fc45",
+      "name": "libjxl",
+      "from": "1:0.11.2-2.fc45",
+      "to": "1:0.11.2-3.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "javascriptcoregtk6.0",
-      "from": "2.54.2-1.fc45",
-      "to": "2.54.3-2.fc45",
+      "name": "librepo",
+      "from": "1.22.0-1.fc45",
+      "to": "1.22.1-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libdav1d",
-      "from": "1.5.4-1.fc45",
-      "to": "1.5.5-1.fc45",
+      "name": "libzstd",
+      "from": "1.5.7-6.fc45",
+      "to": "1.6.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "libgtop2",
-      "from": "2.41.3-13.fc45",
-      "to": "2.41.4-1.fc45",
+      "name": "libzstd-devel",
+      "from": "1.5.7-6.fc45",
+      "to": "1.6.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "m17n-db",
-      "from": "1.8.18-1.fc45",
-      "to": "1.8.19-1.fc45",
+      "name": "llvm-filesystem",
+      "from": "23.1.5-2.fc45",
+      "to": "23.1.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "oo7-daemon",
-      "from": "0.7.0~beta^1.e91b98a-1.fc45",
-      "to": "0.7.3-2.fc45",
+      "name": "llvm-libs",
+      "from": "23.1.5-2.fc45",
+      "to": "23.1.6-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "oo7-portal",
-      "from": "0.7.0~beta^1.e91b98a-1.fc45",
-      "to": "0.7.3-2.fc45",
+      "name": "nspr",
+      "from": "4.39.0-10.fc45",
+      "to": "4.41.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "orca",
-      "from": "51.1-1.fc45",
-      "to": "51.2-1.fc45",
+      "name": "nss",
+      "from": "3.133.0-1.fc45",
+      "to": "3.134.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "pam_oo7",
-      "from": "0.7.0~beta^1.e91b98a-1.fc45",
-      "to": "0.7.3-2.fc45",
+      "name": "nss-softokn",
+      "from": "3.133.0-1.fc45",
+      "to": "3.134.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "perl-libnet",
-      "from": "3.16-1.fc45",
-      "to": "3.17-1.fc45",
+      "name": "nss-softokn-freebl",
+      "from": "3.133.0-1.fc45",
+      "to": "3.134.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "seabios-bin",
-      "from": "1.17.0-16.fc45",
-      "to": "1.17.0-17.fc45",
+      "name": "nss-sysinit",
+      "from": "3.133.0-1.fc45",
+      "to": "3.134.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "seavgabios-bin",
-      "from": "1.17.0-16.fc45",
-      "to": "1.17.0-17.fc45",
+      "name": "nss-util",
+      "from": "3.133.0-1.fc45",
+      "to": "3.134.0-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "selinux-policy",
-      "from": "45.24-1.fc45",
-      "to": "45.25-1.fc45",
+      "name": "perf",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "selinux-policy-targeted",
-      "from": "45.24-1.fc45",
-      "to": "45.25-1.fc45",
+      "name": "pipewire",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "webkit2gtk4.1",
-      "from": "2.54.2-1.fc45",
-      "to": "2.54.3-2.fc45",
+      "name": "pipewire-alsa",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
       "direction": "upgraded"
     },
     {
-      "name": "webkitgtk6.0",
-      "from": "2.54.2-1.fc45",
-      "to": "2.54.3-2.fc45",
+      "name": "pipewire-config-raop",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-gstreamer",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-jack-audio-connection-kit",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-jack-audio-connection-kit-libs",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-libs",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-plugin-libcamera",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-pulseaudio",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "pipewire-utils",
+      "from": "1.6.11-1.fc45",
+      "to": "1.6.12-1.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "python3-perf",
+      "from": "7.3.4-300.fc45",
+      "to": "7.3.6-300.fc45",
+      "direction": "upgraded"
+    },
+    {
+      "name": "zstd",
+      "from": "1.5.7-6.fc45",
+      "to": "1.6.0-1.fc45",
       "direction": "upgraded"
     }
   ]
